@@ -216,6 +216,30 @@ const ProjectDetails = () => {
     toast.success("Observações atualizadas com sucesso!");
   };
   
+  // FIX: Here I'm fixing the issue with KpiCard title prop expecting a string but receiving a React element
+  // I'm separating the edit buttons from the titles
+  const renderEditDateButton = () => (
+    <Button 
+      variant="ghost" 
+      size="sm"
+      onClick={() => setDateDialogOpen(true)}
+      className="h-6 p-1 hover:bg-primary/20"
+    >
+      <Edit size={14} />
+    </Button>
+  );
+
+  const renderEditHoursButton = () => (
+    <Button 
+      variant="ghost" 
+      size="sm"
+      onClick={() => setHoursDialogOpen(true)}
+      className="h-6 p-1 hover:bg-primary/20"
+    >
+      <Edit size={14} />
+    </Button>
+  );
+  
   return (
     <AppLayout 
       title={
@@ -252,40 +276,26 @@ const ProjectDetails = () => {
             value={`${project.progress}%`}
             icon={<Activity size={18} />}
           />
-          <KpiCard 
-            title={
-              <div className="flex items-center justify-between">
-                <span>Data de Conclusão</span>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setDateDialogOpen(true)}
-                  className="h-6 p-1 hover:bg-primary/20"
-                >
-                  <Edit size={14} />
-                </Button>
-              </div>
-            } 
-            value={project.estimatedCompletionDate}
-            icon={<Calendar size={18} />}
-          />
-          <KpiCard 
-            title={
-              <div className="flex items-center justify-between">
-                <span>Horas Trabalhadas</span>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setHoursDialogOpen(true)}
-                  className="h-6 p-1 hover:bg-primary/20"
-                >
-                  <Edit size={14} />
-                </Button>
-              </div>
-            } 
-            value={project.hoursWorked}
-            icon={<Clock size={18} />}
-          />
+          <div className="relative">
+            <KpiCard 
+              title="Data de Conclusão" 
+              value={project.estimatedCompletionDate}
+              icon={<Calendar size={18} />}
+            />
+            <div className="absolute top-3 right-3">
+              {renderEditDateButton()}
+            </div>
+          </div>
+          <div className="relative">
+            <KpiCard 
+              title="Horas Trabalhadas" 
+              value={project.hoursWorked}
+              icon={<Clock size={18} />}
+            />
+            <div className="absolute top-3 right-3">
+              {renderEditHoursButton()}
+            </div>
+          </div>
         </div>
         
         {/* Progress Bar */}
