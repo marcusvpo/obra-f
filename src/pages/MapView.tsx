@@ -21,17 +21,12 @@ const MapView = () => {
     });
   }, []);
   
-  // Criar um array com os projetos que têm coordenadas de localização
+  // Create an array with projects that have location coordinates
   const projectsWithLocation = Object.values(projectDetails).filter(
     (project) => project.latitude && project.longitude
   );
 
-  // Calcular o centro do mapa baseado nos projetos disponíveis
-  const defaultCenter = projectsWithLocation.length > 0
-    ? [projectsWithLocation[0].latitude || -23.5505, projectsWithLocation[0].longitude || -46.6333]
-    : [-23.5505, -46.6333]; // Default: São Paulo
-
-  // Criar um ícone customizado para os marcadores
+  // Create a custom icon for the markers
   const customIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -46,14 +41,14 @@ const MapView = () => {
       <div className="max-w-7xl mx-auto">
         <Card className="bg-card border-none shadow p-0 h-[calc(100vh-10rem)]">
           <MapContainer
-            center={[-23.5505, -46.6333]} 
+            center={[-23.5505, -46.6333] as [number, number]} 
             zoom={13}
             style={{ height: "100%", width: "100%" }}
             className="rounded-lg"
           >
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
 
             {projectsWithLocation.map((project) => (
@@ -62,7 +57,8 @@ const MapView = () => {
                 position={[
                   project.latitude !== undefined ? project.latitude : -23.5505,
                   project.longitude !== undefined ? project.longitude : -46.6333
-                ]}
+                ] as [number, number]}
+                icon={customIcon}
               >
                 <Popup>
                   <div className="p-2">
