@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -242,32 +241,31 @@ const ProjectDetails = () => {
   
   return (
     <AppLayout 
-      title={
-        <div className="flex items-center gap-3">
-          <span>{project.name}</span>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setNameDialogOpen(true)}
-            className="border-primary text-primary hover:bg-primary hover:text-white"
-          >
-            <Edit size={14} className="mr-1" />
-            Editar Nome
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setStatusDialogOpen(true)}
-            className="border-primary text-primary hover:bg-primary hover:text-white"
-          >
-            <Edit size={14} className="mr-1" />
-            Editar Status
-          </Button>
-        </div>
-      }
+      title={project.name}
       showBackButton={true}
       onBackClick={() => navigate("/")}
     >
+      <div className="flex items-center gap-3 mb-6">
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => setNameDialogOpen(true)}
+          className="border-primary text-primary hover:bg-primary hover:text-white"
+        >
+          <Edit size={14} className="mr-1" />
+          Editar Nome
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => setStatusDialogOpen(true)}
+          className="border-primary text-primary hover:bg-primary hover:text-white"
+        >
+          <Edit size={14} className="mr-1" />
+          Editar Status
+        </Button>
+      </div>
+
       <div className="max-w-7xl mx-auto space-y-8">
         {/* KPIs Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
