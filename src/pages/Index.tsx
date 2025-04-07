@@ -67,7 +67,7 @@ const Index = () => {
   );
 
   return (
-    <AppLayout>
+    <AppLayout title="Dashboard">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Últimas Atualizações */}
         {updates.length > 0 && (
