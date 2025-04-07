@@ -1,5 +1,4 @@
-
-import { Project, ProjectDetails, ChatLogEntry } from "@/types/project";
+import { Project, ProjectDetails, ChatLogEntry, TimelineEvent } from "@/types/project";
 
 export const projects: Project[] = [
   {
@@ -213,7 +212,6 @@ export const projectDetails: Record<string, ProjectDetails> = {
   }
 };
 
-// Dados para o ChatLog
 export const chatLogs: ChatLogEntry[] = [
   { 
     obra: "Condomínio Villa Verde", 
@@ -234,9 +232,7 @@ export const chatLogs: ChatLogEntry[] = [
   }
 ];
 
-// Função para buscar detalhes de um projeto
 export function getProjectDetails(id: string) {
-  // Se o projeto não existir nos detalhes, cria um modelo básico
   if (!projectDetails[id as keyof typeof projectDetails]) {
     const project = projects.find(p => p.id === id);
     if (!project) return null;
@@ -255,7 +251,6 @@ export function getProjectDetails(id: string) {
   return projectDetails[id as keyof typeof projectDetails];
 }
 
-// Função para obter as últimas atualizações de todos os projetos
 export function getLatestUpdates() {
   const updates: {projectId: string, projectName: string, update: TimelineEvent}[] = [];
   
@@ -282,7 +277,6 @@ export function getLatestUpdates() {
   ).slice(0, 3);
 }
 
-// Função para alternar favorito
 export function toggleFavorite(id: string) {
   const project = projects.find(p => p.id === id);
   if (project) {
@@ -294,7 +288,6 @@ export function toggleFavorite(id: string) {
   }
 }
 
-// Função para atualizar status
 export function updateProjectStatus(id: string, newStatus: string) {
   const project = projects.find(p => p.id === id);
   if (project) {
@@ -306,7 +299,6 @@ export function updateProjectStatus(id: string, newStatus: string) {
     projectDetails[id].status = newStatus;
     projectDetails[id].lastUpdate = new Date().toLocaleDateString('pt-BR');
     
-    // Adiciona um novo evento na timeline
     const newEvent = {
       id: `t${Date.now()}`,
       date: new Date().toLocaleDateString('pt-BR'),
@@ -320,7 +312,6 @@ export function updateProjectStatus(id: string, newStatus: string) {
   }
 }
 
-// Função para atualizar data de conclusão
 export function updateCompletionDate(id: string, newDate: string) {
   const project = projects.find(p => p.id === id);
   if (project) {
@@ -330,7 +321,6 @@ export function updateCompletionDate(id: string, newDate: string) {
   if (projectDetails[id]) {
     projectDetails[id].estimatedCompletionDate = newDate;
     
-    // Adiciona um novo evento na timeline
     const newEvent = {
       id: `t${Date.now()}`,
       date: new Date().toLocaleDateString('pt-BR'),
@@ -344,7 +334,6 @@ export function updateCompletionDate(id: string, newDate: string) {
   }
 }
 
-// Função para atualizar informações do projeto
 export function updateProjectInfo(id: string, info: {
   managerName?: string;
   managerPhone?: string;
@@ -355,7 +344,6 @@ export function updateProjectInfo(id: string, info: {
     if (info.managerPhone) projectDetails[id].managerPhone = info.managerPhone;
     if (info.address) projectDetails[id].address = info.address;
     
-    // Adiciona um novo evento na timeline
     const newEvent = {
       id: `t${Date.now()}`,
       date: new Date().toLocaleDateString('pt-BR'),
