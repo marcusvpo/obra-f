@@ -52,10 +52,10 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
         <Menu size={24} />
       </Button>
 
-      {/* Sidebar */}
+      {/* Sidebar que abre à esquerda */}
       <div
         className={`fixed top-0 left-0 h-screen bg-[#333333] text-white z-40 transition-all duration-300 ease-in-out ${
-          isOpen ? "w-64" : "w-16"
+          isOpen ? "w-64 translate-x-0" : "w-16 -translate-x-14"
         } flex flex-col`}
       >
         {/* Logo area */}

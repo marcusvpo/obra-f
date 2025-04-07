@@ -1,18 +1,17 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { Download, Calendar, Clock, Activity, Edit, MapPin } from "lucide-react";
+import { Calendar, Clock, Edit, MapPin } from "lucide-react";
 import KpiCard from "@/components/dashboard/KpiCard";
-import ProgressBar from "@/components/dashboard/ProgressBar";
 import TimelineItem from "@/components/dashboard/TimelineItem";
 import PhotoGallery from "@/components/dashboard/PhotoGallery";
 import { 
   getProjectDetails, updateProjectStatus, updateCompletionDate, 
   updateProjectInfo, updateProjectName, updateWorkedHours, updateObservations 
 } from "@/data/mockData";
-import { HoursWorkedChart } from "@/components/dashboard/ProjectCharts";
 import { 
   Dialog, 
   DialogContent, 
@@ -53,24 +52,27 @@ interface ObservationsFormData {
   observations: string;
 }
 
+interface EditFormData {
+  name: string;
+  status: string;
+}
+
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [project, setProject] = useState<ProjectDetailsType | null>(null);
   
   // Dialog states
-  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [dateDialogOpen, setDateDialogOpen] = useState(false);
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
-  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [hoursDialogOpen, setHoursDialogOpen] = useState(false);
   const [observationsDialogOpen, setObservationsDialogOpen] = useState(false);
   
   // Form handling
-  const statusForm = useForm<StatusFormData>();
+  const editForm = useForm<EditFormData>();
   const dateForm = useForm<DateFormData>();
   const infoForm = useForm<InfoFormData>();
-  const nameForm = useForm<NameFormData>();
   const hoursForm = useForm<HoursFormData>();
   const observationsForm = useForm<ObservationsFormData>();
   
@@ -87,14 +89,16 @@ const ProjectDetails = () => {
     setProject(projectData);
     
     // Set default form values
-    statusForm.reset({ status: projectData.status });
+    editForm.reset({ 
+      name: projectData.name,
+      status: projectData.status 
+    });
     dateForm.reset({ completionDate: projectData.estimatedCompletionDate });
     infoForm.reset({
       managerName: projectData.managerName,
       managerPhone: projectData.managerPhone,
       address: projectData.address
     });
-    nameForm.reset({ name: projectData.name });
     hoursForm.reset({ hoursWorked: projectData.hoursWorked });
     observationsForm.reset({ observations: projectData.observations || "" });
     
@@ -106,27 +110,58 @@ const ProjectDetails = () => {
     }
   }, [id, navigate]);
   
+  useEffect(() => {
+    // Adiciona o botão de Editar no cabeçalho
+    if (project) {
+      const buttonContainer = document.getElementById('page-specific-buttons');
+      if (buttonContainer) {
+        const editButton = document.createElement('button');
+        editButton.className = 'bg-primary text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-primary/80';
+        editButton.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Editar</span>';
+        editButton.onclick = () => setEditDialogOpen(true);
+        
+        // Limpa qualquer botão existente e adiciona o novo botão
+        buttonContainer.innerHTML = '';
+        buttonContainer.appendChild(editButton);
+      }
+    }
+
+    return () => {
+      // Limpa o botão ao desmontar o componente
+      const buttonContainer = document.getElementById('page-specific-buttons');
+      if (buttonContainer) {
+        buttonContainer.innerHTML = '';
+      }
+    };
+  }, [project]);
+  
   if (!project) return null;
   
   const handleExportReport = () => {
     toast.success("Relatório gerado com sucesso!");
   };
   
-  const onStatusSubmit = (data: StatusFormData) => {
+  const onEditSubmit = (data: EditFormData) => {
+    // Atualiza o nome do projeto
+    updateProjectName(project.id, data.name);
+    
+    // Atualiza o status do projeto
     updateProjectStatus(project.id, data.status);
-    setStatusDialogOpen(false);
+    
+    setEditDialogOpen(false);
     
     // Update local state
     setProject(prev => {
       if (!prev) return null;
       return {
         ...prev,
+        name: data.name,
         status: data.status,
         lastUpdate: new Date().toLocaleDateString('pt-BR')
       };
     });
     
-    toast.success("Status atualizado com sucesso!");
+    toast.success("Projeto atualizado com sucesso!");
   };
   
   const onDateSubmit = (data: DateFormData) => {
@@ -167,22 +202,6 @@ const ProjectDetails = () => {
     toast.success("Informações atualizadas com sucesso!");
   };
   
-  const onNameSubmit = (data: NameFormData) => {
-    updateProjectName(project.id, data.name);
-    setNameDialogOpen(false);
-    
-    // Update local state
-    setProject(prev => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        name: data.name
-      };
-    });
-    
-    toast.success("Nome do projeto atualizado com sucesso!");
-  };
-  
   const onHoursSubmit = (data: HoursFormData) => {
     updateWorkedHours(project.id, data.hoursWorked);
     setHoursDialogOpen(false);
@@ -215,149 +234,58 @@ const ProjectDetails = () => {
     toast.success("Observações atualizadas com sucesso!");
   };
   
-  // FIX: Here I'm fixing the issue with KpiCard title prop expecting a string but receiving a React element
-  // I'm separating the edit buttons from the titles
-  const renderEditDateButton = () => (
-    <Button 
-      variant="ghost" 
-      size="sm"
-      onClick={() => setDateDialogOpen(true)}
-      className="h-6 p-1 hover:bg-primary/20"
-    >
-      <Edit size={14} />
-    </Button>
-  );
-
-  const renderEditHoursButton = () => (
-    <Button 
-      variant="ghost" 
-      size="sm"
-      onClick={() => setHoursDialogOpen(true)}
-      className="h-6 p-1 hover:bg-primary/20"
-    >
-      <Edit size={14} />
-    </Button>
-  );
-  
   return (
     <AppLayout 
       title={project.name}
       showBackButton={true}
       onBackClick={() => navigate("/")}
     >
-      <div className="flex items-center gap-3 mb-6">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => setNameDialogOpen(true)}
-          className="border-primary text-primary hover:bg-primary hover:text-white"
-        >
-          <Edit size={14} className="mr-1" />
-          Editar Nome
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => setStatusDialogOpen(true)}
-          className="border-primary text-primary hover:bg-primary hover:text-white"
-        >
-          <Edit size={14} className="mr-1" />
-          Editar Status
-        </Button>
-      </div>
-
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Última foto do projeto - Nova feature */}
+        {project.photos && project.photos.length > 0 && (
+          <div className="bg-card p-5 rounded-lg">
+            <h2 className="text-lg font-semibold mb-4">Última Foto do Projeto</h2>
+            <div className="flex justify-center">
+              <img 
+                src={project.photos[project.photos.length - 1].url} 
+                alt="Última foto do projeto" 
+                className="max-h-[400px] rounded-md object-contain"
+              />
+            </div>
+          </div>
+        )}
+        
         {/* KPIs Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <KpiCard 
-            title="Progresso" 
-            value={`${project.progress}%`}
-            icon={<Activity size={18} />}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="relative">
             <KpiCard 
               title="Data de Conclusão" 
               value={project.estimatedCompletionDate}
-              icon={<Calendar size={18} />}
+              icon={Calendar}
             />
-            <div className="absolute top-3 right-3">
-              {renderEditDateButton()}
-            </div>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setDateDialogOpen(true)}
+              className="absolute top-3 right-3 h-6 p-1 hover:bg-primary/20"
+            >
+              <Edit size={14} />
+            </Button>
           </div>
           <div className="relative">
             <KpiCard 
               title="Horas Trabalhadas" 
               value={project.hoursWorked}
-              icon={<Clock size={18} />}
+              icon={Clock}
             />
-            <div className="absolute top-3 right-3">
-              {renderEditHoursButton()}
-            </div>
-          </div>
-        </div>
-        
-        {/* Progress Bar */}
-        <div className="bg-card p-5 rounded-lg">
-          <div className="flex justify-between mb-2">
-            <h3 className="font-medium text-lg">Progresso do Projeto</h3>
-            <span className="text-lg font-semibold">{project.progress}%</span>
-          </div>
-          <ProgressBar progress={project.progress} size="lg" color="#FF6200" />
-        </div>
-        
-        {/* Chart Section */}
-        <div className="grid grid-cols-1 gap-8">
-          {project.plannedHours && (
-            <Card className="bg-card shadow border-none">
-              <CardHeader>
-                <CardTitle className="text-lg font-medium">
-                  Horas Trabalhadas vs. Planejadas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col lg:flex-row items-center justify-around gap-8">
-                  <div className="flex flex-col items-center">
-                    <h3 className="text-lg text-muted-foreground">Trabalhadas</h3>
-                    <p className="text-4xl font-bold text-primary mt-2">
-                      {project.hoursWorked.replace(/[^0-9]/g, '')}h
-                    </p>
-                  </div>
-                  <div className="h-full w-px bg-border hidden lg:block"></div>
-                  <div className="flex flex-col items-center">
-                    <h3 className="text-lg text-muted-foreground">Planejadas</h3>
-                    <p className="text-4xl font-bold mt-2">{project.plannedHours}h</p>
-                  </div>
-                  <div className="flex-1 min-w-[200px]">
-                    <HoursWorkedChart
-                      plannedHours={project.plannedHours}
-                      workedHours={project.hoursWorked}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-        
-        {/* Observações Section */}
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Observações</h2>
             <Button 
-              variant="outline" 
-              onClick={() => setObservationsDialogOpen(true)}
-              className="border-primary text-primary hover:bg-primary hover:text-white"
+              variant="ghost" 
+              size="sm"
+              onClick={() => setHoursDialogOpen(true)}
+              className="absolute top-3 right-3 h-6 p-1 hover:bg-primary/20"
             >
-              <Edit size={14} className="mr-2" />
-              Editar Observações
+              <Edit size={14} />
             </Button>
-          </div>
-          <div className="bg-card p-5 rounded-lg">
-            {project.observations ? (
-              <p className="whitespace-pre-wrap">{project.observations}</p>
-            ) : (
-              <p className="text-muted text-center py-4">Nenhuma observação disponível. Clique em "Editar Observações" para adicionar.</p>
-            )}
           </div>
         </div>
         
@@ -419,17 +347,41 @@ const ProjectDetails = () => {
           </div>
         </div>
         
-        {/* Photos Gallery */}
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Galeria de Fotos</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Photos Gallery */}
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Galeria de Fotos</h2>
+            </div>
+            <div className="bg-card p-5 rounded-lg">
+              {project.photos && project.photos.length > 0 ? (
+                <PhotoGallery images={project.photos} />
+              ) : (
+                <p className="text-muted text-center py-4">Nenhuma foto disponível</p>
+              )}
+            </div>
           </div>
-          <div className="bg-card p-5 rounded-lg">
-            {project.photos && project.photos.length > 0 ? (
-              <PhotoGallery images={project.photos} />
-            ) : (
-              <p className="text-muted text-center py-4">Nenhuma foto disponível</p>
-            )}
+          
+          {/* Observações Section - Reduzido e ao lado da galeria */}
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Observações</h2>
+              <Button 
+                variant="outline" 
+                onClick={() => setObservationsDialogOpen(true)}
+                className="border-primary text-primary hover:bg-primary hover:text-white"
+              >
+                <Edit size={14} className="mr-2" />
+                Editar
+              </Button>
+            </div>
+            <div className="bg-card p-5 rounded-lg h-[calc(100%-48px)]">
+              {project.observations ? (
+                <p className="whitespace-pre-wrap">{project.observations}</p>
+              ) : (
+                <p className="text-muted text-center py-4">Nenhuma observação disponível.</p>
+              )}
+            </div>
           </div>
         </div>
         
@@ -438,23 +390,39 @@ const ProjectDetails = () => {
             onClick={handleExportReport} 
             className="bg-primary hover:bg-primary/80 text-white gap-2"
           >
-            <Download size={16} />
-            <span>Exportar Relatório</span>
+            Exportar Relatório
           </Button>
         </div>
       </div>
       
-      {/* Status Dialog */}
-      <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
+      {/* Edit Dialog - Combinando nome e status */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="bg-background border-border">
           <DialogHeader>
-            <DialogTitle>Atualizar Status</DialogTitle>
+            <DialogTitle>Editar Projeto</DialogTitle>
           </DialogHeader>
           
-          <Form {...statusForm}>
-            <form onSubmit={statusForm.handleSubmit(onStatusSubmit)} className="space-y-4">
+          <Form {...editForm}>
+            <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
               <FormField
-                control={statusForm.control}
+                control={editForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Projeto</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Nome do projeto" 
+                        className="bg-secondary"
+                        {...field} 
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={editForm.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
@@ -474,7 +442,7 @@ const ProjectDetails = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => setStatusDialogOpen(false)}
+                  onClick={() => setEditDialogOpen(false)}
                 >
                   Cancelar
                 </Button>
@@ -521,52 +489,6 @@ const ProjectDetails = () => {
                   type="button" 
                   variant="outline" 
                   onClick={() => setDateDialogOpen(false)}
-                >
-                  Cancelar
-                </Button>
-                <Button 
-                  type="submit" 
-                  className="bg-primary text-white hover:bg-primary/80"
-                >
-                  Salvar
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Name Dialog */}
-      <Dialog open={nameDialogOpen} onOpenChange={setNameDialogOpen}>
-        <DialogContent className="bg-background border-border">
-          <DialogHeader>
-            <DialogTitle>Atualizar Nome do Projeto</DialogTitle>
-          </DialogHeader>
-          
-          <Form {...nameForm}>
-            <form onSubmit={nameForm.handleSubmit(onNameSubmit)} className="space-y-4">
-              <FormField
-                control={nameForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome do Projeto</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Nome do projeto" 
-                        className="bg-secondary"
-                        {...field} 
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              <DialogFooter>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setNameDialogOpen(false)}
                 >
                   Cancelar
                 </Button>
