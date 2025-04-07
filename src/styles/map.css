@@ -5,16 +5,16 @@
   height: 100%;
 }
 
-.custom-popup .leaflet-popup-content-wrapper {
+.leaflet-popup-content-wrapper {
   background-color: #333333;
   color: white;
   border-radius: 8px;
 }
 
-.custom-popup .leaflet-popup-tip {
+.leaflet-popup-tip {
   background-color: #333333;
 }
 
-.custom-popup a {
+.leaflet-popup-content a {
   color: #FF6200;
 }

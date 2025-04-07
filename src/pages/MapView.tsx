@@ -26,23 +26,13 @@ const MapView = () => {
     (project) => project.latitude && project.longitude
   );
 
-  // Create a custom icon for the markers
-  const customIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  });
-
   return (
     <AppLayout title="Mapa de Projetos">
       <div className="max-w-7xl mx-auto">
         <Card className="bg-card border-none shadow p-0 h-[calc(100vh-10rem)]">
-          <MapContainer
-            center={[-23.5505, -46.6333] as [number, number]} 
-            zoom={13}
+          <MapContainer 
+            center={[-23.5505, -46.6333]} 
+            zoom={13} 
             style={{ height: "100%", width: "100%" }}
             className="rounded-lg"
           >
@@ -55,10 +45,9 @@ const MapView = () => {
               <Marker 
                 key={project.id}
                 position={[
-                  project.latitude !== undefined ? project.latitude : -23.5505,
-                  project.longitude !== undefined ? project.longitude : -46.6333
-                ] as [number, number]}
-                icon={customIcon}
+                  project.latitude || -23.5505,
+                  project.longitude || -46.6333
+                ]}
               >
                 <Popup>
                   <div className="p-2">
