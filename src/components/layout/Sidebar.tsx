@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Map, MessageSquare, LogOut } from "lucide-react";
+import { Home, MessageSquare, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -26,11 +26,6 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
       path: "/", 
       label: "Home", 
       icon: <Home size={20} /> 
-    },
-    { 
-      path: "/mapa", 
-      label: "Mapa", 
-      icon: <Map size={20} /> 
     },
     { 
       path: "/chatlog", 
