@@ -46,25 +46,25 @@ const MapView = () => {
       <div className="max-w-7xl mx-auto">
         <Card className="bg-card border-none shadow p-0 h-[calc(100vh-10rem)]">
           <MapContainer
-            center={[defaultCenter[0] as number, defaultCenter[1] as number] as [number, number]}
+            center={[-23.5505, -46.6333]} 
             zoom={13}
             style={{ height: "100%", width: "100%" }}
             className="rounded-lg"
           >
-            {/* Use OpenStreetMap with dark theme */}
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
 
-            {/* Add markers for each project with location */}
             {projectsWithLocation.map((project) => (
               <Marker 
                 key={project.id}
-                position={[project.latitude || 0, project.longitude || 0]}
-                icon={customIcon}
+                position={[
+                  project.latitude !== undefined ? project.latitude : -23.5505,
+                  project.longitude !== undefined ? project.longitude : -46.6333
+                ]}
               >
-                <Popup className="custom-popup">
+                <Popup>
                   <div className="p-2">
                     <h3 className="font-medium text-lg">{project.name}</h3>
                     <p className="text-sm">Status: {project.status}</p>
