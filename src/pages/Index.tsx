@@ -13,6 +13,10 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [projectsList, setProjectsList] = useState<Project[]>([]);
   const [updates, setUpdates] = useState<ReturnType<typeof getLatestUpdates>>([]);
+  const [viewedProjects, setViewedProjects] = useState<Record<string, boolean>>(() => {
+    const stored = localStorage.getItem("viewedProjects");
+    return stored ? JSON.parse(stored) : {};
+  });
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -28,6 +32,10 @@ const Index = () => {
     setUpdates(getLatestUpdates());
   }, []);
   
+  useEffect(() => {
+    localStorage.setItem("viewedProjects", JSON.stringify(viewedProjects));
+  }, [viewedProjects]);
+  
   // Função para lidar com a alteração de favoritos
   const handleFavoriteChange = () => {
     const sortedProjects = [...projects].sort((a, b) => {
@@ -36,6 +44,21 @@ const Index = () => {
       return 0;
     });
     setProjectsList(sortedProjects);
+  };
+  
+  const handleProjectClick = (projectId: string) => {
+    setViewedProjects(prev => ({
+      ...prev,
+      [projectId]: true
+    }));
+    navigate(`/projeto/${projectId}`);
+  };
+
+  // Verificar se um projeto tem atualizações não visualizadas
+  const hasNewUpdates = (projectId: string) => {
+    return updates.some(update => 
+      update.projectId === projectId && !viewedProjects[projectId]
+    );
   };
   
   // Filtrar projetos baseado na busca
@@ -48,22 +71,38 @@ const Index = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Últimas Atualizações */}
         {updates.length > 0 && (
-          <Card className="bg-card border-none shadow">
-            <CardHeader>
-              <CardTitle className="text-lg font-medium text-white">Últimas Atualizações</CardTitle>
+          <Card className="bg-card border-none shadow max-h-60">
+            <CardHeader className="py-3">
+              <CardTitle className="text-lg font-medium text-white flex items-center gap-2">
+                Últimas Atualizações
+                {updates.some(update => !viewedProjects[update.projectId]) && (
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+                  </span>
+                )}
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <ul className="space-y-3">
+            <CardContent className="max-h-40 overflow-y-auto pb-2">
+              <ul className="space-y-2">
                 {updates.map((update, idx) => (
                   <li 
                     key={idx} 
-                    className="p-3 bg-secondary/20 rounded-md hover:bg-secondary/30 cursor-pointer transition-colors"
-                    onClick={() => navigate(`/projeto/${update.projectId}`)}
+                    className="p-2.5 bg-secondary/20 rounded-md hover:bg-secondary/30 cursor-pointer transition-colors flex items-center"
+                    onClick={() => handleProjectClick(update.projectId)}
                   >
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-start w-full">
                       <div>
-                        <span className="font-medium text-white">{update.projectName}</span>
-                        <p className="text-sm mt-1">{update.update.title}</p>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-medium text-white">{update.projectName}</span>
+                          {!viewedProjects[update.projectId] && (
+                            <span className="relative flex h-2 w-2 ml-1">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm mt-0.5">{update.update.title}</p>
                       </div>
                       <span className="text-xs text-muted whitespace-nowrap">{update.update.date}</span>
                     </div>
@@ -99,6 +138,7 @@ const Index = () => {
                 key={project.id} 
                 project={project} 
                 onFavoriteToggle={handleFavoriteChange}
+                hasNewUpdates={hasNewUpdates(project.id)}
               />
             ))}
           </div>

@@ -9,8 +9,11 @@ import KpiCard from "@/components/dashboard/KpiCard";
 import ProgressBar from "@/components/dashboard/ProgressBar";
 import TimelineItem from "@/components/dashboard/TimelineItem";
 import PhotoGallery from "@/components/dashboard/PhotoGallery";
-import { getProjectDetails, updateProjectStatus, updateCompletionDate, updateProjectInfo } from "@/data/mockData";
-import { ProgressTimeChart, HoursWorkedChart } from "@/components/dashboard/ProjectCharts";
+import { 
+  getProjectDetails, updateProjectStatus, updateCompletionDate, 
+  updateProjectInfo, updateProjectName, updateWorkedHours, updateObservations 
+} from "@/data/mockData";
+import { HoursWorkedChart } from "@/components/dashboard/ProjectCharts";
 import { 
   Dialog, 
   DialogContent, 
@@ -39,6 +42,18 @@ interface InfoFormData {
   address: string;
 }
 
+interface NameFormData {
+  name: string;
+}
+
+interface HoursFormData {
+  hoursWorked: string;
+}
+
+interface ObservationsFormData {
+  observations: string;
+}
+
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -48,11 +63,17 @@ const ProjectDetails = () => {
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [dateDialogOpen, setDateDialogOpen] = useState(false);
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [hoursDialogOpen, setHoursDialogOpen] = useState(false);
+  const [observationsDialogOpen, setObservationsDialogOpen] = useState(false);
   
   // Form handling
   const statusForm = useForm<StatusFormData>();
   const dateForm = useForm<DateFormData>();
   const infoForm = useForm<InfoFormData>();
+  const nameForm = useForm<NameFormData>();
+  const hoursForm = useForm<HoursFormData>();
+  const observationsForm = useForm<ObservationsFormData>();
   
   useEffect(() => {
     if (!id) return;
@@ -74,6 +95,16 @@ const ProjectDetails = () => {
       managerPhone: projectData.managerPhone,
       address: projectData.address
     });
+    nameForm.reset({ name: projectData.name });
+    hoursForm.reset({ hoursWorked: projectData.hoursWorked });
+    observationsForm.reset({ observations: projectData.observations || "" });
+    
+    // Marcar projeto como visualizado
+    if (projectData) {
+      const viewedProjects = JSON.parse(localStorage.getItem("viewedProjects") || "{}");
+      viewedProjects[projectData.id] = true;
+      localStorage.setItem("viewedProjects", JSON.stringify(viewedProjects));
+    }
   }, [id, navigate]);
   
   if (!project) return null;
@@ -137,9 +168,79 @@ const ProjectDetails = () => {
     toast.success("Informações atualizadas com sucesso!");
   };
   
+  const onNameSubmit = (data: NameFormData) => {
+    updateProjectName(project.id, data.name);
+    setNameDialogOpen(false);
+    
+    // Update local state
+    setProject(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        name: data.name
+      };
+    });
+    
+    toast.success("Nome do projeto atualizado com sucesso!");
+  };
+  
+  const onHoursSubmit = (data: HoursFormData) => {
+    updateWorkedHours(project.id, data.hoursWorked);
+    setHoursDialogOpen(false);
+    
+    // Update local state
+    setProject(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        hoursWorked: data.hoursWorked
+      };
+    });
+    
+    toast.success("Horas trabalhadas atualizadas com sucesso!");
+  };
+  
+  const onObservationsSubmit = (data: ObservationsFormData) => {
+    updateObservations(project.id, data.observations);
+    setObservationsDialogOpen(false);
+    
+    // Update local state
+    setProject(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        observations: data.observations
+      };
+    });
+    
+    toast.success("Observações atualizadas com sucesso!");
+  };
+  
   return (
     <AppLayout 
-      title={project.name} 
+      title={
+        <div className="flex items-center gap-3">
+          <span>{project.name}</span>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setNameDialogOpen(true)}
+            className="border-primary text-primary hover:bg-primary hover:text-white"
+          >
+            <Edit size={14} className="mr-1" />
+            Editar Nome
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setStatusDialogOpen(true)}
+            className="border-primary text-primary hover:bg-primary hover:text-white"
+          >
+            <Edit size={14} className="mr-1" />
+            Editar Status
+          </Button>
+        </div>
+      }
       showBackButton={true}
       onBackClick={() => navigate("/")}
     >
@@ -152,12 +253,36 @@ const ProjectDetails = () => {
             icon={<Activity size={18} />}
           />
           <KpiCard 
-            title="Data de Conclusão" 
+            title={
+              <div className="flex items-center justify-between">
+                <span>Data de Conclusão</span>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setDateDialogOpen(true)}
+                  className="h-6 p-1 hover:bg-primary/20"
+                >
+                  <Edit size={14} />
+                </Button>
+              </div>
+            } 
             value={project.estimatedCompletionDate}
             icon={<Calendar size={18} />}
           />
           <KpiCard 
-            title="Horas Trabalhadas" 
+            title={
+              <div className="flex items-center justify-between">
+                <span>Horas Trabalhadas</span>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setHoursDialogOpen(true)}
+                  className="h-6 p-1 hover:bg-primary/20"
+                >
+                  <Edit size={14} />
+                </Button>
+              </div>
+            } 
             value={project.hoursWorked}
             icon={<Clock size={18} />}
           />
@@ -166,30 +291,14 @@ const ProjectDetails = () => {
         {/* Progress Bar */}
         <div className="bg-card p-5 rounded-lg">
           <div className="flex justify-between mb-2">
-            <h3 className="font-medium">Progresso do Projeto</h3>
-            <span>{project.progress}%</span>
+            <h3 className="font-medium text-lg">Progresso do Projeto</h3>
+            <span className="text-lg font-semibold">{project.progress}%</span>
           </div>
           <ProgressBar progress={project.progress} size="lg" color="#FF6200" />
         </div>
         
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {project.plannedDays && project.actualDays && (
-            <Card className="bg-card shadow border-none">
-              <CardHeader>
-                <CardTitle className="text-lg font-medium">
-                  Tempo Planejado vs. Real
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ProgressTimeChart 
-                  plannedDays={project.plannedDays}
-                  actualDays={project.actualDays}
-                />
-              </CardContent>
-            </Card>
-          )}
-          
+        {/* Chart Section */}
+        <div className="grid grid-cols-1 gap-8">
           {project.plannedHours && (
             <Card className="bg-card shadow border-none">
               <CardHeader>
@@ -198,13 +307,50 @@ const ProjectDetails = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <HoursWorkedChart
-                  plannedHours={project.plannedHours}
-                  workedHours={project.hoursWorked}
-                />
+                <div className="flex flex-col lg:flex-row items-center justify-around gap-8">
+                  <div className="flex flex-col items-center">
+                    <h3 className="text-lg text-muted-foreground">Trabalhadas</h3>
+                    <p className="text-4xl font-bold text-primary mt-2">
+                      {project.hoursWorked.replace(/[^0-9]/g, '')}h
+                    </p>
+                  </div>
+                  <div className="h-full w-px bg-border hidden lg:block"></div>
+                  <div className="flex flex-col items-center">
+                    <h3 className="text-lg text-muted-foreground">Planejadas</h3>
+                    <p className="text-4xl font-bold mt-2">{project.plannedHours}h</p>
+                  </div>
+                  <div className="flex-1 min-w-[200px]">
+                    <HoursWorkedChart
+                      plannedHours={project.plannedHours}
+                      workedHours={project.hoursWorked}
+                    />
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}
+        </div>
+        
+        {/* Observações Section */}
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">Observações</h2>
+            <Button 
+              variant="outline" 
+              onClick={() => setObservationsDialogOpen(true)}
+              className="border-primary text-primary hover:bg-primary hover:text-white"
+            >
+              <Edit size={14} className="mr-2" />
+              Editar Observações
+            </Button>
+          </div>
+          <div className="bg-card p-5 rounded-lg">
+            {project.observations ? (
+              <p className="whitespace-pre-wrap">{project.observations}</p>
+            ) : (
+              <p className="text-muted text-center py-4">Nenhuma observação disponível. Clique em "Editar Observações" para adicionar.</p>
+            )}
+          </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -212,14 +358,6 @@ const ProjectDetails = () => {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Linha do Tempo</h2>
-              <Button 
-                variant="outline" 
-                onClick={() => setStatusDialogOpen(true)}
-                className="border-primary text-primary hover:bg-primary hover:text-white"
-              >
-                <Edit size={14} className="mr-2" />
-                Editar Status
-              </Button>
             </div>
             <div className="bg-card p-5 rounded-lg">
               {project.timeline && project.timeline.length > 0 ? (
@@ -267,17 +405,6 @@ const ProjectDetails = () => {
                     <h4 className="text-sm text-muted">Endereço</h4>
                     <p>{project.address}</p>
                   </div>
-                </div>
-                <div className="pt-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setDateDialogOpen(true)}
-                    className="border-primary text-primary hover:bg-primary hover:text-white"
-                    size="sm"
-                  >
-                    <Calendar size={14} className="mr-2" />
-                    Editar Data de Conclusão
-                  </Button>
                 </div>
               </div>
             </div>
@@ -401,6 +528,98 @@ const ProjectDetails = () => {
         </DialogContent>
       </Dialog>
       
+      {/* Name Dialog */}
+      <Dialog open={nameDialogOpen} onOpenChange={setNameDialogOpen}>
+        <DialogContent className="bg-background border-border">
+          <DialogHeader>
+            <DialogTitle>Atualizar Nome do Projeto</DialogTitle>
+          </DialogHeader>
+          
+          <Form {...nameForm}>
+            <form onSubmit={nameForm.handleSubmit(onNameSubmit)} className="space-y-4">
+              <FormField
+                control={nameForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Projeto</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Nome do projeto" 
+                        className="bg-secondary"
+                        {...field} 
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setNameDialogOpen(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="bg-primary text-white hover:bg-primary/80"
+                >
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Hours Dialog */}
+      <Dialog open={hoursDialogOpen} onOpenChange={setHoursDialogOpen}>
+        <DialogContent className="bg-background border-border">
+          <DialogHeader>
+            <DialogTitle>Atualizar Horas Trabalhadas</DialogTitle>
+          </DialogHeader>
+          
+          <Form {...hoursForm}>
+            <form onSubmit={hoursForm.handleSubmit(onHoursSubmit)} className="space-y-4">
+              <FormField
+                control={hoursForm.control}
+                name="hoursWorked"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Horas Trabalhadas</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: 450h de 1000h planejadas" 
+                        className="bg-secondary"
+                        {...field} 
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setHoursDialogOpen(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="bg-primary text-white hover:bg-primary/80"
+                >
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      
       {/* Info Dialog */}
       <Dialog open={infoDialogOpen} onOpenChange={setInfoDialogOpen}>
         <DialogContent className="bg-background border-border">
@@ -466,6 +685,52 @@ const ProjectDetails = () => {
                   type="button" 
                   variant="outline" 
                   onClick={() => setInfoDialogOpen(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="bg-primary text-white hover:bg-primary/80"
+                >
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Observations Dialog */}
+      <Dialog open={observationsDialogOpen} onOpenChange={setObservationsDialogOpen}>
+        <DialogContent className="bg-background border-border">
+          <DialogHeader>
+            <DialogTitle>Editar Observações</DialogTitle>
+          </DialogHeader>
+          
+          <Form {...observationsForm}>
+            <form onSubmit={observationsForm.handleSubmit(onObservationsSubmit)} className="space-y-4">
+              <FormField
+                control={observationsForm.control}
+                name="observations"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Observações</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Adicione observações sobre o projeto" 
+                        className="bg-secondary resize-none min-h-[150px]"
+                        {...field} 
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setObservationsDialogOpen(false)}
                 >
                   Cancelar
                 </Button>

@@ -1,3 +1,4 @@
+
 import { Project, ProjectDetails, ChatLogEntry, TimelineEvent } from "@/types/project";
 
 export const projects: Project[] = [
@@ -89,6 +90,7 @@ export const projectDetails: Record<string, ProjectDetails> = {
     address: "Rua das Palmeiras, 123 - São Paulo, SP",
     latitude: -23.5505,
     longitude: -46.6333,
+    observations: "Obra progredindo dentro do cronograma. Materiais sendo entregues conforme planejado. Equipe completa trabalhando no local.",
     timeline: [
       {
         id: "t1",
@@ -168,6 +170,7 @@ export const projectDetails: Record<string, ProjectDetails> = {
     address: "Av. Paulista, 1000 - São Paulo, SP",
     latitude: -23.5605,
     longitude: -46.6433,
+    observations: "Problemas com fornecedor de concreto causaram um atraso de 2 dias. Estamos buscando alternativas para recuperar o tempo perdido.",
     timeline: [
       {
         id: "t1",
@@ -243,6 +246,7 @@ export function getProjectDetails(id: string) {
       managerName: "Gerente não atribuído",
       managerPhone: "Telefone não cadastrado",
       address: "Endereço não cadastrado",
+      observations: "",
       timeline: [],
       photos: []
     };
@@ -349,6 +353,62 @@ export function updateProjectInfo(id: string, info: {
       date: new Date().toLocaleDateString('pt-BR'),
       title: `Informações do projeto atualizadas`,
       description: `Os dados do projeto foram atualizados pelo administrador`
+    };
+    
+    projectDetails[id].timeline = projectDetails[id].timeline 
+      ? [newEvent, ...projectDetails[id].timeline] 
+      : [newEvent];
+  }
+}
+
+export function updateProjectName(id: string, name: string) {
+  const project = projects.find(p => p.id === id);
+  if (project) {
+    project.name = name;
+  }
+  
+  if (projectDetails[id]) {
+    projectDetails[id].name = name;
+    
+    const newEvent = {
+      id: `t${Date.now()}`,
+      date: new Date().toLocaleDateString('pt-BR'),
+      title: `Nome do projeto atualizado`,
+      description: `O nome do projeto foi alterado para: ${name}`
+    };
+    
+    projectDetails[id].timeline = projectDetails[id].timeline 
+      ? [newEvent, ...projectDetails[id].timeline] 
+      : [newEvent];
+  }
+}
+
+export function updateWorkedHours(id: string, hours: string) {
+  if (projectDetails[id]) {
+    projectDetails[id].hoursWorked = hours;
+    
+    const newEvent = {
+      id: `t${Date.now()}`,
+      date: new Date().toLocaleDateString('pt-BR'),
+      title: `Horas trabalhadas atualizadas`,
+      description: `As horas trabalhadas foram atualizadas para: ${hours}`
+    };
+    
+    projectDetails[id].timeline = projectDetails[id].timeline 
+      ? [newEvent, ...projectDetails[id].timeline] 
+      : [newEvent];
+  }
+}
+
+export function updateObservations(id: string, observations: string) {
+  if (projectDetails[id]) {
+    projectDetails[id].observations = observations;
+    
+    const newEvent = {
+      id: `t${Date.now()}`,
+      date: new Date().toLocaleDateString('pt-BR'),
+      title: `Observações atualizadas`,
+      description: `As observações do projeto foram atualizadas`
     };
     
     projectDetails[id].timeline = projectDetails[id].timeline 

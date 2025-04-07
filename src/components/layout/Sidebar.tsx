@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, MessageSquare, LogOut } from "lucide-react";
+import { Home, MessageSquare, LogOut, Menu, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -10,7 +10,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isMobile = false }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(!isMobile);
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
   const handleLogout = () => {
@@ -32,31 +32,30 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
       label: "ChatLog", 
       icon: <MessageSquare size={20} /> 
     },
+    {
+      path: "/novo-projeto",
+      label: "Novo Projeto",
+      icon: <Plus size={20} />
+    }
   ];
 
   return (
     <>
-      {/* Hamburger button for mobile */}
-      {isMobile && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden fixed top-4 left-4 z-50"
-          onClick={toggleSidebar}
-          aria-label="Toggle menu"
-        >
-          <div className="w-6 h-5 flex flex-col justify-between">
-            <span className="w-full h-0.5 bg-white"></span>
-            <span className="w-full h-0.5 bg-white"></span>
-            <span className="w-full h-0.5 bg-white"></span>
-          </div>
-        </Button>
-      )}
+      {/* Hamburger button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="fixed top-4 left-4 z-50"
+        onClick={toggleSidebar}
+        aria-label="Toggle menu"
+      >
+        <Menu size={24} />
+      </Button>
 
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-screen bg-[#333333] text-white z-40 transition-all duration-300 ease-in-out ${
-          isOpen ? "w-64" : "w-0 md:w-16"
+          isOpen ? "w-64" : "w-16"
         } flex flex-col`}
       >
         {/* Logo area */}

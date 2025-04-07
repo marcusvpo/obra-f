@@ -23,6 +23,7 @@ export interface ProjectDetails extends Project {
   photos?: GalleryImage[];
   latitude?: number;
   longitude?: number;
+  observations?: string;
 }
 
 export interface TimelineEvent {

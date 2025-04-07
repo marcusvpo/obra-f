@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "./ProgressBar";
-import { Clock, AlertTriangle, Star, Calendar, ZoomIn } from "lucide-react";
+import { Clock, AlertTriangle, Star, Calendar, ZoomIn, Bell } from "lucide-react";
 import { Project } from "@/types/project";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -11,9 +11,10 @@ import { toggleFavorite } from "@/data/mockData";
 interface ProjectCardProps {
   project: Project;
   onFavoriteToggle: () => void;
+  hasNewUpdates?: boolean;
 }
 
-export default function ProjectCard({ project, onFavoriteToggle }: ProjectCardProps) {
+export default function ProjectCard({ project, onFavoriteToggle, hasNewUpdates = false }: ProjectCardProps) {
   const navigate = useNavigate();
   const [showImageModal, setShowImageModal] = useState(false);
   
@@ -30,38 +31,51 @@ export default function ProjectCard({ project, onFavoriteToggle }: ProjectCardPr
     <div className="bg-card rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow animate-fade-in">
       <div className="flex justify-between items-start mb-3">
         <h3 className="font-semibold text-lg text-white">{project.name}</h3>
-        <button
-          onClick={handleToggleFavorite}
-          className="p-1 rounded-full hover:bg-secondary transition-colors"
-          aria-label={project.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-        >
-          <Star 
-            size={18} 
-            className={project.isFavorite ? "fill-primary text-primary" : "text-muted"} 
-          />
-        </button>
+        <div className="flex items-center gap-2">
+          {hasNewUpdates && (
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+            </span>
+          )}
+          <button
+            onClick={handleToggleFavorite}
+            className="p-1 rounded-full hover:bg-secondary transition-colors"
+            aria-label={project.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          >
+            <Star 
+              size={18} 
+              className={project.isFavorite ? "fill-primary text-primary" : "text-muted"} 
+            />
+          </button>
+        </div>
       </div>
       
-      <div className="mb-3">
-        <div className="flex justify-between mb-1.5 text-sm">
+      <div className="mb-4">
+        <div className="flex justify-between mb-1.5 text-sm font-semibold">
           <span>Progresso</span>
-          <span className="font-medium">{project.progress}%</span>
+          <span className="text-white text-base">{project.progress}%</span>
         </div>
         <ProgressBar progress={project.progress} />
       </div>
       
       <div className="mb-4 space-y-2 text-sm">
         <div className="flex items-start gap-1.5 text-muted">
-          <Clock size={14} className="mt-1 flex-shrink-0" />
+          <div className="flex items-center gap-1.5">
+            <Clock size={14} className="flex-shrink-0" />
+            {hasNewUpdates && <Bell size={14} className="text-primary animate-pulse" />}
+          </div>
           <div>
-            <p>Status: {project.status}</p>
+            <p className="font-medium text-white">Status: {project.status}</p>
             <p className="text-xs mt-0.5">Atualizado em {project.lastUpdate}</p>
           </div>
         </div>
         
         <div className="flex items-start gap-1.5 text-muted">
           <Calendar size={14} className="mt-1 flex-shrink-0" />
-          <p>Previsão: {project.estimatedCompletionDate}</p>
+          <p className={project.delay && project.delay > 0 ? "text-amber-400" : "text-green-500"}>
+            Previsão: {project.estimatedCompletionDate}
+          </p>
         </div>
         
         {project.delay && project.delay > 0 && (
