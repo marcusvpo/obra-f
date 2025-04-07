@@ -46,7 +46,7 @@ const MapView = () => {
       <div className="max-w-7xl mx-auto">
         <Card className="bg-card border-none shadow p-0 h-[calc(100vh-10rem)]">
           <MapContainer
-            center={[defaultCenter[0], defaultCenter[1]]}
+            center={[defaultCenter[0] as number, defaultCenter[1] as number] as [number, number]}
             zoom={13}
             style={{ height: "100%", width: "100%" }}
             className="rounded-lg"

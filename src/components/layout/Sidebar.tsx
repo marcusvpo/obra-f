@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Home, Map, MessageSquare, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -11,6 +11,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isMobile = false }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(!isMobile);
+  const location = useLocation();
 
   const handleLogout = () => {
     toast.success("Logout realizado com sucesso");
@@ -73,11 +74,10 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.path}>
-                <NavLink
+                <Link
                   to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-md transition-colors ${
-                      isActive
+                  className={`flex items-center p-3 rounded-md transition-colors 
+                    ${location.pathname === item.path
                         ? "bg-primary text-white"
                         : "text-gray-300 hover:bg-secondary/50"
                     } ${!isOpen && "justify-center"}`
@@ -85,7 +85,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
                 >
                   <span className="mr-3">{item.icon}</span>
                   {isOpen && <span>{item.label}</span>}
-                </NavLink>
+                </Link>
               </li>
             ))}
           </ul>
