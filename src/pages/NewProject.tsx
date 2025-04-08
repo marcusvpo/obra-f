@@ -1,7 +1,8 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,16 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } fr
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, User, Phone, MapPin, MessageSquare } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { projects } from "@/data/mockData";
+import { Project } from "@/types/project";
+
+interface TeamMember {
+  id: string;
+  nome: string;
+  numero: string;
+  ultimaMensagem: string;
+}
 
 interface NewProjectFormData {
   name: string;
@@ -25,6 +36,22 @@ interface NewProjectFormData {
 export default function NewProject() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  
+  // Load team members from localStorage if available
+  useEffect(() => {
+    const storedMembers = localStorage.getItem("teamMembers");
+    if (storedMembers) {
+      setTeamMembers(JSON.parse(storedMembers));
+    } else {
+      // Default team members if none in storage
+      setTeamMembers([
+        { id: "1", nome: "João Silva", numero: "(11) 999999999", ultimaMensagem: "07/04: Fundações concluídas" },
+        { id: "2", nome: "Maria Oliveira", numero: "(11) 988888888", ultimaMensagem: "06/04: Iniciando instalações elétricas" },
+        { id: "3", nome: "Pedro Santos", numero: "(11) 977777777", ultimaMensagem: "05/04: Problema com entrega de material" }
+      ]);
+    }
+  }, []);
   
   const form = useForm<NewProjectFormData>({
     defaultValues: {
@@ -42,15 +69,39 @@ export default function NewProject() {
   const onSubmit = (data: NewProjectFormData) => {
     setIsSubmitting(true);
     
-    // Simulamos a adição de um novo projeto com um timeout
+    // Create new project
+    const newProject: Project = {
+      id: uuidv4(),
+      name: data.name,
+      progress: 0,
+      status: "Iniciando",
+      delay: null,
+      lastUpdate: new Date().toLocaleDateString("pt-BR"),
+      estimatedCompletionDate: data.estimatedCompletionDate,
+      isFavorite: false
+    };
+    
+    // Add to projects list
+    const updatedProjects = [...projects, newProject];
+    
+    // In a real app, we'd call an API here
+    // For now, we'll update our mock projects
+    // This is a simulated behavior since we can't modify the mockData directly
+    console.log("New project created:", newProject);
+    
     setTimeout(() => {
-      // Na vida real, aqui seria feita uma chamada para adicionar o projeto
-      console.log("Dados do novo projeto:", data);
-      
       toast.success("Projeto criado com sucesso!");
-      navigate("/");
+      navigate("/projetos");
       setIsSubmitting(false);
     }, 1000);
+  };
+
+  // Get responsible person's phone when selected
+  const updateManagerPhone = (managerName: string) => {
+    const selectedMember = teamMembers.find(member => member.nome === managerName);
+    if (selectedMember) {
+      form.setValue("managerPhone", selectedMember.numero);
+    }
   };
   
   return (
@@ -101,6 +152,14 @@ export default function NewProject() {
                             className="bg-secondary"
                             {...field} 
                             required
+                            pattern="\d{2}/\d{2}/\d{4}"
+                            onBlur={(e) => {
+                              // Basic date format validation
+                              const value = e.target.value;
+                              if (value && !/\d{2}\/\d{2}\/\d{4}/.test(value)) {
+                                toast.error("Formato de data inválido. Use DD/MM/AAAA");
+                              }
+                            }}
                           />
                         </FormControl>
                       </FormItem>
@@ -140,15 +199,27 @@ export default function NewProject() {
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <User size={16} />
-                          <span>Gerente Responsável</span>
+                          <span>Responsável</span>
                         </FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Nome do gerente" 
-                            className="bg-secondary"
-                            {...field} 
-                            required
-                          />
+                          <Select 
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              updateManagerPhone(value);
+                            }}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger className="bg-secondary">
+                              <SelectValue placeholder="Selecione um responsável" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {teamMembers.map((member) => (
+                                <SelectItem key={member.id} value={member.nome}>
+                                  {member.nome}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                       </FormItem>
                     )}
@@ -161,18 +232,19 @@ export default function NewProject() {
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <Phone size={16} />
-                          <span>Contato do Gerente</span>
+                          <span>Contato do Responsável</span>
                         </FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="(00) 00000-0000" 
+                            placeholder="(00) 123456789" 
                             className="bg-secondary"
                             {...field} 
-                            required
+                            readOnly
+                            disabled
                           />
                         </FormControl>
                         <FormDescription>
-                          Será usado para identificação no WhatsApp
+                          Será preenchido automaticamente
                         </FormDescription>
                       </FormItem>
                     )}

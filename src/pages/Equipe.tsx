@@ -14,19 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { projects } from "@/data/mockData";
 
 interface TeamMember {
   id: string;
   nome: string;
-  obra: string;
   numero: string;
   ultimaMensagem: string;
 }
@@ -36,44 +27,39 @@ const Equipe = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
-  const [newMember, setNewMember] = useState<{ nome: string; obra: string; numero: string }>({
+  const [newMember, setNewMember] = useState<{ nome: string; numero: string }>({
     nome: "",
-    obra: "",
     numero: ""
   });
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     { 
       id: "1", 
       nome: "João Silva", 
-      obra: "Condomínio Villa Verde", 
-      numero: "+5511999999999", 
+      numero: "(11) 999999999", 
       ultimaMensagem: "07/04: Fundações concluídas" 
     },
     { 
       id: "2", 
       nome: "Maria Oliveira", 
-      obra: "Edifício Solaris", 
-      numero: "+5511988888888", 
+      numero: "(11) 988888888", 
       ultimaMensagem: "06/04: Iniciando instalações elétricas" 
     },
     { 
       id: "3", 
       nome: "Pedro Santos", 
-      obra: "Hospital Regional", 
-      numero: "+5511977777777", 
+      numero: "(11) 977777777", 
       ultimaMensagem: "05/04: Problema com entrega de material" 
     },
     { 
       id: "4", 
       nome: "Ana Costa", 
-      obra: "Shopping Center Plaza", 
-      numero: "+5511966666666", 
+      numero: "(11) 966666666", 
       ultimaMensagem: "07/04: Concluindo a fundação" 
     }
   ]);
 
   const handleAddMember = () => {
-    if (!newMember.nome || !newMember.obra || !newMember.numero) {
+    if (!newMember.nome || !newMember.numero) {
       toast.error("Preencha todos os campos");
       return;
     }
@@ -82,13 +68,12 @@ const Equipe = () => {
     const member: TeamMember = {
       id,
       nome: newMember.nome,
-      obra: newMember.obra,
       numero: newMember.numero,
       ultimaMensagem: "Nenhuma mensagem ainda"
     };
 
     setTeamMembers([...teamMembers, member]);
-    setNewMember({ nome: "", obra: "", numero: "" });
+    setNewMember({ nome: "", numero: "" });
     setIsAddDialogOpen(false);
     toast.success("Trabalhador adicionado com sucesso!");
   };
@@ -156,7 +141,6 @@ const Equipe = () => {
                   <div className="flex justify-between">
                     <div>
                       <h3 className="font-medium text-lg">{member.nome}</h3>
-                      <p className="text-sm text-gray-400">{member.obra}</p>
                     </div>
                     <div className="flex gap-2">
                       <Button 
@@ -226,31 +210,12 @@ const Equipe = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="project">Obra vinculada</Label>
-              <Select 
-                value={newMember.obra} 
-                onValueChange={(value) => setNewMember({...newMember, obra: value})}
-              >
-                <SelectTrigger className="bg-secondary">
-                  <SelectValue placeholder="Selecione uma obra" />
-                </SelectTrigger>
-                <SelectContent>
-                  {projects.map(project => (
-                    <SelectItem key={project.id} value={project.name}>
-                      {project.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="phone">Telefone</Label>
               <Input 
                 id="phone" 
                 value={newMember.numero}
                 onChange={(e) => setNewMember({...newMember, numero: e.target.value})}
-                placeholder="Ex: +5511999999999"
+                placeholder="Ex: (00) 123456789"
                 className="bg-secondary"
               />
             </div>
@@ -299,25 +264,6 @@ const Equipe = () => {
                   onChange={(e) => setSelectedMember({...selectedMember, nome: e.target.value})}
                   className="bg-secondary"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="edit-project">Obra vinculada</Label>
-                <Select 
-                  value={selectedMember.obra} 
-                  onValueChange={(value) => setSelectedMember({...selectedMember, obra: value})}
-                >
-                  <SelectTrigger className="bg-secondary">
-                    <SelectValue placeholder="Selecione uma obra" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {projects.map(project => (
-                      <SelectItem key={project.id} value={project.name}>
-                        {project.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="space-y-2">
