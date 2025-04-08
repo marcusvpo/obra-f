@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -38,13 +37,11 @@ export default function NewProject() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   
-  // Load team members from localStorage if available
   useEffect(() => {
     const storedMembers = localStorage.getItem("teamMembers");
     if (storedMembers) {
       setTeamMembers(JSON.parse(storedMembers));
     } else {
-      // Default team members if none in storage
       setTeamMembers([
         { id: "1", nome: "João Silva", numero: "(11) 999999999", ultimaMensagem: "07/04: Fundações concluídas" },
         { id: "2", nome: "Maria Oliveira", numero: "(11) 988888888", ultimaMensagem: "06/04: Iniciando instalações elétricas" },
@@ -69,7 +66,6 @@ export default function NewProject() {
   const onSubmit = (data: NewProjectFormData) => {
     setIsSubmitting(true);
     
-    // Create new project
     const newProject: Project = {
       id: uuidv4(),
       name: data.name,
@@ -81,12 +77,8 @@ export default function NewProject() {
       isFavorite: false
     };
     
-    // Add to projects list
     const updatedProjects = [...projects, newProject];
     
-    // In a real app, we'd call an API here
-    // For now, we'll update our mock projects
-    // This is a simulated behavior since we can't modify the mockData directly
     console.log("New project created:", newProject);
     
     setTimeout(() => {
@@ -96,7 +88,6 @@ export default function NewProject() {
     }, 1000);
   };
 
-  // Get responsible person's phone when selected
   const updateManagerPhone = (managerName: string) => {
     const selectedMember = teamMembers.find(member => member.nome === managerName);
     if (selectedMember) {
@@ -152,14 +143,7 @@ export default function NewProject() {
                             className="bg-secondary"
                             {...field} 
                             required
-                            pattern="\d{2}/\d{2}/\d{4}"
-                            onBlur={(e) => {
-                              // Basic date format validation
-                              const value = e.target.value;
-                              if (value && !/\d{2}\/\d{2}\/\d{4}/.test(value)) {
-                                toast.error("Formato de data inválido. Use DD/MM/AAAA");
-                              }
-                            }}
+                            dateFormat={true}
                           />
                         </FormControl>
                       </FormItem>

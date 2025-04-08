@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "./ProgressBar";
@@ -30,7 +29,6 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
     onFavoriteToggle();
   };
 
-  // Update URLs for these specific projects
   let photoUrl = project.latestPhoto;
   if (project.id === "2") {
     photoUrl = "https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=873&auto=format&fit=crop";
@@ -64,7 +62,6 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
         <ProgressBar progress={project.progress} />
       </div>
 
-      {/* Health indicator badge */}
       {saude && (
         <div 
           className="mb-4 px-3 py-1 inline-block rounded-full text-xs font-medium"
@@ -92,7 +89,7 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
         
         <div className="flex items-start gap-1.5 text-muted">
           <Calendar size={14} className="mt-1 flex-shrink-0" />
-          <p className={project.delay && project.delay > 0 ? "text-amber-400" : "text-green-500"}>
+          <p className="text-white">
             Previsão: {project.estimatedCompletionDate}
           </p>
         </div>

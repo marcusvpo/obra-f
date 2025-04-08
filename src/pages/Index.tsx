@@ -66,10 +66,10 @@ const PrjetosEmAndamento = () => {
   );
 
   return (
-    <AppLayout title="Projetos em Andamento">
+    <AppLayout title="Projetos">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <h1 className="text-2xl font-semibold">Projetos em Andamento</h1>
+          <h1 className="text-2xl font-semibold">Projetos</h1>
           
           <div className="relative w-full sm:w-64">
             <SearchIcon size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted" />

@@ -5,8 +5,7 @@ import {
   SheetContent, 
   SheetDescription, 
   SheetHeader, 
-  SheetTitle, 
-  SheetClose,
+  SheetTitle,
   SheetFooter
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -38,11 +37,9 @@ export default function NotificationsPanel() {
                 </span>
               )}
             </div>
-            <SheetClose asChild>
-              <Button variant="ghost" size="icon" className="text-white" onClick={closeNotificationsPanel}>
-                <X size={18} />
-              </Button>
-            </SheetClose>
+            <Button variant="ghost" size="icon" className="text-white" onClick={closeNotificationsPanel}>
+              <X size={18} />
+            </Button>
           </div>
           <SheetDescription className="text-gray-400">
             Alertas e notificações recentes de suas obras

@@ -22,7 +22,7 @@ export default function Sidebar() {
     },
     { 
       path: "/projetos", 
-      label: "Projetos em Andamento", 
+      label: "Projetos", 
       icon: <Construction size={20} /> 
     },
     { 
@@ -63,7 +63,7 @@ export default function Sidebar() {
                 to={item.path}
                 className={`flex items-center p-3 rounded-md transition-colors 
                   ${location.pathname === item.path
-                      ? "bg-[#FF6200] text-white"
+                      ? "bg-[#FF6200] text-white shadow-[0_0_10px_rgba(255,98,0,0.5)] border border-[#FF7D33]"
                       : "text-gray-300 hover:bg-secondary/50"
                   }`
                 }

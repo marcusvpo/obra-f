@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -57,7 +56,6 @@ interface EditFormData {
   status: string;
 }
 
-// Mock data for materials
 const materialsMock = {
   cimento: { usado: 50, planejado: 100 },
   areia: { usado: 200, planejado: 300 },
@@ -65,14 +63,12 @@ const materialsMock = {
   ferro: { usado: 850, planejado: 800 }
 };
 
-// Mock data for pending tasks
 const tarefasPendentesMock = [
   'Falta concluir pilares - Reportado em 11/04',
   'Comprar mais cimento - Reportado em 12/04',
   'Revisar instalações elétricas - Reportado em 13/04'
 ];
 
-// Mock data for delay history
 const historicoAtrasosMock = [
   '10/04: Atraso de 2 horas - Chuva',
   '12/04: Atraso de 1 dia - Falta de material',
@@ -84,19 +80,16 @@ const ProjectDetails = () => {
   const navigate = useNavigate();
   const [project, setProject] = useState<ProjectDetailsType | null>(null);
   
-  // Dialog states
   const [dateDialogOpen, setDateDialogOpen] = useState(false);
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [hoursDialogOpen, setHoursDialogOpen] = useState(false);
   const [observationsDialogOpen, setObservationsDialogOpen] = useState(false);
   
-  // State for mock data
   const [materiais, setMateriais] = useState(materialsMock);
   const [tarefasPendentes, setTarefasPendentes] = useState(tarefasPendentesMock);
   const [historicoAtrasos, setHistoricoAtrasos] = useState(historicoAtrasosMock);
   
-  // Form handling
   const editForm = useForm<EditFormData>();
   const dateForm = useForm<DateFormData>();
   const infoForm = useForm<InfoFormData>();
@@ -115,7 +108,6 @@ const ProjectDetails = () => {
     
     setProject(projectData);
     
-    // Set default form values
     editForm.reset({ 
       name: projectData.name,
       status: projectData.status 
@@ -129,7 +121,6 @@ const ProjectDetails = () => {
     hoursForm.reset({ hoursWorked: projectData.hoursWorked });
     observationsForm.reset({ observations: projectData.observations || "" });
     
-    // Marcar projeto como visualizado
     if (projectData) {
       const viewedProjects = JSON.parse(localStorage.getItem("viewedProjects") || "{}");
       viewedProjects[projectData.id] = true;
@@ -138,7 +129,6 @@ const ProjectDetails = () => {
   }, [id, navigate]);
   
   useEffect(() => {
-    // Adiciona o botão de Editar no cabeçalho
     if (project) {
       const buttonContainer = document.getElementById('page-specific-buttons');
       if (buttonContainer) {
@@ -147,14 +137,12 @@ const ProjectDetails = () => {
         editButton.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Editar</span>';
         editButton.onclick = () => setEditDialogOpen(true);
         
-        // Limpa qualquer botão existente e adiciona o novo botão
         buttonContainer.innerHTML = '';
         buttonContainer.appendChild(editButton);
       }
     }
 
     return () => {
-      // Limpa o botão ao desmontar o componente
       const buttonContainer = document.getElementById('page-specific-buttons');
       if (buttonContainer) {
         buttonContainer.innerHTML = '';
@@ -174,15 +162,10 @@ const ProjectDetails = () => {
   };
   
   const onEditSubmit = (data: EditFormData) => {
-    // Atualiza o nome do projeto
     updateProjectName(project.id, data.name);
-    
-    // Atualiza o status do projeto
     updateProjectStatus(project.id, data.status);
-    
     setEditDialogOpen(false);
     
-    // Update local state
     setProject(prev => {
       if (!prev) return null;
       return {
@@ -200,7 +183,6 @@ const ProjectDetails = () => {
     updateCompletionDate(project.id, data.completionDate);
     setDateDialogOpen(false);
     
-    // Update local state
     setProject(prev => {
       if (!prev) return null;
       return {
@@ -220,7 +202,6 @@ const ProjectDetails = () => {
     });
     setInfoDialogOpen(false);
     
-    // Update local state
     setProject(prev => {
       if (!prev) return null;
       return {
@@ -238,7 +219,6 @@ const ProjectDetails = () => {
     updateWorkedHours(project.id, data.hoursWorked);
     setHoursDialogOpen(false);
     
-    // Update local state
     setProject(prev => {
       if (!prev) return null;
       return {
@@ -254,7 +234,6 @@ const ProjectDetails = () => {
     updateObservations(project.id, data.observations);
     setObservationsDialogOpen(false);
     
-    // Update local state
     setProject(prev => {
       if (!prev) return null;
       return {
@@ -273,7 +252,6 @@ const ProjectDetails = () => {
       onBackClick={() => navigate("/projetos")}
     >
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Última foto do projeto - Nova feature */}
         {project.photos && project.photos.length > 0 && (
           <div className="bg-card p-5 rounded-lg">
             <h2 className="text-lg font-semibold mb-4">Última Foto do Projeto</h2>
@@ -287,7 +265,6 @@ const ProjectDetails = () => {
           </div>
         )}
         
-        {/* KPIs Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="relative">
             <KpiCard 
@@ -321,7 +298,6 @@ const ProjectDetails = () => {
           </div>
         </div>
         
-        {/* Gestão de Materiais */}
         <div className="bg-card p-5 rounded-lg">
           <h2 className="text-lg font-semibold mb-4">Consumo de Materiais</h2>
           <div className="space-y-4">
@@ -356,7 +332,6 @@ const ProjectDetails = () => {
           </div>
         </div>
 
-        {/* Tarefas Pendentes */}
         <div className="bg-card p-5 rounded-lg">
           <h2 className="text-lg font-semibold mb-4">Tarefas Pendentes</h2>
           {tarefasPendentes.length === 0 ? (
@@ -381,7 +356,6 @@ const ProjectDetails = () => {
           )}
         </div>
 
-        {/* Histórico de Atrasos */}
         <div className="bg-card p-5 rounded-lg">
           <h2 className="text-lg font-semibold mb-4">Histórico de Atrasos</h2>
           {historicoAtrasos.length === 0 ? (
@@ -414,7 +388,6 @@ const ProjectDetails = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Timeline Section */}
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Linha do Tempo</h2>
@@ -436,7 +409,6 @@ const ProjectDetails = () => {
             </div>
           </div>
           
-          {/* Project Information */}
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Informações do Projeto</h2>
@@ -472,7 +444,6 @@ const ProjectDetails = () => {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Photos Gallery */}
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Galeria de Fotos</h2>
@@ -486,7 +457,6 @@ const ProjectDetails = () => {
             </div>
           </div>
           
-          {/* Observações Section - Reduzido e ao lado da galeria */}
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Observações</h2>
@@ -519,7 +489,6 @@ const ProjectDetails = () => {
         </div>
       </div>
       
-      {/* Edit Dialog - Combinando nome e status */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="bg-background border-border">
           <DialogHeader>
@@ -582,7 +551,6 @@ const ProjectDetails = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Date Dialog */}
       <Dialog open={dateDialogOpen} onOpenChange={setDateDialogOpen}>
         <DialogContent className="bg-background border-border">
           <DialogHeader>
@@ -601,6 +569,7 @@ const ProjectDetails = () => {
                       <Input 
                         placeholder="DD/MM/AAAA" 
                         className="bg-secondary"
+                        dateFormat={true}
                         {...field} 
                       />
                     </FormControl>
@@ -628,7 +597,6 @@ const ProjectDetails = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Hours Dialog */}
       <Dialog open={hoursDialogOpen} onOpenChange={setHoursDialogOpen}>
         <DialogContent className="bg-background border-border">
           <DialogHeader>
@@ -674,7 +642,6 @@ const ProjectDetails = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Info Dialog */}
       <Dialog open={infoDialogOpen} onOpenChange={setInfoDialogOpen}>
         <DialogContent className="bg-background border-border">
           <DialogHeader>
@@ -754,7 +721,6 @@ const ProjectDetails = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Observations Dialog */}
       <Dialog open={observationsDialogOpen} onOpenChange={setObservationsDialogOpen}>
         <DialogContent className="bg-background border-border">
           <DialogHeader>
