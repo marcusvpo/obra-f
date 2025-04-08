@@ -261,7 +261,7 @@ const ProjectDetails = () => {
             <KpiCard 
               title="Data de Conclusão" 
               value={project.estimatedCompletionDate}
-              icon={Calendar}
+              icon={<Calendar size={24} />}
             />
             <Button 
               variant="ghost" 
@@ -276,7 +276,7 @@ const ProjectDetails = () => {
             <KpiCard 
               title="Horas Trabalhadas" 
               value={project.hoursWorked}
-              icon={Clock}
+              icon={<Clock size={24} />}
             />
             <Button 
               variant="ghost" 
