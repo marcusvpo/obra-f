@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, MessageSquare, LogOut, Construction, Description, People, Bell, Plus } from "lucide-react";
+import { Home, MessageSquare, LogOut, Construction, FileText, Users, Bell, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -38,12 +38,12 @@ export default function Sidebar() {
     {
       path: "/relatorios",
       label: "Relatórios",
-      icon: <Description size={20} />
+      icon: <FileText size={20} />
     },
     {
       path: "/equipe",
       label: "Equipe",
-      icon: <People size={20} />
+      icon: <Users size={20} />
     }
   ];
 
