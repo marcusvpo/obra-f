@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Edit, MapPin } from "lucide-react";
+import { Calendar, Clock, Edit, MapPin, Check, AlertCircle } from "lucide-react";
 import KpiCard from "@/components/dashboard/KpiCard";
 import TimelineItem from "@/components/dashboard/TimelineItem";
 import PhotoGallery from "@/components/dashboard/PhotoGallery";
@@ -57,6 +57,28 @@ interface EditFormData {
   status: string;
 }
 
+// Mock data for materials
+const materialsMock = {
+  cimento: { usado: 50, planejado: 100 },
+  areia: { usado: 200, planejado: 300 },
+  tijolos: { usado: 12000, planejado: 15000 },
+  ferro: { usado: 850, planejado: 800 }
+};
+
+// Mock data for pending tasks
+const tarefasPendentesMock = [
+  'Falta concluir pilares - Reportado em 11/04',
+  'Comprar mais cimento - Reportado em 12/04',
+  'Revisar instalações elétricas - Reportado em 13/04'
+];
+
+// Mock data for delay history
+const historicoAtrasosMock = [
+  '10/04: Atraso de 2 horas - Chuva',
+  '12/04: Atraso de 1 dia - Falta de material',
+  '14/04: Atraso de 3 horas - Problema com fornecedor'
+];
+
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -68,6 +90,11 @@ const ProjectDetails = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [hoursDialogOpen, setHoursDialogOpen] = useState(false);
   const [observationsDialogOpen, setObservationsDialogOpen] = useState(false);
+  
+  // State for mock data
+  const [materiais, setMateriais] = useState(materialsMock);
+  const [tarefasPendentes, setTarefasPendentes] = useState(tarefasPendentesMock);
+  const [historicoAtrasos, setHistoricoAtrasos] = useState(historicoAtrasosMock);
   
   // Form handling
   const editForm = useForm<EditFormData>();
@@ -139,6 +166,11 @@ const ProjectDetails = () => {
   
   const handleExportReport = () => {
     toast.success("Relatório gerado com sucesso!");
+  };
+
+  const handleConcluirTarefa = (index: number) => {
+    setTarefasPendentes(prev => prev.filter((_, i) => i !== index));
+    toast.success("Tarefa marcada como concluída!");
   };
   
   const onEditSubmit = (data: EditFormData) => {
@@ -238,7 +270,7 @@ const ProjectDetails = () => {
     <AppLayout 
       title={project.name}
       showBackButton={true}
-      onBackClick={() => navigate("/")}
+      onBackClick={() => navigate("/projetos")}
     >
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Última foto do projeto - Nova feature */}
@@ -289,6 +321,98 @@ const ProjectDetails = () => {
           </div>
         </div>
         
+        {/* Gestão de Materiais */}
+        <div className="bg-card p-5 rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">Consumo de Materiais</h2>
+          <div className="space-y-4">
+            {Object.entries(materiais).map(([material, { usado, planejado }]) => {
+              const percentagem = Math.round((usado / planejado) * 100);
+              const acimaPlanejado = usado > planejado;
+              
+              return (
+                <div key={material}>
+                  <div className="flex justify-between items-center mb-1">
+                    <div className="flex items-center">
+                      <span className="capitalize">{material}</span>
+                      <span className="text-gray-400 text-sm ml-2">
+                        {usado} de {planejado} planejados
+                      </span>
+                    </div>
+                    {acimaPlanejado && (
+                      <span className="text-[#FF6200] text-xs">
+                        {Math.round((usado / planejado - 1) * 100)}% acima do planejado
+                      </span>
+                    )}
+                  </div>
+                  <div className="w-full bg-[#333333] rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${acimaPlanejado ? 'bg-[#FF6200]' : 'bg-primary'}`} 
+                      style={{ width: `${Math.min(percentagem, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Tarefas Pendentes */}
+        <div className="bg-card p-5 rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">Tarefas Pendentes</h2>
+          {tarefasPendentes.length === 0 ? (
+            <p className="text-center text-gray-400">Nenhuma tarefa pendente</p>
+          ) : (
+            <div className="space-y-3">
+              {tarefasPendentes.map((tarefa, index) => (
+                <div key={index} className="flex justify-between items-center p-3 bg-[#333333] rounded-lg">
+                  <p>{tarefa}</p>
+                  <Button 
+                    onClick={() => handleConcluirTarefa(index)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-green-500 hover:bg-green-500/10 hover:text-green-400"
+                  >
+                    <Check size={16} className="mr-2" />
+                    Concluir
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Histórico de Atrasos */}
+        <div className="bg-card p-5 rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">Histórico de Atrasos</h2>
+          {historicoAtrasos.length === 0 ? (
+            <p className="text-center text-gray-400">Nenhum atraso registrado</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#444444] text-left">
+                    <th className="pb-2">Data</th>
+                    <th className="pb-2">Descrição</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {historicoAtrasos.map((atraso, index) => {
+                    const [data, ...restoParts] = atraso.split(': ');
+                    const resto = restoParts.join(': ');
+                    
+                    return (
+                      <tr key={index} className="border-b border-[#333333]">
+                        <td className="py-3">{data}</td>
+                        <td className="py-3">{resto}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Timeline Section */}
           <div>

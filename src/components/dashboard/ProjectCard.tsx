@@ -11,10 +11,13 @@ import { toggleFavorite } from "@/data/mockData";
 interface ProjectCardProps {
   project: Project;
   onFavoriteToggle: () => void;
-  hasNewUpdates?: boolean;
+  saude?: {
+    cor: string;
+    texto: string;
+  };
 }
 
-export default function ProjectCard({ project, onFavoriteToggle, hasNewUpdates = false }: ProjectCardProps) {
+export default function ProjectCard({ project, onFavoriteToggle, saude }: ProjectCardProps) {
   const navigate = useNavigate();
   const [showImageModal, setShowImageModal] = useState(false);
   
@@ -26,18 +29,20 @@ export default function ProjectCard({ project, onFavoriteToggle, hasNewUpdates =
     toggleFavorite(project.id);
     onFavoriteToggle();
   };
+
+  // Update URLs for these specific projects
+  let photoUrl = project.latestPhoto;
+  if (project.id === "2") {
+    photoUrl = "https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=873&auto=format&fit=crop";
+  } else if (project.id === "5") {
+    photoUrl = "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=873&auto=format&fit=crop";
+  }
   
   return (
     <div className="bg-card rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow animate-fade-in">
       <div className="flex justify-between items-start mb-3">
         <h3 className="font-semibold text-lg text-white">{project.name}</h3>
         <div className="flex items-center gap-2">
-          {hasNewUpdates && (
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-            </span>
-          )}
           <button
             onClick={handleToggleFavorite}
             className="p-1 rounded-full hover:bg-secondary transition-colors"
@@ -58,12 +63,26 @@ export default function ProjectCard({ project, onFavoriteToggle, hasNewUpdates =
         </div>
         <ProgressBar progress={project.progress} />
       </div>
+
+      {/* Health indicator badge */}
+      {saude && (
+        <div 
+          className="mb-4 px-3 py-1 inline-block rounded-full text-xs font-medium"
+          style={{ backgroundColor: saude.cor === '#FFFF00' ? 'rgba(255, 255, 0, 0.2)' : 
+                                  saude.cor === '#FF0000' ? 'rgba(255, 0, 0, 0.2)' : 
+                                  'rgba(0, 255, 0, 0.2)',
+                   color: saude.cor === '#FFFF00' ? '#FFFF00' : 
+                          saude.cor === '#FF0000' ? '#FF0000' : 
+                          '#00FF00' }}
+        >
+          {saude.texto}
+        </div>
+      )}
       
       <div className="mb-4 space-y-2 text-sm">
         <div className="flex items-start gap-1.5 text-muted">
           <div className="flex items-center gap-1.5">
             <Clock size={14} className="flex-shrink-0" />
-            {hasNewUpdates && <Bell size={14} className="text-primary animate-pulse" />}
           </div>
           <div>
             <p className="font-medium text-white">Status: {project.status}</p>
@@ -86,14 +105,14 @@ export default function ProjectCard({ project, onFavoriteToggle, hasNewUpdates =
         )}
       </div>
       
-      {project.latestPhoto && (
+      {photoUrl && (
         <div className="mb-4 relative">
           <div 
             className="w-full h-32 rounded-md overflow-hidden cursor-pointer relative group"
             onClick={() => setShowImageModal(true)}
           >
             <img 
-              src={project.latestPhoto} 
+              src={photoUrl} 
               alt={`Foto recente de ${project.name}`}
               className="w-full h-full object-cover"
             />
@@ -115,7 +134,7 @@ export default function ProjectCard({ project, onFavoriteToggle, hasNewUpdates =
         <DialogContent className="bg-background border-border max-w-3xl w-[90vw]">
           <div className="w-full">
             <img 
-              src={project.latestPhoto} 
+              src={photoUrl} 
               alt={`Foto de ${project.name}`}
               className="w-full h-auto max-h-[80vh] object-contain rounded-md"
             />

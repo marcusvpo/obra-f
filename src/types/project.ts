@@ -24,6 +24,9 @@ export interface ProjectDetails extends Project {
   latitude?: number;
   longitude?: number;
   observations?: string;
+  materiais?: Record<string, { usado: number, planejado: number }>;
+  tarefasPendentes?: string[];
+  historicoAtrasos?: string[];
 }
 
 export interface TimelineEvent {
@@ -49,4 +52,9 @@ export interface ChatLogEntry {
     mensagem: string;
     origem: string;
   }[];
+}
+
+export interface SaudeObra {
+  cor: string;
+  texto: string;
 }
