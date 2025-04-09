@@ -8,6 +8,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Home from "./pages/Home";
 import Projetos from "./pages/Index";
 import ProjectDetails from "./pages/ProjectDetails";
+import ChatLog from "./pages/ChatLog";
+import NewProject from "./pages/NewProject";
+import Relatorios from "./pages/Relatorios";
 import Equipe from "./pages/Equipe";
 import NotFound from "./pages/NotFound";
 import NotificationsPanel from "./components/notifications/NotificationsPanel";
@@ -26,6 +29,9 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/projetos" element={<Projetos />} />
             <Route path="/projeto/:id" element={<ProjectDetails />} />
+            <Route path="/chatlog" element={<ChatLog />} />
+            <Route path="/novo-projeto" element={<NewProject />} />
+            <Route path="/relatorios" element={<Relatorios />} />
             <Route path="/equipe" element={<Equipe />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

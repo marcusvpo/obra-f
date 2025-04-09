@@ -2,12 +2,13 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "./ProgressBar";
-import { Clock, Calendar, ZoomIn } from "lucide-react";
+import { Clock, Calendar, ZoomIn, Bell, AlertTriangle, ClipboardList } from "lucide-react";
 import { Project } from "@/types/project";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toggleFavorite } from "@/data/mockData";
 import { Star } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface ProjectCardProps {
   project: Project;
@@ -32,37 +33,42 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
   };
 
   let photoUrl = project.latestPhoto;
+  if (project.id === "2") {
+    photoUrl = "https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=873&auto=format&fit=crop";
+  } else if (project.id === "5") {
+    photoUrl = "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=873&auto=format&fit=crop";
+  }
   
   return (
-    <div className="bg-card rounded-md p-4 shadow-sm hover:shadow-md transition-shadow animate-fade-in w-[250px]">
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="font-semibold text-base text-white">{project.name}</h3>
-        <div className="flex items-center gap-1.5">
+    <div className="bg-card rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow animate-fade-in">
+      <div className="flex justify-between items-start mb-3">
+        <h3 className="font-semibold text-lg text-white">{project.name}</h3>
+        <div className="flex items-center gap-2">
           <button
             onClick={handleToggleFavorite}
-            className="p-0.5 rounded-full hover:bg-secondary/50 transition-colors"
+            className="p-1 rounded-full hover:bg-secondary transition-colors"
             aria-label={project.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
           >
             <Star 
-              size={16} 
+              size={18} 
               className={project.isFavorite ? "fill-primary text-primary" : "text-muted"} 
             />
           </button>
         </div>
       </div>
       
-      <div className="mb-3">
-        <div className="flex justify-between mb-1 text-sm font-semibold">
+      <div className="mb-4">
+        <div className="flex justify-between mb-1.5 text-sm font-semibold">
           <span>Progresso</span>
-          <span className="text-white text-lg text-[#FF6200]">{project.progress}%</span>
+          <span className="text-white text-base">{project.progress}%</span>
         </div>
         <ProgressBar progress={project.progress} />
       </div>
 
       {saude && (
-        <div className="mb-3 flex flex-wrap gap-1.5">
+        <div className="mb-4 flex flex-wrap gap-2">
           <div 
-            className="px-2 py-0.5 inline-block rounded-full text-xs font-medium"
+            className="px-3 py-1 inline-block rounded-full text-xs font-medium"
             style={{ backgroundColor: saude.cor === '#FFFF00' ? 'rgba(255, 255, 0, 0.2)' : 
                                   saude.cor === '#FF0000' ? 'rgba(255, 0, 0, 0.2)' : 
                                   'rgba(0, 255, 0, 0.2)',
@@ -75,26 +81,53 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
         </div>
       )}
       
-      <div className="mb-3 space-y-1.5 text-xs">
-        <div className="flex items-start gap-1 text-muted">
-          <Calendar size={12} className="mt-0.5 flex-shrink-0" />
+      <div className="mb-4 space-y-2 text-sm">
+        <div className="flex items-start gap-1.5 text-muted">
+          <div className="flex items-center gap-1.5">
+            <Clock size={14} className="flex-shrink-0" />
+          </div>
+          <div>
+            <p className="font-medium text-white">Status: {project.status}</p>
+            <p className="text-xs mt-0.5">Atualizado em {project.lastUpdate}</p>
+          </div>
+        </div>
+        
+        <div className="flex items-start gap-1.5 text-muted">
+          <Calendar size={14} className="mt-1 flex-shrink-0" />
           <p className="text-white">
             Previsão: {project.estimatedCompletionDate}
           </p>
         </div>
         
+        {/* New indicators */}
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          {project.pendingTasks !== undefined && (
+            <div className="flex items-center gap-1.5 bg-[#3A3A3A] rounded-md p-2">
+              <ClipboardList size={14} className="text-primary" />
+              <span className="text-xs">Pendências: {project.pendingTasks}</span>
+            </div>
+          )}
+          
+          {project.todayUpdates !== undefined && (
+            <div className="flex items-center gap-1.5 bg-[#3A3A3A] rounded-md p-2">
+              <Bell size={14} className="text-primary" />
+              <span className="text-xs">Atualizações hoje: {project.todayUpdates}</span>
+            </div>
+          )}
+        </div>
+        
         {project.lastUpdateTime && (
-          <div className="flex items-center gap-1 text-muted">
-            <Clock size={12} className="flex-shrink-0" />
+          <div className="flex items-center gap-1.5 text-xs text-muted mt-2">
+            <Clock size={12} />
             <span>Última atualização: {project.lastUpdateTime}</span>
           </div>
         )}
       </div>
       
       {photoUrl && (
-        <div className="mb-3 relative">
+        <div className="mb-4 relative">
           <div 
-            className="w-full h-28 rounded-md overflow-hidden cursor-pointer relative group"
+            className="w-full h-32 rounded-md overflow-hidden cursor-pointer relative group"
             onClick={() => setShowImageModal(true)}
           >
             <img 
@@ -103,7 +136,7 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-              <ZoomIn size={20} className="text-white" />
+              <ZoomIn size={24} className="text-white" />
             </div>
           </div>
         </div>
@@ -111,7 +144,7 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
       
       <Button 
         onClick={handleViewDetails} 
-        className="w-full bg-primary hover:bg-primary/80 text-white text-xs h-8 mt-1"
+        className="w-full bg-primary hover:bg-primary/80 text-white"
       >
         Ver Detalhes
       </Button>
