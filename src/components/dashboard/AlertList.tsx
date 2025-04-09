@@ -1,6 +1,5 @@
 
-import { AlertTriangle, AlertCircle, XCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AlertTriangle, AlertCircle } from "lucide-react";
 import { AlertItem } from "@/types/project";
 
 interface AlertListProps {
@@ -10,7 +9,7 @@ interface AlertListProps {
   onResolve?: (index: number) => void;
 }
 
-export default function AlertList({ title, alerts, type, onResolve }: AlertListProps) {
+export default function AlertList({ title, alerts, type }: AlertListProps) {
   const getIcon = () => {
     if (type === 'safety') return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
     return <AlertCircle className="h-5 w-5 text-red-500" />;
@@ -27,25 +26,13 @@ export default function AlertList({ title, alerts, type, onResolve }: AlertListP
         {alerts.map((alert, index) => (
           <div 
             key={index} 
-            className="bg-card rounded p-3 flex justify-between items-start"
+            className="bg-card rounded p-3"
           >
             <div>
               <p className="text-sm font-medium">{alert.title}</p>
               <p className="text-xs text-gray-400">{alert.date}</p>
               <p className="text-sm mt-1">{alert.description}</p>
             </div>
-            
-            {onResolve && (
-              <Button 
-                onClick={() => onResolve(index)}
-                variant="ghost"
-                size="sm"
-                className="text-red-500 hover:bg-red-500/10 hover:text-red-400"
-              >
-                <XCircle size={16} className="mr-1" />
-                Resolver
-              </Button>
-            )}
           </div>
         ))}
       </div>

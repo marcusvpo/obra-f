@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { projects } from "@/data/mockData";
+import { projects } from "@/data/projectsData";
 import { Project } from "@/types/project";
 import ProjectBasicInfo from "@/components/new-project/ProjectBasicInfo";
 import ProjectContactInfo from "@/components/new-project/ProjectContactInfo";
 import ProjectLocation from "@/components/new-project/ProjectLocation";
+import { Upload } from "lucide-react";
 
 interface TeamMember {
   id: string;
@@ -94,6 +95,10 @@ export default function NewProject() {
       form.setValue("managerPhone", selectedMember.numero);
     }
   };
+
+  const handleSendDocuments = () => {
+    toast.info("Função de envio de documentos será implementada em breve.");
+  };
   
   return (
     <AppLayout 
@@ -119,14 +124,21 @@ export default function NewProject() {
                 
                 <ProjectLocation control={form.control} />
                 
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-end pt-4 gap-2">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => navigate("/")}
-                    className="mr-2"
                   >
                     Cancelar
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleSendDocuments}
+                    className="bg-secondary hover:bg-secondary/80 text-white"
+                  >
+                    <Upload className="mr-1 h-4 w-4" />
+                    Enviar Documentos
                   </Button>
                   <Button 
                     type="submit"

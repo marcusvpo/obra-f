@@ -1,4 +1,3 @@
-
 export interface Project {
   id: string;
   name: string;
@@ -23,14 +22,9 @@ export interface ProjectDetails extends Project {
   managerName: string;
   managerPhone: string;
   address: string;
-  timeline?: TimelineEvent[];
-  photos?: GalleryImage[];
   latitude?: number;
   longitude?: number;
-  observations?: string;
-  materiais?: Record<string, { usado: number, planejado: number }>;
-  tarefasPendentes?: string[];
-  historicoAtrasos?: string[];
+  observations: string;
   budget?: {
     planned: number;
     estimated: number;
@@ -44,7 +38,11 @@ export interface ProjectDetails extends Project {
   qualityIssues?: AlertItem[];
   teamProductivity?: number;
   postConstructionMaintenance?: MaintenanceItem[];
+  timeline?: TimelineEvent[];
+  photos?: Photo[];
   chatLogs?: ChatMessage[];
+  tarefasPendentes?: string[];
+  materiais?: Record<string, { usado: number; planejado: number }>;
 }
 
 export interface TimelineEvent {
@@ -55,11 +53,19 @@ export interface TimelineEvent {
   isDelayed?: boolean;
 }
 
-export interface GalleryImage {
+export interface Photo {
   id: string;
   url: string;
   caption: string;
   date: string;
+}
+
+export interface ChatMessage {
+  data: string;
+  hora: string;
+  remetente: string;
+  mensagem: string;
+  origem: string;
 }
 
 export interface ChatLogEntry {
@@ -67,23 +73,10 @@ export interface ChatLogEntry {
   logs: ChatMessage[];
 }
 
-export interface ChatMessage {
-  data: string;
-  hora?: string;
-  remetente: string;
-  mensagem: string;
-  origem: string;
-}
-
-export interface SaudeObra {
-  cor: string;
-  texto: string;
-}
-
 export interface AlertItem {
+  date: string;
   title: string;
   description: string;
-  date: string;
 }
 
 export interface MaintenanceItem {

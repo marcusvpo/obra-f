@@ -1,10 +1,12 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, MessageSquare, LogOut, Construction, FileText, Users, Bell, Plus } from "lucide-react";
+import { Home, MessageSquare, LogOut, Construction, FileText, Users, Bell, Plus, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useNotifications } from "@/hooks/useNotifications";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -38,7 +40,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col border-r border-[#FF6200]/50">
+    <div className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col border-r border-[#FF6200] shadow-[0_0_15px_rgba(255,98,0,0.3)] rounded-r-md overflow-hidden">
       {/* Logo area */}
       <div className="px-5 py-6 flex items-center">
         <h1 className="text-xl font-bold">ObraFácil</h1>
@@ -75,8 +77,19 @@ export default function Sidebar() {
         </ul>
       </nav>
 
-      {/* Logout button */}
-      <div className="p-4">
+      {/* Profile section */}
+      <div className="p-4 bg-[#2A2A2A] mt-2">
+        <div className="flex items-center space-x-3 mb-3">
+          <Avatar>
+            <AvatarImage src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=150" />
+            <AvatarFallback>FD</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-medium text-sm">Fulano</p>
+            <p className="text-xs text-gray-400">fulano@example.com</p>
+          </div>
+        </div>
+        <Separator className="my-2 bg-gray-600" />
         <Button
           onClick={handleLogout}
           variant="ghost"
