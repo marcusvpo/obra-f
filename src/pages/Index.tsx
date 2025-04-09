@@ -116,29 +116,29 @@ const Projetos = () => {
 
   return (
     <AppLayout title="Projetos">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <h1 className="text-2xl font-semibold">Projetos</h1>
+      <div className="max-w-7xl mx-auto space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+          <h1 className="text-xl font-semibold">Projetos</h1>
           
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="relative w-full sm:w-64">
-              <SearchIcon size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted" />
+              <SearchIcon size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted" />
               <Input
                 placeholder="Buscar projeto..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-secondary border-none"
+                className="pl-8 bg-secondary border-none h-8 text-sm"
               />
             </div>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-1 min-w-[90px]">
-                  <Filter size={16} />
+                <Button variant="outline" className="flex items-center gap-1 min-w-[80px] h-8 text-sm">
+                  <Filter size={14} />
                   <span>Filtrar</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuGroup>
                   <DropdownMenuItem onClick={() => applyFilter("all")}>
                     Todos os projetos
@@ -162,25 +162,25 @@ const Projetos = () => {
         </div>
         
         {activeFilter && (
-          <div className="flex items-center gap-2 mb-6">
-            <Badge variant="outline" className="px-3 py-1 flex items-center gap-2 bg-secondary">
+          <div className="flex items-center gap-2 mb-4">
+            <Badge variant="outline" className="px-2 py-0.5 flex items-center gap-2 bg-secondary text-xs">
               {activeFilter === "delayed" && "Projetos atrasados"}
               {activeFilter === "completed" && "Projetos concluídos"}
               {activeFilter === "in-progress" && "Projetos no prazo"}
               {activeFilter === "favorites" && "Projetos favoritos"}
               <button onClick={clearFilter} className="ml-1">
-                <X size={14} />
+                <X size={12} />
               </button>
             </Badge>
           </div>
         )}
 
         {filteredProjects.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted text-lg">Nenhum projeto encontrado</p>
+          <div className="text-center py-10">
+            <p className="text-muted text-base">Nenhum projeto encontrado</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex flex-wrap gap-4">
             {filteredProjects.map((project) => {
               const saude = getSaudeObra(project);
               return (

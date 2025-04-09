@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, MessageSquare, LogOut, Construction, FileText, Users, Bell, Plus } from "lucide-react";
+import { Home, LogOut, Construction, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -25,21 +25,6 @@ export default function Sidebar() {
       label: "Projetos", 
       icon: <Construction size={20} /> 
     },
-    { 
-      path: "/chatlog", 
-      label: "ChatLog", 
-      icon: <MessageSquare size={20} /> 
-    },
-    {
-      path: "/novo-projeto",
-      label: "Novo Projeto",
-      icon: <Plus size={20} />
-    },
-    {
-      path: "/relatorios",
-      label: "Relatórios",
-      icon: <FileText size={20} />
-    },
     {
       path: "/equipe",
       label: "Equipe",
@@ -48,7 +33,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col">
+    <div className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col border-r border-[#444444] shadow-lg">
       {/* Logo area */}
       <div className="px-5 py-6 flex items-center">
         <h1 className="text-xl font-bold">ObraFácil</h1>
@@ -56,44 +41,35 @@ export default function Sidebar() {
 
       {/* Menu items */}
       <nav className="flex-1 px-2">
-        <ul className="space-y-2">
+        <ul className="space-y-1">
           {menuItems.map((item) => (
             <li key={item.path}>
               <Link
                 to={item.path}
-                className={`flex items-center p-3 rounded-md transition-colors 
+                className={`flex items-center p-2.5 rounded-md transition-colors 
                   ${location.pathname === item.path
-                      ? "bg-[#FF6200] text-white shadow-lg border border-[#FF7D33] drop-shadow-[0_0_8px_rgba(255,98,0,0.5)]"
+                      ? "bg-[#FF6200] text-white shadow-md border border-[#FF7D33] drop-shadow-[0_0_8px_rgba(255,98,0,0.5)]"
                       : "text-gray-300 hover:bg-secondary/50"
                   }`
                 }
               >
-                <span className="mr-3">{item.icon}</span>
-                <span>{item.label}</span>
+                <span className="mr-2.5">{item.icon}</span>
+                <span className="text-sm">{item.label}</span>
               </Link>
             </li>
           ))}
-          <li>
-            <button
-              onClick={openNotificationsPanel}
-              className="flex items-center w-full p-3 rounded-md transition-colors text-gray-300 hover:bg-secondary/50"
-            >
-              <span className="mr-3"><Bell size={20} /></span>
-              <span>Notificações</span>
-            </button>
-          </li>
         </ul>
       </nav>
 
       {/* Logout button */}
-      <div className="p-4">
+      <div className="p-2 mb-4">
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full flex items-center p-3 text-gray-300 hover:bg-secondary/50 rounded-md"
+          className="w-full flex items-center p-2.5 text-gray-300 hover:bg-secondary/50 rounded-md"
         >
-          <LogOut size={20} className="mr-3" />
-          <span>Sair</span>
+          <LogOut size={20} className="mr-2.5" />
+          <span className="text-sm">Sair</span>
         </Button>
       </div>
     </div>
