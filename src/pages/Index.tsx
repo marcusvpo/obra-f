@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import ProjectCard from "@/components/dashboard/ProjectCard";
-import { SearchIcon, Filter, X } from "lucide-react";
+import { SearchIcon, Filter, X, SortAsc } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { projects, getSaudeObra, getDelayedProjects, getCompletedProjects } from "@/data/mockData";
 import { Project } from "@/types/project";
@@ -12,10 +12,27 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipProvider, 
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
+
+type SortOption = "progress" | "date" | "delay" | "none";
+
+const sortOptions = [
+  { value: "none", label: "Padrão" },
+  { value: "progress", label: "Por Progresso" },
+  { value: "date", label: "Por Data de Conclusão" },
+  { value: "delay", label: "Por Atraso" }
+];
 
 const Projetos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,6 +43,7 @@ const Projetos = () => {
   });
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>("none");
   
   const navigate = useNavigate();
   
@@ -98,7 +116,7 @@ const Projetos = () => {
         });
     }
     
-    setProjectsList(filtered);
+    setProjectsList(applySorting(filtered, sortBy));
     setSearchParams(filter === "all" ? {} : { filter });
   };
   
@@ -111,7 +129,36 @@ const Projetos = () => {
       if (!a.isFavorite && b.isFavorite) return 1;
       return 0;
     });
-    setProjectsList(sortedProjects);
+    setProjectsList(applySorting(sortedProjects, sortBy));
+  };
+
+  const applySorting = (projects: Project[], sortOption: SortOption): Project[] => {
+    const projectsCopy = [...projects];
+    
+    switch (sortOption) {
+      case "progress":
+        return projectsCopy.sort((a, b) => b.progress - a.progress);
+      case "date":
+        // Simple string comparison for dates in DD/MM/YYYY format
+        return projectsCopy.sort((a, b) => 
+          a.estimatedCompletionDate.localeCompare(b.estimatedCompletionDate)
+        );
+      case "delay":
+        // Sort by delay (null/0 values first, then ascending by delay)
+        return projectsCopy.sort((a, b) => {
+          if (!a.delay && !b.delay) return 0;
+          if (!a.delay) return -1;
+          if (!b.delay) return 1;
+          return a.delay - b.delay;
+        });
+      default:
+        return projectsCopy;
+    }
+  };
+  
+  const handleSort = (option: SortOption) => {
+    setSortBy(option);
+    setProjectsList(applySorting(projectsList, option));
   };
 
   return (
@@ -131,33 +178,83 @@ const Projetos = () => {
               />
             </div>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-1 min-w-[90px]">
-                  <Filter size={16} />
-                  <span>Filtrar</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => applyFilter("all")}>
-                    Todos os projetos
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => applyFilter("in-progress")}>
-                    Projetos no prazo
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => applyFilter("delayed")}>
-                    Projetos atrasados
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => applyFilter("favorites")}>
-                    Projetos favoritos
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => applyFilter("completed")}>
-                    Projetos concluídos
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="flex items-center gap-1 min-w-[90px]">
+                        <Filter size={16} />
+                        <span>Filtrar</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel>Status</DropdownMenuLabel>
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem onClick={() => applyFilter("all")}>
+                          Todos os projetos
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => applyFilter("in-progress")}>
+                          Projetos no prazo
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => applyFilter("delayed")}>
+                          Projetos atrasados
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => applyFilter("completed")}>
+                          Projetos concluídos
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Progresso</DropdownMenuLabel>
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem onClick={() => applyFilter("progress-low")}>
+                          0-50% concluído
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => applyFilter("progress-high")}>
+                          51-100% concluído
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => applyFilter("favorites")}>
+                        Projetos favoritos
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Filtrar projetos
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="flex items-center gap-1">
+                        <SortAsc size={16} />
+                        <span>Ordenar</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      {sortOptions.map((option) => (
+                        <DropdownMenuItem 
+                          key={option.value}
+                          onClick={() => handleSort(option.value as SortOption)}
+                          className={sortBy === option.value ? "bg-primary/20" : ""}
+                        >
+                          {option.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Ordenar projetos
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         
@@ -168,6 +265,8 @@ const Projetos = () => {
               {activeFilter === "completed" && "Projetos concluídos"}
               {activeFilter === "in-progress" && "Projetos no prazo"}
               {activeFilter === "favorites" && "Projetos favoritos"}
+              {activeFilter === "progress-low" && "Progresso 0-50%"}
+              {activeFilter === "progress-high" && "Progresso 51-100%"}
               <button onClick={clearFilter} className="ml-1">
                 <X size={14} />
               </button>

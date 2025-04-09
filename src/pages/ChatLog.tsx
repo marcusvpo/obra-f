@@ -60,11 +60,11 @@ const ChatLog = () => {
                     {selectedLogs.map((log, index) => (
                       <div
                         key={index}
-                        className="max-w-xl bg-background p-4 rounded-lg shadow"
+                        className={`max-w-xl p-4 rounded-lg shadow ${index % 2 === 0 ? 'bg-[#444444]' : 'bg-background'}`}
                       >
                         <div className="flex justify-between mb-2">
                           <span className="text-primary font-medium">{log.remetente}</span>
-                          <span className="text-xs text-muted">{log.data}</span>
+                          <span className="text-xs text-muted">{log.data} {log.hora ? `às ${log.hora}` : ''}</span>
                         </div>
                         <p className="mb-2">{log.mensagem}</p>
                         <div className="text-xs text-muted bg-secondary/30 rounded px-2 py-1 inline-block">

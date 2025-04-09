@@ -2,13 +2,14 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "./ProgressBar";
-import { Clock, Calendar, ZoomIn, Bell, AlertTriangle, ClipboardList } from "lucide-react";
+import { Clock, Calendar, ZoomIn, Bell, AlertTriangle, ClipboardList, ArrowRight } from "lucide-react";
 import { Project } from "@/types/project";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toggleFavorite } from "@/data/mockData";
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ProjectCardProps {
   project: Project;
@@ -44,16 +45,25 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
       <div className="flex justify-between items-start mb-3">
         <h3 className="font-semibold text-lg text-white">{project.name}</h3>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleToggleFavorite}
-            className="p-1 rounded-full hover:bg-secondary transition-colors"
-            aria-label={project.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-          >
-            <Star 
-              size={18} 
-              className={project.isFavorite ? "fill-primary text-primary" : "text-muted"} 
-            />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleToggleFavorite}
+                  className="p-1 rounded-full hover:bg-secondary transition-colors"
+                  aria-label={project.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                >
+                  <Star 
+                    size={18} 
+                    className={project.isFavorite ? "fill-primary text-primary" : "text-muted"} 
+                  />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {project.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       
@@ -62,7 +72,18 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
           <span>Progresso</span>
           <span className="text-white text-base">{project.progress}%</span>
         </div>
-        <ProgressBar progress={project.progress} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <ProgressBar progress={project.progress} gradient={true} />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              Progresso: {project.progress}%
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {saude && (
@@ -104,14 +125,14 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
           {project.pendingTasks !== undefined && (
             <div className="flex items-center gap-1.5 bg-[#3A3A3A] rounded-md p-2">
               <ClipboardList size={14} className="text-primary" />
-              <span className="text-xs">Pendências: {project.pendingTasks}</span>
+              <span className="text-xs">Pendências: <span className="text-primary">{project.pendingTasks}</span></span>
             </div>
           )}
           
           {project.todayUpdates !== undefined && (
             <div className="flex items-center gap-1.5 bg-[#3A3A3A] rounded-md p-2">
               <Bell size={14} className="text-primary" />
-              <span className="text-xs">Atualizações hoje: {project.todayUpdates}</span>
+              <span className="text-xs">Atualizações hoje: <span className="text-primary">{project.todayUpdates}</span></span>
             </div>
           )}
         </div>
@@ -144,9 +165,10 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
       
       <Button 
         onClick={handleViewDetails} 
-        className="w-full bg-primary hover:bg-primary/80 text-white"
+        className="w-full bg-primary hover:bg-primary/80 text-white flex items-center justify-center gap-1"
       >
         Ver Detalhes
+        <ArrowRight size={14} />
       </Button>
       
       <Dialog open={showImageModal} onOpenChange={setShowImageModal}>

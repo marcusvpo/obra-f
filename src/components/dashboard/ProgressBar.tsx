@@ -3,9 +3,10 @@ interface ProgressBarProps {
   progress: number;
   size?: "sm" | "md" | "lg";
   color?: string;
+  gradient?: boolean;
 }
 
-export default function ProgressBar({ progress, size = "md", color }: ProgressBarProps) {
+export default function ProgressBar({ progress, size = "md", color, gradient = false }: ProgressBarProps) {
   const height = {
     sm: "h-1.5",
     md: "h-2",
@@ -22,7 +23,8 @@ export default function ProgressBar({ progress, size = "md", color }: ProgressBa
         style={{ 
           width: `${safeProgress}%`, 
           transition: "width 0.5s ease-in-out",
-          backgroundColor: color || "hsl(var(--primary))" 
+          backgroundColor: gradient ? 'transparent' : (color || "hsl(var(--primary))"),
+          backgroundImage: gradient ? 'linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary)/0.8))' : 'none'
         }}
       />
     </div>
