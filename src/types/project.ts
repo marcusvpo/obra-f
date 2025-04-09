@@ -40,10 +40,11 @@ export interface ProjectDetails extends Project {
     days: number;
     reason: string;
   };
-  safetyAlerts?: string[];
-  qualityIssues?: string[];
+  safetyAlerts?: AlertItem[];
+  qualityIssues?: AlertItem[];
   teamProductivity?: number;
-  postConstructionMaintenance?: string[];
+  postConstructionMaintenance?: MaintenanceItem[];
+  chatLogs?: ChatMessage[];
 }
 
 export interface TimelineEvent {
@@ -63,16 +64,31 @@ export interface GalleryImage {
 
 export interface ChatLogEntry {
   obra: string;
-  logs: {
-    data: string;
-    hora?: string;
-    remetente: string;
-    mensagem: string;
-    origem: string;
-  }[];
+  logs: ChatMessage[];
+}
+
+export interface ChatMessage {
+  data: string;
+  hora?: string;
+  remetente: string;
+  mensagem: string;
+  origem: string;
 }
 
 export interface SaudeObra {
   cor: string;
   texto: string;
+}
+
+export interface AlertItem {
+  title: string;
+  description: string;
+  date: string;
+}
+
+export interface MaintenanceItem {
+  title: string;
+  description: string;
+  date: string;
+  isCompleted: boolean;
 }

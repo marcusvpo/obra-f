@@ -9,11 +9,11 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import PhotoGallery from "@/components/dashboard/PhotoGallery";
 import { updateObservations } from "@/data/mockData";
-import { Photo } from "@/types/project";
+import { GalleryImage } from "@/types/project";
 
 interface MediaGalleryProps {
   projectId: string;
-  photos?: Photo[];
+  photos?: GalleryImage[];
   observations?: string;
   onObservationsUpdated: (observations: string) => void;
 }

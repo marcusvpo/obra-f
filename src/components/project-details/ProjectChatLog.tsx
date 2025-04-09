@@ -1,14 +1,7 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface ChatMessage {
-  remetente: string;
-  data: string;
-  hora?: string;
-  mensagem: string;
-  origem?: string;
-}
+import { ChatMessage } from "@/types/project";
 
 interface ProjectChatLogProps {
   messages: ChatMessage[];

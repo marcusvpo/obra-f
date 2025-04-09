@@ -4,6 +4,7 @@ import ProductivityIndicator from "@/components/dashboard/ProductivityIndicator"
 import AlertList from "@/components/dashboard/AlertList";
 import MaintenanceList from "@/components/dashboard/MaintenanceList";
 import { toast } from "sonner";
+import { AlertItem, MaintenanceItem } from "@/types/project";
 
 interface RiskInfo {
   percentage: number;
@@ -14,9 +15,9 @@ interface RiskInfo {
 interface ProjectRiskInfoProps {
   delayRisk?: RiskInfo;
   teamProductivity?: number;
-  safetyAlerts?: { title: string; description: string; date: string }[];
-  qualityIssues?: { title: string; description: string; date: string }[];
-  postConstructionMaintenance?: { title: string; description: string; date: string; isCompleted: boolean }[];
+  safetyAlerts?: AlertItem[];
+  qualityIssues?: AlertItem[];
+  postConstructionMaintenance?: MaintenanceItem[];
   isCompleted?: boolean;
   onHandleRiskUpdated: () => void;
 }
