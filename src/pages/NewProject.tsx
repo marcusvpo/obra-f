@@ -1,18 +1,18 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, User, Phone, MapPin, MessageSquare } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { projects } from "@/data/mockData";
 import { Project } from "@/types/project";
+import ProjectBasicInfo from "@/components/new-project/ProjectBasicInfo";
+import ProjectContactInfo from "@/components/new-project/ProjectContactInfo";
+import ProjectLocation from "@/components/new-project/ProjectLocation";
 
 interface TeamMember {
   id: string;
@@ -109,172 +109,15 @@ export default function NewProject() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome do Projeto</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Ex: Condomínio Villa Verde" 
-                          className="bg-secondary"
-                          {...field} 
-                          required
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
+                <ProjectBasicInfo control={form.control} />
+                
+                <ProjectContactInfo 
+                  control={form.control} 
+                  teamMembers={teamMembers} 
+                  updateManagerPhone={updateManagerPhone}
                 />
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="estimatedCompletionDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Calendar size={16} />
-                          <span>Data Estimada de Conclusão</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="DD/MM/AAAA" 
-                            className="bg-secondary"
-                            {...field} 
-                            required
-                            dateFormat={true}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="plannedHours"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Clock size={16} />
-                          <span>Horas Planejadas</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Ex: 1000" 
-                            className="bg-secondary"
-                            {...field} 
-                            required
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Quantidade total de horas previstas para o projeto
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="managerName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <User size={16} />
-                          <span>Responsável</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Select 
-                            onValueChange={(value) => {
-                              field.onChange(value);
-                              updateManagerPhone(value);
-                            }}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="bg-secondary">
-                              <SelectValue placeholder="Selecione um responsável" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {teamMembers.map((member) => (
-                                <SelectItem key={member.id} value={member.nome}>
-                                  {member.nome}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="managerPhone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Phone size={16} />
-                          <span>Contato do Responsável</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="(00) 123456789" 
-                            className="bg-secondary"
-                            {...field} 
-                            readOnly
-                            disabled
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Será preenchido automaticamente
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <MapPin size={16} />
-                        <span>Endereço da Obra</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Endereço completo" 
-                          className="bg-secondary"
-                          {...field} 
-                          required
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="observations"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <MessageSquare size={16} />
-                        <span>Observações</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Observações iniciais sobre o projeto" 
-                          className="bg-secondary resize-none min-h-[100px]"
-                          {...field} 
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                <ProjectLocation control={form.control} />
                 
                 <div className="flex justify-end pt-4">
                   <Button

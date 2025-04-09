@@ -25,20 +25,10 @@ export default function Sidebar() {
       label: "Projetos", 
       icon: <Construction size={20} /> 
     },
-    { 
-      path: "/chatlog", 
-      label: "ChatLog", 
-      icon: <MessageSquare size={20} /> 
-    },
     {
       path: "/novo-projeto",
       label: "Novo Projeto",
       icon: <Plus size={20} />
-    },
-    {
-      path: "/relatorios",
-      label: "Relatórios",
-      icon: <FileText size={20} />
     },
     {
       path: "/equipe",
@@ -48,7 +38,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col">
+    <div className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col border-r border-[#FF6200]/50">
       {/* Logo area */}
       <div className="px-5 py-6 flex items-center">
         <h1 className="text-xl font-bold">ObraFácil</h1>
