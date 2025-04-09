@@ -1,60 +1,54 @@
 
-import { AlertTriangle, Check } from "lucide-react";
+import { AlertTriangle, AlertCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AlertItem } from "@/types/project";
 
 interface AlertListProps {
   title: string;
-  alerts: string[];
+  alerts: AlertItem[];
   type: 'safety' | 'quality';
   onResolve?: (index: number) => void;
 }
 
 export default function AlertList({ title, alerts, type, onResolve }: AlertListProps) {
-  const getColor = () => {
-    return type === 'safety' ? 'text-red-500 border-red-500' : 'text-yellow-500 border-yellow-500';
+  const getIcon = () => {
+    if (type === 'safety') return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+    return <AlertCircle className="h-5 w-5 text-red-500" />;
   };
   
-  const getIcon = () => {
-    return type === 'safety' ? 
-      <AlertTriangle className="text-red-500" size={20} /> : 
-      <AlertTriangle className="text-yellow-500" size={20} />;
-  };
-
   return (
-    <div className="bg-card rounded-lg p-5 shadow-sm">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+    <div className="bg-[#3A3A3A] p-4 rounded-lg">
+      <h3 className="font-medium flex items-center gap-2 mb-3">
         {getIcon()}
-        {title}
-      </h2>
+        {title} ({alerts.length})
+      </h3>
       
-      {alerts.length === 0 ? (
-        <p className="text-center text-gray-400">Nenhum alerta disponível</p>
-      ) : (
-        <div className="space-y-3">
-          {alerts.map((alert, index) => (
-            <div 
-              key={index} 
-              className={`p-3 border-l-2 ${getColor()} bg-[#3A3A3A] rounded-r-md flex justify-between items-start`}
-            >
-              <div>
-                <p className="text-sm whitespace-pre-wrap">{alert}</p>
-              </div>
-              
-              {onResolve && (
-                <Button 
-                  onClick={() => onResolve(index)}
-                  variant="ghost"
-                  size="sm"
-                  className="text-green-500 hover:bg-green-500/10 hover:text-green-400 min-w-[80px] h-7"
-                >
-                  <Check size={14} className="mr-1" />
-                  Resolver
-                </Button>
-              )}
+      <div className="space-y-3">
+        {alerts.map((alert, index) => (
+          <div 
+            key={index} 
+            className="bg-card rounded p-3 flex justify-between items-start"
+          >
+            <div>
+              <p className="text-sm font-medium">{alert.title}</p>
+              <p className="text-xs text-gray-400">{alert.date}</p>
+              <p className="text-sm mt-1">{alert.description}</p>
             </div>
-          ))}
-        </div>
-      )}
+            
+            {onResolve && (
+              <Button 
+                onClick={() => onResolve(index)}
+                variant="ghost"
+                size="sm"
+                className="text-red-500 hover:bg-red-500/10 hover:text-red-400"
+              >
+                <XCircle size={16} className="mr-1" />
+                Resolver
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

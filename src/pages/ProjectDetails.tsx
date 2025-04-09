@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -34,31 +33,24 @@ const historicoAtrasosMock = [
   '14/04: Atraso de 3 horas - Problema com fornecedor'
 ];
 
-// Função para converter strings de alerta em objetos AlertItem
-const convertStringToAlertItem = (alertStrings: string[] | undefined): AlertItem[] => {
-  if (!alertStrings) return [];
-  return alertStrings.map(alert => {
-    const parts = alert.split(': ');
-    return {
-      date: parts[0],
-      title: parts.length > 1 ? parts[1] : alert,
-      description: parts.length > 1 ? parts[1] : alert
-    };
-  });
+const convertStringToAlertItem = (alertString: string): AlertItem => {
+  const [date, ...descriptionParts] = alertString.split(': ');
+  const description = descriptionParts.join(': ');
+  return {
+    date,
+    title: description,
+    description
+  };
 };
 
-// Função para converter strings de manutenção em objetos MaintenanceItem
-const convertStringToMaintenanceItem = (maintenanceStrings: string[] | undefined): MaintenanceItem[] => {
-  if (!maintenanceStrings) return [];
-  return maintenanceStrings.map(item => {
-    const parts = item.split(' - ');
-    return {
-      title: parts[0],
-      description: parts[0],
-      date: parts.length > 1 ? parts[1] : '',
-      isCompleted: false
-    };
-  });
+const convertStringToMaintenanceItem = (maintenanceString: string): MaintenanceItem => {
+  const [title, date] = maintenanceString.split(' - ');
+  return {
+    title,
+    description: title,
+    date: date || "",
+    isCompleted: false
+  };
 };
 
 const ProjectDetails = () => {
@@ -133,19 +125,12 @@ const ProjectDetails = () => {
   };
   
   const handleRiskUpdated = () => {
-    // Atualiza o projeto quando algum alerta ou risco é resolvido
     setProject(prev => {
       if (!prev) return null;
       return { ...prev };
     });
   };
 
-  // Converter strings de alerta e manutenção para o formato de objeto
-  const safetyAlertsFormatted = convertStringToAlertItem(project.safetyAlerts);
-  const qualityIssuesFormatted = convertStringToAlertItem(project.qualityIssues);
-  const maintenanceFormatted = convertStringToMaintenanceItem(project.postConstructionMaintenance);
-
-  // Mock de mensagens de chat se não existirem no projeto
   const chatMessages: ChatMessage[] = project.chatLogs || [
     { data: "10/04/2025", hora: "08:30", remetente: "João", mensagem: "Obra iniciada conforme planejado", origem: "Status no dashboard" }
   ];
@@ -188,9 +173,9 @@ const ProjectDetails = () => {
         <ProjectRiskInfo 
           delayRisk={project.delayRisk}
           teamProductivity={project.teamProductivity}
-          safetyAlerts={safetyAlertsFormatted}
-          qualityIssues={qualityIssuesFormatted}
-          postConstructionMaintenance={maintenanceFormatted}
+          safetyAlerts={project.safetyAlerts}
+          qualityIssues={project.qualityIssues}
+          postConstructionMaintenance={project.postConstructionMaintenance}
           isCompleted={project.isCompleted}
           onHandleRiskUpdated={handleRiskUpdated}
         />
@@ -217,7 +202,6 @@ const ProjectDetails = () => {
           onObservationsUpdated={handleObservationsUpdated}
         />
 
-        {/* ChatLog incorporado na página de detalhes */}
         <ProjectChatLog messages={chatMessages} />
       </div>
     </AppLayout>

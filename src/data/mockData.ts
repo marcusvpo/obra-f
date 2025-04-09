@@ -1,4 +1,26 @@
-import { Project, ProjectDetails, ChatLogEntry, TimelineEvent } from "@/types/project";
+import { Project, ProjectDetails, ChatLogEntry, TimelineEvent, AlertItem, MaintenanceItem } from "@/types/project";
+
+// Helper function to convert string alerts to AlertItem objects
+const convertStringToAlertItem = (alertString: string): AlertItem => {
+  const [date, ...descriptionParts] = alertString.split(': ');
+  const description = descriptionParts.join(': ');
+  return {
+    date,
+    title: description,
+    description
+  };
+};
+
+// Helper function to convert string maintenance to MaintenanceItem objects
+const convertStringToMaintenanceItem = (maintenanceString: string): MaintenanceItem => {
+  const [title, date] = maintenanceString.split(' - ');
+  return {
+    title,
+    description: title,
+    date: date || "",
+    isCompleted: false
+  };
+};
 
 export const projects: Project[] = [
   {
@@ -124,15 +146,15 @@ export const projectDetails: Record<string, ProjectDetails> = {
     safetyAlerts: [
       "11/04: Trabalhador sem capacete detectado",
       "12/04: Andaime instável"
-    ],
+    ].map(convertStringToAlertItem),
     qualityIssues: [
       "11/04: Rachadura na fundação",
       "12/04: Acabamento irregular"
-    ],
+    ].map(convertStringToAlertItem),
     teamProductivity: 75,
     postConstructionMaintenance: [
       "Verificar fundações - 15/10/2025"
-    ],
+    ].map(convertStringToMaintenanceItem),
     timeline: [
       {
         id: "t1",
@@ -228,15 +250,15 @@ export const projectDetails: Record<string, ProjectDetails> = {
     safetyAlerts: [
       "10/04: Equipe sem proteção adequada para altura",
       "08/04: Material empilhado incorretamente"
-    ],
+    ].map(convertStringToAlertItem),
     qualityIssues: [
       "07/04: Coluna com alinhamento incorreto",
       "05/04: Problema na compactação do solo"
-    ],
+    ].map(convertStringToAlertItem),
     teamProductivity: 65,
     postConstructionMaintenance: [
       "Verificar estrutura do 3º andar - 20/12/2025"
-    ],
+    ].map(convertStringToMaintenanceItem),
     timeline: [
       {
         id: "t1",
@@ -307,7 +329,7 @@ export const chatLogs: ChatLogEntry[] = [
     obra: "Residencial Monte Alto",
     logs: [
       { data: "09/04/2025", hora: "14:15", remetente: "Carlos (+5511955555555)", mensagem: "Acabamento de 70% dos apartamentos concluído", origem: "Status no dashboard" },
-      { data: "09/04/2025", hora: "09:30", remetente: "Carlos (+5511955555555)", mensagem: "Recebemos os materiais para finalização", origem: "Atualização de materiais" },
+      { data: "09/04/2025", hora: "09:30", remetente: "Carlos (+5511955555555)", mensagem: "Recebemos os materiais para finalização", origem: "Atualizaç��o de materiais" },
       { data: "07/04/2025", hora: "13:00", remetente: "Carlos (+5511955555555)", mensagem: "Acabamentos avançando conforme planejado", origem: "Status no dashboard" }
     ]
   },
