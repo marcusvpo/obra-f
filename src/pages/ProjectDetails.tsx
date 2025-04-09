@@ -7,6 +7,11 @@ import { Calendar, Clock, Edit, MapPin, Check, AlertCircle } from "lucide-react"
 import KpiCard from "@/components/dashboard/KpiCard";
 import TimelineItem from "@/components/dashboard/TimelineItem";
 import PhotoGallery from "@/components/dashboard/PhotoGallery";
+import BudgetIndicator from "@/components/dashboard/BudgetIndicator";
+import RiskIndicator from "@/components/dashboard/RiskIndicator";
+import AlertList from "@/components/dashboard/AlertList";
+import ProductivityIndicator from "@/components/dashboard/ProductivityIndicator";
+import MaintenanceList from "@/components/dashboard/MaintenanceList";
 import { 
   getProjectDetails, updateProjectStatus, updateCompletionDate, 
   updateProjectInfo, updateProjectName, updateWorkedHours, updateObservations 
@@ -20,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { ProjectDetails as ProjectDetailsType } from "@/types/project";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -244,6 +249,29 @@ const ProjectDetails = () => {
     
     toast.success("Observações atualizadas com sucesso!");
   };
+
+  const handleResolveAlert = (index: number, type: 'safety' | 'quality') => {
+    if (!project) return;
+    
+    let updatedProject = { ...project };
+    if (type === 'safety' && updatedProject.safetyAlerts) {
+      updatedProject.safetyAlerts = updatedProject.safetyAlerts.filter((_, i) => i !== index);
+    } else if (type === 'quality' && updatedProject.qualityIssues) {
+      updatedProject.qualityIssues = updatedProject.qualityIssues.filter((_, i) => i !== index);
+    }
+    
+    setProject(updatedProject);
+    toast.success(`Alerta resolvido com sucesso!`);
+  };
+
+  const handleCompleteMaintenance = (index: number) => {
+    if (!project || !project.postConstructionMaintenance) return;
+    
+    const updatedProject = { ...project };
+    updatedProject.postConstructionMaintenance = updatedProject.postConstructionMaintenance.filter((_, i) => i !== index);
+    setProject(updatedProject);
+    toast.success("Tarefa de manutenção concluída!");
+  };
   
   return (
     <AppLayout 
@@ -270,7 +298,7 @@ const ProjectDetails = () => {
             <KpiCard 
               title="Data de Conclusão" 
               value={project.estimatedCompletionDate}
-              icon={<Calendar size={24} />}
+              icon={<Calendar size={24} className="text-primary" />}
             />
             <Button 
               variant="ghost" 
@@ -285,7 +313,7 @@ const ProjectDetails = () => {
             <KpiCard 
               title="Horas Trabalhadas" 
               value={project.hoursWorked}
-              icon={<Clock size={24} />}
+              icon={<Clock size={24} className="text-primary" />}
             />
             <Button 
               variant="ghost" 
@@ -297,6 +325,56 @@ const ProjectDetails = () => {
             </Button>
           </div>
         </div>
+        
+        {project.budget && (
+          <BudgetIndicator 
+            planned={project.budget.planned} 
+            estimated={project.budget.estimated} 
+          />
+        )}
+
+        {project.delayRisk && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <RiskIndicator 
+              percentage={project.delayRisk.percentage}
+              days={project.delayRisk.days}
+              reason={project.delayRisk.reason}
+            />
+            
+            {project.teamProductivity !== undefined && (
+              <ProductivityIndicator productivity={project.teamProductivity} />
+            )}
+          </div>
+        )}
+        
+        {(project.safetyAlerts?.length || project.qualityIssues?.length) && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {project.safetyAlerts?.length > 0 && (
+              <AlertList 
+                title="Alertas de Segurança"
+                alerts={project.safetyAlerts}
+                type="safety"
+                onResolve={(index) => handleResolveAlert(index, 'safety')}
+              />
+            )}
+            
+            {project.qualityIssues?.length > 0 && (
+              <AlertList 
+                title="Problemas de Qualidade"
+                alerts={project.qualityIssues}
+                type="quality"
+                onResolve={(index) => handleResolveAlert(index, 'quality')}
+              />
+            )}
+          </div>
+        )}
+        
+        {project.isCompleted && project.postConstructionMaintenance && project.postConstructionMaintenance.length > 0 && (
+          <MaintenanceList 
+            maintenance={project.postConstructionMaintenance}
+            onComplete={handleCompleteMaintenance}
+          />
+        )}
         
         <div className="bg-card p-5 rounded-lg">
           <h2 className="text-lg font-semibold mb-4">Consumo de Materiais</h2>
@@ -315,7 +393,7 @@ const ProjectDetails = () => {
                       </span>
                     </div>
                     {acimaPlanejado && (
-                      <span className="text-[#FF6200] text-xs">
+                      <span className="text-[#FF6200] text-xs bg-[#FF6200]/10 px-2 py-0.5 rounded-full">
                         {Math.round((usado / planejado - 1) * 100)}% acima do planejado
                       </span>
                     )}
@@ -424,7 +502,7 @@ const ProjectDetails = () => {
             <div className="bg-card p-5 rounded-lg">
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-sm text-muted">Gerente Responsável</h4>
+                  <h4 className="text-sm text-muted">Responsável</h4>
                   <p>{project.managerName}</p>
                 </div>
                 <div>
@@ -655,10 +733,10 @@ const ProjectDetails = () => {
                 name="managerName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Gerente Responsável</FormLabel>
+                    <FormLabel>Responsável</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Nome do gerente" 
+                        placeholder="Nome do responsável" 
                         className="bg-secondary"
                         {...field} 
                       />
@@ -675,7 +753,7 @@ const ProjectDetails = () => {
                     <FormLabel>Contato</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Telefone" 
+                        placeholder="(00) 123456789" 
                         className="bg-secondary"
                         {...field} 
                       />

@@ -1,11 +1,14 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "./ProgressBar";
-import { Clock, AlertTriangle, Star, Calendar, ZoomIn, Bell } from "lucide-react";
+import { Clock, Calendar, ZoomIn, Bell, AlertTriangle, ClipboardList } from "lucide-react";
 import { Project } from "@/types/project";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toggleFavorite } from "@/data/mockData";
+import { Star } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface ProjectCardProps {
   project: Project;
@@ -63,16 +66,18 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
       </div>
 
       {saude && (
-        <div 
-          className="mb-4 px-3 py-1 inline-block rounded-full text-xs font-medium"
-          style={{ backgroundColor: saude.cor === '#FFFF00' ? 'rgba(255, 255, 0, 0.2)' : 
+        <div className="mb-4 flex flex-wrap gap-2">
+          <div 
+            className="px-3 py-1 inline-block rounded-full text-xs font-medium"
+            style={{ backgroundColor: saude.cor === '#FFFF00' ? 'rgba(255, 255, 0, 0.2)' : 
                                   saude.cor === '#FF0000' ? 'rgba(255, 0, 0, 0.2)' : 
                                   'rgba(0, 255, 0, 0.2)',
                    color: saude.cor === '#FFFF00' ? '#FFFF00' : 
                           saude.cor === '#FF0000' ? '#FF0000' : 
                           '#00FF00' }}
-        >
-          {saude.texto}
+          >
+            {saude.texto}
+          </div>
         </div>
       )}
       
@@ -94,10 +99,27 @@ export default function ProjectCard({ project, onFavoriteToggle, saude }: Projec
           </p>
         </div>
         
-        {project.delay && project.delay > 0 && (
-          <div className="flex items-center text-primary text-sm gap-1.5">
-            <AlertTriangle size={14} />
-            <span>Atraso de {project.delay} {project.delay === 1 ? 'dia' : 'dias'}</span>
+        {/* New indicators */}
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          {project.pendingTasks !== undefined && (
+            <div className="flex items-center gap-1.5 bg-[#3A3A3A] rounded-md p-2">
+              <ClipboardList size={14} className="text-primary" />
+              <span className="text-xs">Pendências: {project.pendingTasks}</span>
+            </div>
+          )}
+          
+          {project.todayUpdates !== undefined && (
+            <div className="flex items-center gap-1.5 bg-[#3A3A3A] rounded-md p-2">
+              <Bell size={14} className="text-primary" />
+              <span className="text-xs">Atualizações hoje: {project.todayUpdates}</span>
+            </div>
+          )}
+        </div>
+        
+        {project.lastUpdateTime && (
+          <div className="flex items-center gap-1.5 text-xs text-muted mt-2">
+            <Clock size={12} />
+            <span>Última atualização: {project.lastUpdateTime}</span>
           </div>
         )}
       </div>

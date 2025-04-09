@@ -1,15 +1,17 @@
 
-import { X, Bell } from "lucide-react";
+import { Bell } from "lucide-react";
 import { 
   Sheet, 
   SheetContent, 
   SheetDescription, 
   SheetHeader, 
   SheetTitle,
-  SheetFooter
+  SheetFooter,
+  SheetClose
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/hooks/useNotifications";
+import { X } from "lucide-react";
 
 export default function NotificationsPanel() {
   const { 
@@ -37,9 +39,11 @@ export default function NotificationsPanel() {
                 </span>
               )}
             </div>
-            <Button variant="ghost" size="icon" className="text-white" onClick={closeNotificationsPanel}>
-              <X size={18} />
-            </Button>
+            <SheetClose asChild>
+              <Button variant="ghost" size="icon" className="text-white">
+                <X size={18} />
+              </Button>
+            </SheetClose>
           </div>
           <SheetDescription className="text-gray-400">
             Alertas e notificações recentes de suas obras

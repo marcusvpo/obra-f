@@ -41,6 +41,47 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       }
     };
 
+    // Handle phone format
+    const handlePhoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+      // Check if this is a phone-type input based on placeholder
+      const isPhone = props.placeholder?.includes("(") || /^\(\d+\)/.test(e.target.value);
+      
+      if (!isPhone) return;
+      
+      let input = e.target.value.replace(/\D/g, '');
+      
+      // Format phone number
+      if (input.length > 0) {
+        input = '(' + input;
+        
+        if (input.length > 3) {
+          input = input.substring(0, 3) + ') ' + input.substring(3);
+        }
+        
+        if (input.length > 10) {
+          // Format for the rest of the digits
+          if (input.length <= 13) {
+            input = input.substring(0, 10) + '-' + input.substring(10);
+          } else {
+            input = input.substring(0, 10) + input.substring(10, 15);
+          }
+        }
+      }
+      
+      // Create a synthetic event to pass back the formatted value
+      const syntheticEvent = {
+        ...e,
+        target: {
+          ...e.target,
+          value: input
+        }
+      };
+      
+      if (props.onChange) {
+        props.onChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
+      }
+    };
+
     React.useEffect(() => {
       if (props.value !== undefined && props.value !== value) {
         setValue(props.value);
@@ -51,12 +92,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-gray-400/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm text-gray-300/90",
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-gray-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm text-gray-300/80",
           className
         )}
         ref={ref}
         value={dateFormat ? value : undefined}
-        onChange={dateFormat ? handleDateInput : undefined}
+        onChange={dateFormat ? handleDateInput : handlePhoneInput}
         {...props}
       />
     )

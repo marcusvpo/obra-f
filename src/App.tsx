@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import Home from "./pages/Home";
-import PrjetosEmAndamento from "./pages/Index";
+import Projetos from "./pages/Index";
 import ProjectDetails from "./pages/ProjectDetails";
 import ChatLog from "./pages/ChatLog";
 import NewProject from "./pages/NewProject";
@@ -27,7 +27,7 @@ const App = () => (
           <NotificationsPanel />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/projetos" element={<PrjetosEmAndamento />} />
+            <Route path="/projetos" element={<Projetos />} />
             <Route path="/projeto/:id" element={<ProjectDetails />} />
             <Route path="/chatlog" element={<ChatLog />} />
             <Route path="/novo-projeto" element={<NewProject />} />

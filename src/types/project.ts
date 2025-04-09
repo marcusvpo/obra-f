@@ -9,6 +9,10 @@ export interface Project {
   estimatedCompletionDate: string;
   isFavorite?: boolean;
   latestPhoto?: string;
+  pendingTasks?: number;
+  todayUpdates?: number;
+  lastUpdateTime?: string;
+  isCompleted?: boolean;
 }
 
 export interface ProjectDetails extends Project {
@@ -27,6 +31,19 @@ export interface ProjectDetails extends Project {
   materiais?: Record<string, { usado: number, planejado: number }>;
   tarefasPendentes?: string[];
   historicoAtrasos?: string[];
+  budget?: {
+    planned: number;
+    estimated: number;
+  };
+  delayRisk?: {
+    percentage: number;
+    days: number;
+    reason: string;
+  };
+  safetyAlerts?: string[];
+  qualityIssues?: string[];
+  teamProductivity?: number;
+  postConstructionMaintenance?: string[];
 }
 
 export interface TimelineEvent {
@@ -48,6 +65,7 @@ export interface ChatLogEntry {
   obra: string;
   logs: {
     data: string;
+    hora?: string;
     remetente: string;
     mensagem: string;
     origem: string;
