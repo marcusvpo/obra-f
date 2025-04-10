@@ -1,16 +1,22 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, MessageSquare, LogOut, Construction, FileText, Users, Bell, Plus, User } from "lucide-react";
+import { Home, MessageSquare, LogOut, Construction, FileText, Users, Bell, Plus, User, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { motion } from "framer-motion";
 
 export default function Sidebar() {
   const location = useLocation();
   const { openNotificationsPanel } = useNotifications();
+  const [activeItem, setActiveItem] = useState<string>("/");
+
+  useEffect(() => {
+    setActiveItem(location.pathname);
+  }, [location.pathname]);
 
   const handleLogout = () => {
     toast.success("Logout realizado com sucesso");
@@ -36,51 +42,102 @@ export default function Sidebar() {
       path: "/equipe",
       label: "Equipe",
       icon: <Users size={20} />
+    },
+    {
+      path: "/chatlog",
+      label: "ChatLog",
+      icon: <MessageCircle size={20} />
     }
   ];
 
+  const menuItemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: (i: number) => ({ 
+      opacity: 1, 
+      x: 0, 
+      transition: {
+        delay: i * 0.1,
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    })
+  };
+
   return (
-    <div className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col border-r border-[#FF6200] shadow-[0_0_15px_rgba(255,98,0,0.3)] rounded-r-md overflow-hidden">
+    <motion.div 
+      initial={{ x: -50, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col border-r border-[#FF6200] shadow-[0_0_15px_rgba(255,98,0,0.3)] rounded-r-md overflow-hidden"
+    >
       {/* Logo area */}
       <div className="px-5 py-6 flex items-center">
-        <h1 className="text-xl font-bold">ObraFácil</h1>
+        <motion.h1 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="text-xl font-bold"
+        >
+          ObraFácil
+        </motion.h1>
       </div>
 
       {/* Menu items */}
       <nav className="flex-1 px-2">
         <ul className="space-y-2">
-          {menuItems.map((item) => (
-            <li key={item.path}>
+          {menuItems.map((item, index) => (
+            <motion.li 
+              key={item.path}
+              custom={index}
+              initial="hidden"
+              animate="visible"
+              variants={menuItemVariants}
+            >
               <Link
                 to={item.path}
-                className={`flex items-center p-3 rounded-md transition-colors 
+                className={`flex items-center p-3 rounded-md transition-all duration-300 
                   ${location.pathname === item.path
                       ? "bg-[#FF6200] text-white shadow-lg border border-[#FF7D33] drop-shadow-[0_0_8px_rgba(255,98,0,0.5)]"
-                      : "text-gray-300 hover:bg-secondary/50"
+                      : "text-gray-300 hover:bg-secondary/50 hover:translate-x-1"
                   }`
                 }
               >
                 <span className="mr-3">{item.icon}</span>
                 <span>{item.label}</span>
+                {item.path === "/chatlog" && (
+                  <span className="ml-auto bg-[#FF6200] text-white text-xs font-medium rounded-full px-1.5 py-0.5 animate-pulse">
+                    Novo
+                  </span>
+                )}
               </Link>
-            </li>
+            </motion.li>
           ))}
-          <li>
+          <motion.li
+            custom={menuItems.length}
+            initial="hidden"
+            animate="visible"
+            variants={menuItemVariants}
+          >
             <button
               onClick={openNotificationsPanel}
-              className="flex items-center w-full p-3 rounded-md transition-colors text-gray-300 hover:bg-secondary/50"
+              className="flex items-center w-full p-3 rounded-md transition-all duration-300 text-gray-300 hover:bg-secondary/50 hover:translate-x-1"
             >
               <span className="mr-3"><Bell size={20} /></span>
               <span>Notificações</span>
             </button>
-          </li>
+          </motion.li>
         </ul>
       </nav>
 
       {/* Profile section */}
-      <div className="p-4 bg-[#2A2A2A] mt-2">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        className="p-4 bg-[#2A2A2A] mt-2"
+      >
         <div className="flex items-center space-x-3 mb-3">
-          <Avatar>
+          <Avatar className="border-2 border-primary/20">
             <AvatarImage src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=150" />
             <AvatarFallback>FD</AvatarFallback>
           </Avatar>
@@ -93,12 +150,12 @@ export default function Sidebar() {
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full flex items-center p-3 text-gray-300 hover:bg-secondary/50 rounded-md"
+          className="w-full flex items-center p-3 text-gray-300 hover:bg-secondary/50 hover:text-white rounded-md transition-all duration-300"
         >
           <LogOut size={20} className="mr-3" />
           <span>Sair</span>
         </Button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -12,7 +12,6 @@ import PendingTasks from "./PendingTasks";
 import DelayHistory from "./DelayHistory";
 import ProjectInfoPanel from "./ProjectInfoPanel";
 import MediaGallery from "./MediaGallery";
-import ProjectChatLog from "./ProjectChatLog";
 import ProjectLatestPhoto from "./ProjectLatestPhoto";
 import ProjectKpis from "./ProjectKpis";
 
@@ -98,7 +97,7 @@ export default function ProjectDetailsContainer() {
           />
         </div>
         
-        <div className="bg-[#353535] p-5 rounded-lg shadow-md border-l-4 border-[#FF6200]">
+        <div className="bg-[#353535] p-5 rounded-lg shadow-md border-l-4 border-[#FF6200] hover:shadow-lg transition-all duration-300">
           <h2 className="text-lg font-semibold mb-3">Status do Projeto</h2>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
@@ -107,7 +106,7 @@ export default function ProjectDetailsContainer() {
             </div>
             <div className="w-full bg-[#222222] rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-[#FF6200] to-[#FFAA00] h-2 rounded-full" 
+                className="bg-gradient-to-r from-[#FF6200] to-[#FFAA00] h-2 rounded-full transition-all duration-1000 ease-out" 
                 style={{ width: `${project.progress}%` }}
               ></div>
             </div>
@@ -134,6 +133,22 @@ export default function ProjectDetailsContainer() {
       />
       
       <ProjectKpis data={kpisMock} />
+
+      <ProjectInfoPanel 
+        projectId={project.id}
+        managerName={project.managerName}
+        managerPhone={project.managerPhone}
+        address={project.address}
+        timeline={project.timeline}
+        onProjectUpdated={handleProjectInfoUpdated}
+      />
+      
+      <MediaGallery 
+        projectId={project.id}
+        photos={project.photos}
+        observations={project.observations}
+        onObservationsUpdated={handleObservationsUpdated}
+      />
      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <MaterialConsumption materials={materialsMock} />
@@ -151,24 +166,6 @@ export default function ProjectDetailsContainer() {
           </div>
         )}
       </div>
-
-      <ProjectInfoPanel 
-        projectId={project.id}
-        managerName={project.managerName}
-        managerPhone={project.managerPhone}
-        address={project.address}
-        timeline={project.timeline}
-        onProjectUpdated={handleProjectInfoUpdated}
-      />
-      
-      <MediaGallery 
-        projectId={project.id}
-        photos={project.photos}
-        observations={project.observations}
-        onObservationsUpdated={handleObservationsUpdated}
-      />
-
-      <ProjectChatLog messages={project.chatLogs || []} />
     </div>
   );
   
