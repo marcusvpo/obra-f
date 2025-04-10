@@ -12,7 +12,7 @@ interface RiskInfo {
   reason: string;
 }
 
-interface ProjectRiskInfoProps {
+export interface ProjectRiskInfoProps {
   delayRisk?: RiskInfo;
   teamProductivity?: number;
   safetyAlerts?: AlertItem[];

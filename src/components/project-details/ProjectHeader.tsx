@@ -9,9 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { updateProjectName, updateProjectStatus } from "@/data/mockData";
+import { updateProjectName, updateProjectStatus } from "@/data/projectData";
 
-interface ProjectHeaderProps {
+export interface ProjectHeaderProps {
   projectId: string;
   projectName: string;
   projectStatus: string;

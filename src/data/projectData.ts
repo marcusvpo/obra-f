@@ -1,6 +1,10 @@
-
 import { Project, ProjectDetails } from "@/types/project";
 import { projectDetails, projects } from "./projectsData";
+
+export function getProjectById(id: number | string): ProjectDetails | null {
+  const strId = String(id);
+  return projectDetails[strId] || null;
+}
 
 export function getProjectDetails(id: string) {
   if (!projectDetails[id as keyof typeof projectDetails]) {

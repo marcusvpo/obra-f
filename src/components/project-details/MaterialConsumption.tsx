@@ -1,55 +1,50 @@
 
-import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Package } from "lucide-react";
 
-interface Material {
-  usado: number;
-  planejado: number;
+export interface MaterialConsumptionProps {
+  materiais?: Record<string, { usado: number; planejado: number }>;
 }
 
-interface MaterialsData {
-  [key: string]: Material;
-}
-
-interface MaterialConsumptionProps {
-  materials: MaterialsData;
-}
-
-export default function MaterialConsumption({ materials }: MaterialConsumptionProps) {
-  const [materiais, setMateriais] = useState(materials);
+export default function MaterialConsumption({ materiais }: MaterialConsumptionProps) {
+  if (!materiais || Object.keys(materiais).length === 0) {
+    return null;
+  }
   
   return (
-    <div className="bg-card p-5 rounded-lg">
-      <h2 className="text-lg font-semibold mb-4">Consumo de Materiais</h2>
-      <div className="space-y-4">
-        {Object.entries(materiais).map(([material, { usado, planejado }]) => {
-          const percentagem = Math.round((usado / planejado) * 100);
-          const acimaPlanejado = usado > planejado;
-          
-          return (
-            <div key={material}>
-              <div className="flex justify-between items-center mb-1">
-                <div className="flex items-center">
-                  <span className="capitalize">{material}</span>
-                  <span className="text-gray-400 text-sm ml-2">
-                    {usado} de {planejado} planejados
-                  </span>
-                </div>
-                {acimaPlanejado && (
-                  <span className="text-[#FF6200] text-xs bg-[#FF6200]/10 px-2 py-0.5 rounded-full">
-                    {Math.round((usado / planejado - 1) * 100)}% acima do planejado
-                  </span>
-                )}
+    <Card className="bg-card border-none shadow-md hover:shadow-lg transition-all duration-300">
+      <CardHeader>
+        <CardTitle className="text-lg font-medium flex items-center">
+          <Package size={18} className="text-primary mr-2" />
+          Consumo de Materiais
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {Object.entries(materiais).map(([material, dados], index) => (
+            <div key={index} className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">{material}</span>
+                <span className="text-sm text-muted-foreground">
+                  {dados.usado} de {dados.planejado} ({Math.round((dados.usado / dados.planejado) * 100)}%)
+                </span>
               </div>
-              <div className="w-full bg-[#333333] rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div 
-                  className={`h-2 rounded-full ${acimaPlanejado ? 'bg-[#FF6200]' : 'bg-primary'}`} 
-                  style={{ width: `${Math.min(percentagem, 100)}%` }}
-                ></div>
+                  className={`h-2 rounded-full ${
+                    dados.usado > dados.planejado 
+                      ? 'bg-red-500' 
+                      : dados.usado / dados.planejado > 0.9 
+                        ? 'bg-amber-500' 
+                        : 'bg-green-500'
+                  }`}
+                  style={{ width: `${Math.min((dados.usado / dados.planejado) * 100, 100)}%` }}
+                />
               </div>
             </div>
-          );
-        })}
-      </div>
-    </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

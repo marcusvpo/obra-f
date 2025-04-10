@@ -8,10 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import PhotoGallery from "@/components/dashboard/PhotoGallery";
-import { updateObservations } from "@/data/mockData";
+import { updateObservations } from "@/data/projectData";
 import { GalleryImage } from "@/types/project";
 
-interface MediaGalleryProps {
+export interface MediaGalleryProps {
   projectId: string;
   photos?: GalleryImage[];
   observations?: string;

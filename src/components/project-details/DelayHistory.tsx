@@ -1,39 +1,37 @@
 
-interface DelayHistoryProps {
-  delays: string[];
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Clock } from "lucide-react";
+import { TimelineEvent } from "@/types/project";
+import TimelineItem from "@/components/dashboard/TimelineItem";
+
+export interface DelayHistoryProps {
+  timeline: TimelineEvent[];
 }
 
-export default function DelayHistory({ delays }: DelayHistoryProps) {
+export default function DelayHistory({ timeline }: DelayHistoryProps) {
   return (
-    <div className="bg-card p-5 rounded-lg">
-      <h2 className="text-lg font-semibold mb-4">Histórico de Atrasos</h2>
-      {delays.length === 0 ? (
-        <p className="text-center text-gray-400">Nenhum atraso registrado</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[#444444] text-left">
-                <th className="pb-2">Data</th>
-                <th className="pb-2">Descrição</th>
-              </tr>
-            </thead>
-            <tbody>
-              {delays.map((atraso, index) => {
-                const [data, ...restoParts] = atraso.split(': ');
-                const resto = restoParts.join(': ');
-                
-                return (
-                  <tr key={index} className="border-b border-[#333333]">
-                    <td className="py-3">{data}</td>
-                    <td className="py-3">{resto}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+    <Card className="bg-card border-none shadow-md hover:shadow-lg transition-all duration-300">
+      <CardHeader>
+        <CardTitle className="text-lg font-medium flex items-center">
+          <Clock size={18} className="text-primary mr-2" />
+          Histórico de Atrasos
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {timeline && timeline.length > 0 ? (
+          <div className="space-y-4 pl-2 pt-2">
+            {timeline.map((event, index) => (
+              <TimelineItem 
+                key={event.id} 
+                event={event} 
+                isLast={index === timeline.length - 1}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-muted py-4">Nenhum atraso registrado</p>
+        )}
+      </CardContent>
+    </Card>
   );
 }
