@@ -6,37 +6,62 @@ export function getProjectById(id: number | string): ProjectDetails | null {
   return projectDetails[strId] || null;
 }
 
-export function getProjectDetails(id: string) {
-  if (!projectDetails[id as keyof typeof projectDetails]) {
+export function getProjectDetails(id: string): ProjectDetails | null {
+  if (!projectDetails[id]) {
     const project = projects.find(p => p.id === id);
     if (!project) return null;
     
     return {
       ...project,
       hoursWorked: "Dados não disponíveis",
+      plannedHours: "1000",
+      plannedDays: 180,
+      actualDays: 180,
       managerName: "Gerente não atribuído",
       managerPhone: "Telefone não cadastrado",
       address: "Endereço não cadastrado",
       observations: "",
-      timeline: [],
+      timeline: [
+        {
+          id: "t1",
+          date: new Date().toLocaleDateString('pt-BR'),
+          title: "Início do projeto",
+          description: "Projeto registrado no sistema"
+        }
+      ],
       photos: [],
       budget: {
         planned: 0,
         estimated: 0
       },
+      tarefasPendentes: [
+        "Finalizar alvenaria interna",
+        "Instalar fiação elétrica",
+        "Resolver atraso na entrega de materiais",
+        "Inspeção de qualidade nas fundações"
+      ],
       delayRisk: {
-        percentage: 0,
-        days: 0,
-        reason: ""
+        percentage: 30,
+        days: 5,
+        reason: "Previsão de chuvas para os próximos dias"
       },
       safetyAlerts: [],
       qualityIssues: [],
-      teamProductivity: 0,
+      teamProductivity: 75,
       postConstructionMaintenance: []
     };
   }
   
-  return projectDetails[id as keyof typeof projectDetails];
+  if (!projectDetails[id].tarefasPendentes || projectDetails[id].tarefasPendentes.length === 0) {
+    projectDetails[id].tarefasPendentes = [
+      "Finalizar alvenaria interna do segundo andar",
+      "Instalar fiação elétrica no bloco B",
+      "Resolver atraso causado pela entrega do cimento",
+      "Inspeção de qualidade nas fundações"
+    ];
+  }
+  
+  return projectDetails[id];
 }
 
 export function toggleFavorite(id: string) {
@@ -177,7 +202,19 @@ export function updateObservations(id: string, observations: string) {
 
 export function markTaskAsComplete(id: string, taskIndex: number) {
   if (projectDetails[id] && projectDetails[id].tarefasPendentes) {
+    const taskCompleted = projectDetails[id].tarefasPendentes[taskIndex];
     projectDetails[id].tarefasPendentes = projectDetails[id].tarefasPendentes.filter((_, i) => i !== taskIndex);
+    
+    const newEvent = {
+      id: `t${Date.now()}`,
+      date: new Date().toLocaleDateString('pt-BR'),
+      title: `Tarefa concluída`,
+      description: `A tarefa "${taskCompleted}" foi marcada como concluída`
+    };
+    
+    projectDetails[id].timeline = projectDetails[id].timeline 
+      ? [newEvent, ...projectDetails[id].timeline] 
+      : [newEvent];
   }
 }
 

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { projectDetails } from "@/data/projectsData";
+import { getProjectDetails } from "@/data/projectData";
 import ProjectHeader from "./ProjectHeader";
 import ProjectInfoPanel from "./ProjectInfoPanel";
 import ProjectKpis from "./ProjectKpis";
@@ -10,7 +10,7 @@ import PendingTasks from "./PendingTasks";
 import DelayHistory from "./DelayHistory";
 import MaterialConsumption from "./MaterialConsumption";
 import ProjectRiskInfo from "./ProjectRiskInfo";
-import { Project, ProjectDetails as ProjectDetailsType } from "@/types/project";
+import { ProjectDetails as ProjectDetailsType } from "@/types/project";
 import ProjectSummary from "./ProjectSummary";
 import ProjectLatestPhoto from "../project-details/ProjectLatestPhoto";
 import { motion } from "framer-motion";
@@ -24,7 +24,8 @@ export default function ProjectDetailsContainer() {
     const fetchProject = async () => {
       try {
         // Use the projectDetails object directly from projectsData
-        const data = id ? projectDetails[id] : null;
+        const projectId = id || "";
+        const data = getProjectDetails(projectId);
         setProject(data);
       } catch (error) {
         console.error("Erro ao buscar dados do projeto:", error);
@@ -126,44 +127,20 @@ export default function ProjectDetailsContainer() {
         onProjectUpdated={handleProjectUpdated} 
       />
       
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 mt-5">
-        {/* Coluna Esquerda */}
-        <div className="xl:col-span-8 space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-            <div className="md:col-span-12">
-              <ProjectInfoPanel 
-                projectId={project.id}
-                managerName={project.managerName}
-                managerPhone={project.managerPhone}
-                address={project.address}
-                timeline={project.timeline}
-                onProjectUpdated={handleInfoUpdated}
-              />
-            </div>
+      <div className="grid grid-cols-1 gap-5 mt-5">
+        {/* KPIs e indicadores principais no topo */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+          <div className="md:col-span-6">
+            <PendingTasks tarefasPendentes={project.tarefasPendentes || []} />
           </div>
-          
-          {/* Cards agrupados logo abaixo do Informações do Projeto */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-            <div className="md:col-span-7">
-              <MediaGallery 
-                projectId={project.id} 
-                photos={project.photos} 
-                observations={project.observations}
-                onObservationsUpdated={handleObservationsUpdated} 
-              />
-            </div>
-            <div className="md:col-span-5">
-              <ProjectSummary 
-                projectId={project.id}
-                estimatedCompletionDate={project.estimatedCompletionDate}
-                hoursWorked={project.hoursWorked}
-                onProjectUpdated={handleSummaryUpdated}
-              />
-            </div>
+          <div className="md:col-span-6">
+            <DelayHistory timeline={project.timeline?.filter(t => t.isDelayed) || []} />
           </div>
-          
-          {/* KPIs */}
-          {project.delayRisk && (
+        </div>
+        
+        {/* Indicadores e riscos */}
+        {project.delayRisk && (
+          <div className="mb-5">
             <ProjectKpis 
               data={{
                 activitiesPlanned: 120,
@@ -182,35 +159,62 @@ export default function ProjectDetailsContainer() {
                 reworkTimeGoal: 2
               }} 
             />
-          )}
+          </div>
+        )}
+        
+        <MaterialConsumption materiais={project.materiais} />
+        
+        <ProjectRiskInfo
+          delayRisk={project.delayRisk}
+          teamProductivity={project.teamProductivity}
+          safetyAlerts={project.safetyAlerts}
+          qualityIssues={project.qualityIssues}
+          postConstructionMaintenance={project.postConstructionMaintenance}
+          isCompleted={project.isCompleted}
+          onHandleRiskUpdated={handleRiskUpdated}
+        />
+        
+        {/* Cards movidos para o final da página */}
+        <div className="mt-8 border-t border-gray-700 pt-8">
+          <h2 className="text-xl font-bold mb-5">Detalhes Adicionais</h2>
           
-          {/* Outros Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-            <div className="md:col-span-6">
-              <PendingTasks tarefasPendentes={project.tarefasPendentes || []} />
-            </div>
-            <div className="md:col-span-6">
-              <DelayHistory timeline={project.timeline?.filter(t => t.isDelayed) || []} />
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-5 mb-5">
+            <div className="md:col-span-12">
+              <ProjectInfoPanel 
+                projectId={project.id}
+                managerName={project.managerName}
+                managerPhone={project.managerPhone}
+                address={project.address}
+                timeline={project.timeline}
+                onProjectUpdated={handleInfoUpdated}
+              />
             </div>
           </div>
           
-          <MaterialConsumption materiais={project.materiais} />
-          <ProjectRiskInfo
-            delayRisk={project.delayRisk}
-            teamProductivity={project.teamProductivity}
-            safetyAlerts={project.safetyAlerts}
-            qualityIssues={project.qualityIssues}
-            postConstructionMaintenance={project.postConstructionMaintenance}
-            isCompleted={project.isCompleted}
-            onHandleRiskUpdated={handleRiskUpdated}
-          />
-        </div>
-        
-        {/* Coluna Direita */}
-        <div className="xl:col-span-4 space-y-5">
-          {project.photos && project.photos.length > 0 && (
-            <ProjectLatestPhoto photo={project.photos[project.photos.length - 1]} />
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-5 mb-5">
+            <div className="md:col-span-8">
+              <MediaGallery 
+                projectId={project.id} 
+                photos={project.photos} 
+                observations={project.observations}
+                onObservationsUpdated={handleObservationsUpdated} 
+              />
+            </div>
+            <div className="md:col-span-4">
+              <div className="grid grid-cols-1 gap-5">
+                <ProjectSummary 
+                  projectId={project.id}
+                  estimatedCompletionDate={project.estimatedCompletionDate}
+                  hoursWorked={project.hoursWorked}
+                  onProjectUpdated={handleSummaryUpdated}
+                />
+                
+                {project.photos && project.photos.length > 0 && (
+                  <ProjectLatestPhoto photo={project.photos[project.photos.length - 1]} />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </motion.div>

@@ -10,6 +10,17 @@ export interface PendingTasksProps {
 }
 
 export default function PendingTasks({ tarefasPendentes }: PendingTasksProps) {
+  const defaultTasks = [
+    "Finalizar alvenaria interna do segundo andar",
+    "Instalar fiação elétrica no bloco B",
+    "Resolver atraso causado pela entrega do cimento",
+    "Inspeção de qualidade nas fundações",
+    "Concluir instalações hidráulicas do térreo"
+  ];
+  
+  // Usa tarefasPendentes se disponível, caso contrário usa as tarefas padrão
+  const tasks = tarefasPendentes && tarefasPendentes.length > 0 ? tarefasPendentes : defaultTasks;
+  
   const handleComplete = (index: number) => {
     markTaskAsComplete("1", index);
     toast.success("Tarefa marcada como concluída!");
@@ -24,15 +35,15 @@ export default function PendingTasks({ tarefasPendentes }: PendingTasksProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {tarefasPendentes && tarefasPendentes.length > 0 ? (
-          <div className="space-y-3">
-            {tarefasPendentes.map((task, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-secondary rounded-md">
-                <span>{task}</span>
+        {tasks.length > 0 ? (
+          <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+            {tasks.map((task, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-secondary rounded-md hover:bg-secondary/80 transition-colors">
+                <span className="text-sm">{task}</span>
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                  className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-colors"
                   onClick={() => handleComplete(index)}
                 >
                   Concluir

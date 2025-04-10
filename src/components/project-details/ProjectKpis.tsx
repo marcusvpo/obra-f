@@ -63,7 +63,7 @@ export default function ProjectKpis({ data }: ProjectKpisProps) {
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span>Planejadas: {data.activitiesPlanned}</span>
-                <span>Concluídas: {data.activitiesCompleted} ({completedPercentage}% ✅)</span>
+                <span>Concluídas: {data.activitiesCompleted} ({completedPercentage}% ✓)</span>
               </div>
               <div className="w-full bg-[#222222] rounded-full h-2.5">
                 <div 
@@ -88,7 +88,7 @@ export default function ProjectKpis({ data }: ProjectKpisProps) {
               <div className="flex items-center justify-between">
                 <span>Realizadas: {data.inspectionsCount} inspeções</span>
                 <span>
-                  Resultado médio: {data.inspectionAvgResult}% {getStatusIcon(data.inspectionAvgResult, 80)} 
+                  Resultado médio: {data.inspectionAvgResult}% {data.inspectionAvgResult >= 80 ? '✓' : '⚠'} 
                 </span>
               </div>
               <div className="w-full bg-[#222222] rounded-full h-2.5">
@@ -116,7 +116,7 @@ export default function ProjectKpis({ data }: ProjectKpisProps) {
               <div className="flex items-center justify-between">
                 <span>Desperdício atual: {data.wastePercentage}%</span>
                 <span className={isWasteOverLimit ? "text-red-500" : "text-green-500"}>
-                  {isWasteOverLimit ? "⚠️" : "✅"} (ideal {"<"} 5%)
+                  {isWasteOverLimit ? "⚠" : "✓"} (ideal: menor que 5%)
                 </span>
               </div>
               <Progress 
@@ -139,7 +139,7 @@ export default function ProjectKpis({ data }: ProjectKpisProps) {
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-center">
-                <span className="text-red-500 mr-1">🔴</span>
+                <span className="text-red-500 mr-1">●</span>
                 <span>Falhas identificadas: {data.failuresCount}</span>
               </div>
               <div className="space-y-1.5">
@@ -175,7 +175,7 @@ export default function ProjectKpis({ data }: ProjectKpisProps) {
               <div className="flex items-center justify-between">
                 <span>Tempo médio atual: {data.reworkTimeAvg} dias</span>
                 <span className={isReworkTimeOverLimit ? "text-red-500" : "text-green-500"}>
-                  {isReworkTimeOverLimit ? "⚠️" : "✅"} (meta ≤ {data.reworkTimeGoal} dia)
+                  {isReworkTimeOverLimit ? "⚠" : "✓"} (meta: até {data.reworkTimeGoal} dias)
                 </span>
               </div>
               <div className="w-full h-2.5 bg-[#222222] rounded-full">
