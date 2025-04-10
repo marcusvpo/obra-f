@@ -1,4 +1,4 @@
-import { Project, ProjectDetails, AlertItem, MaintenanceItem, ChatMessage } from "@/types/project";
+import { Project, ProjectDetails, AlertItem, MaintenanceItem, ChatMessage, TimelineEvent } from "@/types/project";
 
 // Helper function to convert string alerts to AlertItem objects
 export const convertStringToAlertItem = (alertString: string): AlertItem => {
