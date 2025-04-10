@@ -1,16 +1,32 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Edit, MapPin } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import TimelineItem from "@/components/dashboard/TimelineItem";
 import { updateProjectInfo } from "@/data/mockData";
 import { TimelineEvent } from "@/types/project";
+
+interface TeamMember {
+  id: string;
+  nome: string;
+  numero: string;
+  funcao: string;
+  foto?: string;
+}
+
+const teamMembers: TeamMember[] = [
+  { id: "1", nome: "Carlos Silva", numero: "(11) 98765-4321", funcao: "Engenheiro Civil" },
+  { id: "2", nome: "Ana Oliveira", numero: "(11) 91234-5678", funcao: "Engenheira Civil" },
+  { id: "3", nome: "Pedro Santos", numero: "(11) 99876-5432", funcao: "Arquiteto" },
+  { id: "4", nome: "Mariana Costa", numero: "(11) 97654-3210", funcao: "Técnica de Segurança" }
+];
 
 interface ProjectInfoPanelProps {
   projectId: string;
@@ -44,6 +60,13 @@ export default function ProjectInfoPanel({
       address
     }
   });
+  
+  const updateManagerPhone = (selectedManagerName: string) => {
+    const selectedManager = teamMembers.find(member => member.nome === selectedManagerName);
+    if (selectedManager) {
+      infoForm.setValue('managerPhone', selectedManager.numero);
+    }
+  };
   
   const onInfoSubmit = (data: InfoFormData) => {
     updateProjectInfo(projectId, {
@@ -130,13 +153,26 @@ export default function ProjectInfoPanel({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Responsável</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Nome do responsável" 
-                        className="bg-secondary"
-                        {...field} 
-                      />
-                    </FormControl>
+                    <Select 
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        updateManagerPhone(value);
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="bg-secondary">
+                          <SelectValue placeholder="Selecione um responsável" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {teamMembers.map((member) => (
+                          <SelectItem key={member.id} value={member.nome}>
+                            {member.nome} ({member.funcao})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormItem>
                 )}
               />
@@ -152,6 +188,8 @@ export default function ProjectInfoPanel({
                         placeholder="(00) 123456789" 
                         className="bg-secondary"
                         {...field} 
+                        readOnly
+                        disabled
                       />
                     </FormControl>
                   </FormItem>

@@ -40,7 +40,7 @@ const Home = () => {
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold text-[#FF6200]">{resumoGeral.totalObras}</p>
-              <p className="text-sm text-gray-400 mt-1">obras ativas no sistema</p>
+              <p className="text-sm text-gray-400 mt-1">projetos ativos</p>
             </CardContent>
           </Card>
 
@@ -53,7 +53,7 @@ const Home = () => {
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold text-[#FF6200]">{resumoGeral.percentualMedio}%</p>
-              <p className="text-sm text-gray-400 mt-1">média de todos os projetos</p>
+              <p className="text-sm text-gray-400 mt-1">média geral</p>
             </CardContent>
           </Card>
 
@@ -66,10 +66,10 @@ const Home = () => {
             </CardHeader>
             <CardContent className="flex flex-col">
               <p className="text-4xl font-bold text-[#FF6200]">{resumoGeral.totalAtrasos}</p>
-              <div className="text-sm text-gray-400 mt-1">projetos com atrasos relatados</div>
+              <div className="text-sm text-gray-400 mt-1">projetos com atrasos</div>
               <Link to="/projetos?filter=delayed">
                 <Button variant="link" className="text-sm text-primary p-0 h-auto mt-2 flex items-center gap-1 hover:underline">
-                  Ver projetos atrasados
+                  Em Atraso
                   <ArrowRight size={14} />
                 </Button>
               </Link>
@@ -89,11 +89,11 @@ const Home = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <p className="text-sm text-gray-400 mt-1 cursor-help">
-                      {resumoGeral.alerts.safety} de segurança, {resumoGeral.alerts.materials} de materiais, {resumoGeral.alerts.quality} de qualidade
+                      Alertas ativos que requerem atenção
                     </p>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Alertas ativos que requerem atenção</p>
+                    <p>Alertas ativos em todos os projetos</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -109,7 +109,7 @@ const Home = () => {
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold text-[#FF6200]">{resumoGeral.totalTodayUpdates}</p>
-              <p className="text-sm text-gray-400 mt-1">mensagens recebidas hoje</p>
+              <p className="text-sm text-gray-400 mt-1">mensagens hoje</p>
             </CardContent>
           </Card>
         </div>
@@ -229,9 +229,6 @@ const Home = () => {
                     <p className="text-sm text-gray-400">Equipe sem proteção adequada para altura</p>
                     <div className="flex justify-between items-center mt-1">
                       <p className="text-xs text-gray-500">10/04/2025</p>
-                      <Button size="sm" className="h-8 bg-green-600 hover:bg-green-700 text-white">
-                        Resolver
-                      </Button>
                     </div>
                   </div>
                   <div className="p-3 border-l-2 border-red-500 bg-[#3A3A3A] rounded-r-md">
@@ -239,9 +236,6 @@ const Home = () => {
                     <p className="text-sm text-gray-400">Trabalhador sem capacete detectado</p>
                     <div className="flex justify-between items-center mt-1">
                       <p className="text-xs text-gray-500">11/04/2025</p>
-                      <Button size="sm" className="h-8 bg-green-600 hover:bg-green-700 text-white">
-                        Resolver
-                      </Button>
                     </div>
                   </div>
                 </div>
@@ -257,9 +251,6 @@ const Home = () => {
                     <p className="text-sm text-gray-400">Rachadura na fundação</p>
                     <div className="flex justify-between items-center mt-1">
                       <p className="text-xs text-gray-500">11/04/2025</p>
-                      <Button size="sm" className="h-8 bg-green-600 hover:bg-green-700 text-white">
-                        Resolver
-                      </Button>
                     </div>
                   </div>
                   <div className="p-3 border-l-2 border-yellow-500 bg-[#3A3A3A] rounded-r-md">
@@ -267,9 +258,6 @@ const Home = () => {
                     <p className="text-sm text-gray-400">Coluna com alinhamento incorreto</p>
                     <div className="flex justify-between items-center mt-1">
                       <p className="text-xs text-gray-500">07/04/2025</p>
-                      <Button size="sm" className="h-8 bg-green-600 hover:bg-green-700 text-white">
-                        Resolver
-                      </Button>
                     </div>
                   </div>
                 </div>

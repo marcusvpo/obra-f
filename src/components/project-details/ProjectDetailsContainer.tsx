@@ -69,18 +69,42 @@ export default function ProjectDetailsContainer() {
         onProjectUpdated={handleProjectNameStatusUpdated}
       />
       
-      {project.photos && project.photos.length > 0 && (
-        <ProjectLatestPhoto photo={project.photos[project.photos.length - 1]} />
-      )}
-      
-      <ProjectSummary 
-        projectId={project.id}
-        estimatedCompletionDate={project.estimatedCompletionDate}
-        hoursWorked={project.hoursWorked}
-        budget={project.budget}
-        onProjectUpdated={handleProjectDatesHoursUpdated}
-      />
-      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <ProjectSummary 
+            projectId={project.id}
+            estimatedCompletionDate={project.estimatedCompletionDate}
+            hoursWorked={project.hoursWorked}
+            budget={project.budget}
+            onProjectUpdated={handleProjectDatesHoursUpdated}
+          />
+        </div>
+        
+        <div className="bg-[#353535] p-5 rounded-lg shadow-md border-l-4 border-[#FF6200]">
+          <h2 className="text-lg font-semibold mb-3">Status do Projeto</h2>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-300">Progresso:</span>
+              <span className="font-bold text-[#FF6200]">{project.progress}%</span>
+            </div>
+            <div className="w-full bg-[#222222] rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-[#FF6200] to-[#FFAA00] h-2 rounded-full" 
+                style={{ width: `${project.progress}%` }}
+              ></div>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-300">Status:</span>
+              <span className="font-medium">{project.status}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-300">Última atualização:</span>
+              <span>{project.lastUpdate}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <ProjectRiskInfo 
         delayRisk={project.delayRisk}
         teamProductivity={project.teamProductivity}
@@ -90,12 +114,21 @@ export default function ProjectDetailsContainer() {
         isCompleted={project.isCompleted}
         onHandleRiskUpdated={handleRiskUpdated}
       />
+     
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MaterialConsumption materials={materialsMock} />
+        <PendingTasks initialTasks={tarefasPendentesMock} />
+      </div>
       
-      <MaterialConsumption materials={materialsMock} />
-
-      <PendingTasks initialTasks={tarefasPendentesMock} />
-
-      <DelayHistory delays={historicoAtrasosMock} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <DelayHistory delays={historicoAtrasosMock} />
+        
+        {project.photos && project.photos.length > 0 && (
+          <div>
+            <ProjectLatestPhoto photo={project.photos[project.photos.length - 1]} />
+          </div>
+        )}
+      </div>
 
       <ProjectInfoPanel 
         projectId={project.id}
