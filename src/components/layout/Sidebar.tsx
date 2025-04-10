@@ -68,7 +68,7 @@ export default function Sidebar() {
       initial={{ x: -50, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col border-r border-[#FF6200] shadow-[0_0_15px_rgba(255,98,0,0.3)] rounded-r-md overflow-hidden"
+      className="h-screen w-64 fixed left-0 top-0 bg-[#333333] text-white z-40 flex flex-col border-r-4 border-[#FF6200] rounded-r-md overflow-hidden"
     >
       {/* Logo area */}
       <div className="px-5 py-6 flex items-center">
@@ -97,7 +97,7 @@ export default function Sidebar() {
                 to={item.path}
                 className={`flex items-center p-3 rounded-md transition-all duration-300 
                   ${location.pathname === item.path
-                      ? "bg-[#FF6200] text-white shadow-lg border border-[#FF7D33] drop-shadow-[0_0_8px_rgba(255,98,0,0.5)]"
+                      ? "bg-[#FF6200] text-white shadow-md border border-[#FF7D33]"
                       : "text-gray-300 hover:bg-secondary/50 hover:translate-x-1"
                   }`
                 }

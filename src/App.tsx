@@ -11,7 +11,6 @@ import ProjectDetails from "./pages/ProjectDetails";
 import NewProject from "./pages/NewProject";
 import Equipe from "./pages/Equipe";
 import NotFound from "./pages/NotFound";
-import NotificationsPanel from "./components/notifications/NotificationsPanel";
 import ChatLog from "./pages/ChatLog";
 
 // Create a new QueryClient instance
@@ -25,7 +24,6 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <NotificationsPanel />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/projetos" element={<Projetos />} />

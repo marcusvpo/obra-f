@@ -12,7 +12,8 @@ export default function ProjectLatestPhoto({ photo }: ProjectLatestPhotoProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-card p-4 rounded-lg h-full shadow-md hover:shadow-lg transition-all duration-300 border border-[#444444] overflow-hidden group"
+      whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+      className="bg-card p-4 rounded-lg h-full shadow-md hover:shadow-lg transition-all duration-300 border border-[#444444] overflow-hidden group cursor-pointer"
     >
       <h2 className="text-base font-semibold mb-2 flex items-center">
         <span className="text-primary mr-2">
