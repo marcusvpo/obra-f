@@ -14,6 +14,7 @@ import ProjectInfoPanel from "./ProjectInfoPanel";
 import MediaGallery from "./MediaGallery";
 import ProjectChatLog from "./ProjectChatLog";
 import ProjectLatestPhoto from "./ProjectLatestPhoto";
+import ProjectKpis from "./ProjectKpis";
 
 const materialsMock = {
   cimento: { usado: 50, planejado: 100 },
@@ -33,6 +34,23 @@ const historicoAtrasosMock = [
   '12/04: Atraso de 1 dia - Falta de material',
   '14/04: Atraso de 3 horas - Problema com fornecedor'
 ];
+
+// Mock data for new KPIs
+const kpisMock = {
+  activitiesPlanned: 40,
+  activitiesCompleted: 32,
+  inspectionsCount: 5,
+  inspectionAvgResult: 90,
+  wastePercentage: 7,
+  failuresCount: 12,
+  failuresByArea: [
+    { area: "Estrutura", count: 4 },
+    { area: "Elétrica", count: 5 },
+    { area: "Acabamento", count: 3 }
+  ],
+  reworkTimeAvg: 2,
+  reworkTimeGoal: 1
+};
 
 export default function ProjectDetailsContainer() {
   const { id } = useParams<{ id: string }>();
@@ -95,7 +113,7 @@ export default function ProjectDetailsContainer() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-300">Status:</span>
-              <span className="font-medium">{project.status}</span>
+              <span className="font-medium text-white bg-primary/20 px-2 py-0.5 rounded-full text-sm">{project.status}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-300">Última atualização:</span>
@@ -114,14 +132,18 @@ export default function ProjectDetailsContainer() {
         isCompleted={project.isCompleted}
         onHandleRiskUpdated={handleRiskUpdated}
       />
+      
+      <ProjectKpis data={kpisMock} />
      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <MaterialConsumption materials={materialsMock} />
         <PendingTasks initialTasks={tarefasPendentesMock} />
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <DelayHistory delays={historicoAtrasosMock} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <DelayHistory delays={historicoAtrasosMock} />
+        </div>
         
         {project.photos && project.photos.length > 0 && (
           <div>

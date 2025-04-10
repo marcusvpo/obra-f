@@ -1,64 +1,73 @@
-
-import { DollarSign, TrendingUp } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils";
 
 interface BudgetIndicatorProps {
   planned: number;
   estimated: number;
+  compact?: boolean;
 }
 
-export default function BudgetIndicator({ planned, estimated }: BudgetIndicatorProps) {
-  const percentage = Math.round((estimated / planned) * 100);
-  const isOverBudget = estimated > planned;
-  const overPercentage = isOverBudget ? Math.round(((estimated - planned) / planned) * 100) : 0;
+const BudgetIndicator = ({ planned, estimated, compact = false }: BudgetIndicatorProps) => {
+  const difference = estimated - planned;
+  const percentageDiff = Math.round((difference / planned) * 100);
+  const isOverBudget = difference > 0;
   
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
-  
+  if (compact) {
+    return (
+      <Card className="bg-card border-0 shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-sm font-semibold text-muted">Orçamento</h3>
+              <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                isOverBudget ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'
+              }`}>
+                {isOverBudget ? `${percentageDiff}% acima` : `${Math.abs(percentageDiff)}% abaixo`}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span>Planejado: {formatCurrency(planned)}</span>
+              <span>Estimado: {formatCurrency(estimated)}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <div className="bg-card rounded-lg p-5 shadow-sm">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <DollarSign className="h-5 w-5 text-primary" />
-        Orçamento
-      </h2>
-      
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
+    <Card className="bg-card mt-5 border-0 shadow-md">
+      <CardContent className="p-6">
+        <h3 className="font-semibold mb-4">Orçamento</h3>
+        <div className="grid grid-cols-2 gap-8">
           <div>
-            <p className="text-sm text-muted">Orçado</p>
-            <p className="text-xl font-semibold">{formatCurrency(planned)}</p>
+            <p className="text-muted text-sm mb-1">Planejado</p>
+            <p className="text-xl font-bold">{formatCurrency(planned)}</p>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-muted">Estimado</p>
-            <p className={`text-xl font-semibold ${isOverBudget ? 'text-red-500' : 'text-green-500'}`}>
-              {formatCurrency(estimated)}
-            </p>
+          <div>
+            <p className="text-muted text-sm mb-1">Estimado</p>
+            <p className="text-xl font-bold">{formatCurrency(estimated)}</p>
           </div>
         </div>
         
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Utilização do orçamento</span>
-            <span>{percentage}%</span>
+        <div className="mt-5">
+          <div className="flex justify-between mb-2">
+            <span className="text-sm">Variação</span>
+            <span className={`text-sm ${isOverBudget ? 'text-red-500' : 'text-green-500'}`}>
+              {isOverBudget ? '+' : ''}{formatCurrency(difference)} ({isOverBudget ? '+' : ''}{percentageDiff}%)
+            </span>
           </div>
-          <Progress 
-            value={percentage > 100 ? 100 : percentage} 
-            className="h-2"
-            indicatorClassName={percentage > 100 ? 'bg-red-500' : 'bg-primary'}
-          />
+          <div className="w-full h-2 bg-gray-700 rounded-full">
+            <div 
+              className={`h-2 rounded-full ${isOverBudget ? 'bg-red-500' : 'bg-green-500'}`}
+              style={{ width: `${Math.min(Math.abs(percentageDiff) * 2, 100)}%` }}
+            />
+          </div>
         </div>
-        
-        {isOverBudget && (
-          <div className="bg-[#3A3A3A] p-3 rounded-md flex items-center gap-2 text-red-500">
-            <TrendingUp size={16} />
-            <span className="text-sm">{overPercentage}% acima do orçado</span>
-          </div>
-        )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+export default BudgetIndicator;

@@ -62,12 +62,12 @@ export default function ProjectSummary({
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="relative">
-          <KpiCard 
-            title="Data de Conclusão" 
-            value={estimatedCompletionDate}
-            icon={<Calendar size={24} className="text-primary" />}
-          />
+        <div className="relative bg-card rounded-lg p-5 shadow-md border-l-4 border-primary">
+          <div className="flex items-center mb-2">
+            <Calendar size={24} className="text-primary mr-2" />
+            <h3 className="text-sm font-medium text-muted">Data de Conclusão</h3>
+          </div>
+          <div className="text-xl font-bold">{estimatedCompletionDate}</div>
           <Button 
             variant="ghost" 
             size="sm"
@@ -77,6 +77,7 @@ export default function ProjectSummary({
             <Edit size={14} />
           </Button>
         </div>
+        
         <div className="relative">
           <KpiCard 
             title="Horas Trabalhadas" 
@@ -95,10 +96,13 @@ export default function ProjectSummary({
       </div>
       
       {budget && (
-        <BudgetIndicator 
-          planned={budget.planned} 
-          estimated={budget.estimated} 
-        />
+        <div className="mt-5">
+          <BudgetIndicator 
+            planned={budget.planned} 
+            estimated={budget.estimated} 
+            compact={true}
+          />
+        </div>
       )}
     
       <Dialog open={dateDialogOpen} onOpenChange={setDateDialogOpen}>

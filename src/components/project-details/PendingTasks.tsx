@@ -1,13 +1,12 @@
 
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface PendingTasksProps {
   initialTasks: string[];
 }
 
 export default function PendingTasks({ initialTasks }: PendingTasksProps) {
-  const [tarefasPendentes, setTarefasPendentes] = useState<string[]>(initialTasks);
+  const [tarefasPendentes] = useState<string[]>(initialTasks);
   
   return (
     <div className="bg-card p-5 rounded-lg">
@@ -17,7 +16,7 @@ export default function PendingTasks({ initialTasks }: PendingTasksProps) {
       ) : (
         <div className="space-y-3">
           {tarefasPendentes.map((tarefa, index) => (
-            <div key={index} className="flex justify-between items-center p-3 bg-[#333333] rounded-lg">
+            <div key={index} className="p-3 bg-[#333333] rounded-lg">
               <p>{tarefa}</p>
             </div>
           ))}
