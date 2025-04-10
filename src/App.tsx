@@ -13,28 +13,31 @@ import Equipe from "./pages/Equipe";
 import NotFound from "./pages/NotFound";
 import NotificationsPanel from "./components/notifications/NotificationsPanel";
 
+// Create a new QueryClient instance
 const queryClient = new QueryClient();
 
-const App = () => (
-  <ThemeProvider defaultTheme="dark">
+const App = () => {
+  return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <NotificationsPanel />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/projetos" element={<Projetos />} />
-            <Route path="/projeto/:id" element={<ProjectDetails />} />
-            <Route path="/novo-projeto" element={<NewProject />} />
-            <Route path="/equipe" element={<Equipe />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="dark">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <NotificationsPanel />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/projetos" element={<Projetos />} />
+              <Route path="/projeto/:id" element={<ProjectDetails />} />
+              <Route path="/novo-projeto" element={<NewProject />} />
+              <Route path="/equipe" element={<Equipe />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
-  </ThemeProvider>
-);
+  );
+};
 
 export default App;

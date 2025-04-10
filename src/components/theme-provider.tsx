@@ -1,5 +1,4 @@
 
-// Simple theme provider implementation
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
@@ -20,9 +19,16 @@ export function ThemeProvider({
   children,
   defaultTheme = "dark",
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem("theme") as Theme) || defaultTheme
-  );
+  // Using a simple state initialization to avoid potential issues
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  
+  // Once the component mounts, we can safely access localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as Theme;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;

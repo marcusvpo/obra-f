@@ -1,3 +1,4 @@
+
 export interface Project {
   id: string;
   name: string;
@@ -54,6 +55,13 @@ export interface TimelineEvent {
 }
 
 export interface Photo {
+  id: string;
+  url: string;
+  caption: string;
+  date: string;
+}
+
+export interface GalleryImage {
   id: string;
   url: string;
   caption: string;
