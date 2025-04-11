@@ -1,17 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, MessageSquare, LogOut, Construction, FileText, Users, Bell, Plus, User, MessageCircle } from "lucide-react";
+import { Home, MessageSquare, LogOut, Construction, FileText, Users, Plus, User, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useNotifications } from "@/hooks/useNotifications";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 
 export default function Sidebar() {
   const location = useLocation();
-  const { openNotificationsPanel } = useNotifications();
   const [activeItem, setActiveItem] = useState<string>("/");
 
   useEffect(() => {
@@ -112,20 +110,6 @@ export default function Sidebar() {
               </Link>
             </motion.li>
           ))}
-          <motion.li
-            custom={menuItems.length}
-            initial="hidden"
-            animate="visible"
-            variants={menuItemVariants}
-          >
-            <button
-              onClick={openNotificationsPanel}
-              className="flex items-center w-full p-3 rounded-md transition-all duration-300 text-gray-300 hover:bg-secondary/50 hover:translate-x-1"
-            >
-              <span className="mr-3"><Bell size={20} /></span>
-              <span>Notificações</span>
-            </button>
-          </motion.li>
         </ul>
       </nav>
 

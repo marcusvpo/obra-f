@@ -1,9 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
-import { toast } from "sonner";
-import { markTaskAsComplete } from "@/data/mockData";
 
 export interface PendingTasksProps {
   tarefasPendentes: string[];
@@ -21,11 +18,6 @@ export default function PendingTasks({ tarefasPendentes }: PendingTasksProps) {
   // Usa tarefasPendentes se disponível, caso contrário usa as tarefas padrão
   const tasks = tarefasPendentes && tarefasPendentes.length > 0 ? tarefasPendentes : defaultTasks;
   
-  const handleComplete = (index: number) => {
-    markTaskAsComplete("1", index);
-    toast.success("Tarefa marcada como concluída!");
-  };
-  
   return (
     <Card className="bg-card border-none shadow-md hover:shadow-lg transition-all duration-300">
       <CardHeader>
@@ -40,14 +32,6 @@ export default function PendingTasks({ tarefasPendentes }: PendingTasksProps) {
             {tasks.map((task, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-secondary rounded-md hover:bg-secondary/80 transition-colors">
                 <span className="text-sm">{task}</span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-colors"
-                  onClick={() => handleComplete(index)}
-                >
-                  Concluir
-                </Button>
               </div>
             ))}
           </div>

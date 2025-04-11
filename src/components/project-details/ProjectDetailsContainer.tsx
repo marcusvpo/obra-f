@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getProjectDetails } from "@/data/projectData";
@@ -23,7 +22,6 @@ export default function ProjectDetailsContainer() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        // Use the projectDetails object directly from projectsData
         const projectId = id || "";
         const data = getProjectDetails(projectId);
         setProject(data);
@@ -109,7 +107,6 @@ export default function ProjectDetailsContainer() {
   };
 
   const handleRiskUpdated = () => {
-    // Re-fetch or update risk related data if needed
     console.log("Risk data updated");
   };
   
@@ -128,8 +125,35 @@ export default function ProjectDetailsContainer() {
       />
       
       <div className="grid grid-cols-1 gap-5 mt-5">
-        {/* KPIs e indicadores principais no topo */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+        <div className="mb-6">
+          <ProjectSummary 
+            projectId={project.id}
+            estimatedCompletionDate={project.estimatedCompletionDate}
+            hoursWorked={project.hoursWorked}
+            onProjectUpdated={handleSummaryUpdated}
+          />
+        </div>
+        
+        <div className="mb-6">
+          <ProjectKpis 
+            data={{
+              activitiesPlanned: 120,
+              activitiesCompleted: project.progress ? Math.round(120 * project.progress / 100) : 0,
+              inspectionsCount: 45,
+              inspectionAvgResult: 85,
+              wastePercentage: 4.2,
+              failuresCount: 8,
+              failuresByArea: [
+                { area: "Estrutura", count: 3 },
+                { area: "Elétrica", count: 2 },
+                { area: "Hidráulica", count: 2 },
+                { area: "Acabamento", count: 1 }
+              ]
+            }} 
+          />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 mb-6">
           <div className="md:col-span-6">
             <PendingTasks tarefasPendentes={project.tarefasPendentes || []} />
           </div>
@@ -138,43 +162,22 @@ export default function ProjectDetailsContainer() {
           </div>
         </div>
         
-        {/* Indicadores e riscos */}
-        {project.delayRisk && (
-          <div className="mb-5">
-            <ProjectKpis 
-              data={{
-                activitiesPlanned: 120,
-                activitiesCompleted: project.progress ? Math.round(120 * project.progress / 100) : 0,
-                inspectionsCount: 45,
-                inspectionAvgResult: 85,
-                wastePercentage: 4.2,
-                failuresCount: 8,
-                failuresByArea: [
-                  { area: "Estrutura", count: 3 },
-                  { area: "Elétrica", count: 2 },
-                  { area: "Hidráulica", count: 2 },
-                  { area: "Acabamento", count: 1 }
-                ],
-                reworkTimeAvg: 2.5,
-                reworkTimeGoal: 2
-              }} 
-            />
-          </div>
-        )}
+        <div className="mb-6">
+          <MaterialConsumption materiais={project.materiais} />
+        </div>
         
-        <MaterialConsumption materiais={project.materiais} />
+        <div className="mb-6">
+          <ProjectRiskInfo
+            delayRisk={project.delayRisk}
+            teamProductivity={project.teamProductivity}
+            safetyAlerts={project.safetyAlerts}
+            qualityIssues={project.qualityIssues}
+            postConstructionMaintenance={project.postConstructionMaintenance}
+            isCompleted={project.isCompleted}
+            onHandleRiskUpdated={handleRiskUpdated}
+          />
+        </div>
         
-        <ProjectRiskInfo
-          delayRisk={project.delayRisk}
-          teamProductivity={project.teamProductivity}
-          safetyAlerts={project.safetyAlerts}
-          qualityIssues={project.qualityIssues}
-          postConstructionMaintenance={project.postConstructionMaintenance}
-          isCompleted={project.isCompleted}
-          onHandleRiskUpdated={handleRiskUpdated}
-        />
-        
-        {/* Cards movidos para o final da página */}
         <div className="mt-8 border-t border-gray-700 pt-8">
           <h2 className="text-xl font-bold mb-5">Detalhes Adicionais</h2>
           
@@ -201,18 +204,11 @@ export default function ProjectDetailsContainer() {
               />
             </div>
             <div className="md:col-span-4">
-              <div className="grid grid-cols-1 gap-5">
-                <ProjectSummary 
-                  projectId={project.id}
-                  estimatedCompletionDate={project.estimatedCompletionDate}
-                  hoursWorked={project.hoursWorked}
-                  onProjectUpdated={handleSummaryUpdated}
-                />
-                
-                {project.photos && project.photos.length > 0 && (
+              {project.photos && project.photos.length > 0 && (
+                <div className="h-full flex items-center justify-center">
                   <ProjectLatestPhoto photo={project.photos[project.photos.length - 1]} />
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

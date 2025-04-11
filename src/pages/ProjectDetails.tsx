@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import ProjectDetailsContainer from "@/components/project-details/ProjectDetailsContainer";
 import { useNavigate, useParams } from "react-router-dom";
-import { projectDetails } from "@/data/projectsData";
+import { projectDetails, projects } from "@/data/projectsData";
 
 const ProjectDetails = () => {
   const navigate = useNavigate();
@@ -16,6 +16,9 @@ const ProjectDetails = () => {
       const availableProjectIds = Object.keys(projectDetails);
       if (availableProjectIds.length > 0) {
         navigate(`/projeto/${availableProjectIds[0]}`);
+      } else if (projects.length > 0) {
+        // Redireciona para o primeiro projeto na lista de projetos
+        navigate(`/projeto/${projects[0].id}`);
       } else {
         navigate("/projetos");
       }

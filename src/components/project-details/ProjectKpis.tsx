@@ -14,8 +14,6 @@ interface KpiData {
     area: string;
     count: number;
   }[];
-  reworkTimeAvg: number;
-  reworkTimeGoal: number;
 }
 
 interface ProjectKpisProps {
@@ -25,21 +23,6 @@ interface ProjectKpisProps {
 export default function ProjectKpis({ data }: ProjectKpisProps) {
   const completedPercentage = Math.round((data.activitiesCompleted / data.activitiesPlanned) * 100);
   const isWasteOverLimit = data.wastePercentage > 5;
-  const isReworkTimeOverLimit = data.reworkTimeAvg > data.reworkTimeGoal;
-  
-  const getStatusColor = (value: number, threshold: number, inverse = false) => {
-    if (inverse) {
-      return value <= threshold ? "text-green-500" : "text-red-500";
-    }
-    return value >= threshold ? "text-green-500" : "text-red-500";
-  };
-  
-  const getStatusIcon = (value: number, threshold: number, inverse = false) => {
-    if (inverse) {
-      return value <= threshold ? "✅" : "⚠️";
-    }
-    return value >= threshold ? "✅" : "⚠️";
-  };
   
   return (
     <div className="space-y-6">
@@ -88,7 +71,7 @@ export default function ProjectKpis({ data }: ProjectKpisProps) {
               <div className="flex items-center justify-between">
                 <span>Realizadas: {data.inspectionsCount} inspeções</span>
                 <span>
-                  Resultado médio: {data.inspectionAvgResult}% {data.inspectionAvgResult >= 80 ? '✓' : '⚠'} 
+                  Média de qualidade: {data.inspectionAvgResult}%
                 </span>
               </div>
               <div className="w-full bg-[#222222] rounded-full h-2.5">
@@ -102,13 +85,13 @@ export default function ProjectKpis({ data }: ProjectKpisProps) {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* KPI 3 - Desperdício de Matéria-Prima */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* KPI 3 - Desperdício */}
         <Card className="bg-[#3A3A3A] border-0 shadow-md hover:shadow-lg transition-all duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center text-white">
               <FileText size={18} className="text-primary mr-2" />
-              Desperdício de Matéria-Prima
+              Desperdício
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -157,35 +140,6 @@ export default function ProjectKpis({ data }: ProjectKpisProps) {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* KPI 5 - Tempo para Correção dos Retrabalhos */}
-        <Card className="bg-[#3A3A3A] border-0 shadow-md hover:shadow-lg transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center text-white">
-              <Clock size={18} className="text-primary mr-2" />
-              Tempo para Correção dos Retrabalhos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span>Tempo médio atual: {data.reworkTimeAvg} dias</span>
-                <span className={isReworkTimeOverLimit ? "text-red-500" : "text-green-500"}>
-                  {isReworkTimeOverLimit ? "⚠" : "✓"} (meta: até {data.reworkTimeGoal} dias)
-                </span>
-              </div>
-              <div className="w-full h-2.5 bg-[#222222] rounded-full">
-                <div 
-                  className={`h-2.5 rounded-full transition-all duration-500 ease-out ${
-                    data.reworkTimeAvg <= data.reworkTimeGoal ? 'bg-green-500' : 
-                    data.reworkTimeAvg <= data.reworkTimeGoal * 1.5 ? 'bg-yellow-500' : 'bg-red-500'
-                  }`}
-                  style={{ width: `${Math.min(data.reworkTimeAvg / (data.reworkTimeGoal * 2) * 100, 100)}%` }}
-                />
               </div>
             </div>
           </CardContent>

@@ -14,17 +14,17 @@ export default function ProjectLatestPhoto({ photo }: ProjectLatestPhotoProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-      className="bg-card p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-[#444444] overflow-hidden group cursor-pointer"
+      className="bg-card p-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-[#444444] max-w-[300px]"
     >
-      <h2 className="text-base font-semibold mb-2 flex items-center">
-        <Camera size={18} className="text-primary mr-2" />
+      <h2 className="text-sm font-semibold mb-2 flex items-center">
+        <Camera size={16} className="text-primary mr-2" />
         Última Foto
       </h2>
       <div className="flex justify-center overflow-hidden rounded-md">
         <motion.img 
           src={photo.url} 
           alt="Última foto do projeto" 
-          className="h-[180px] rounded-md object-cover group-hover:scale-105 transition-transform duration-500"
+          className="h-[160px] w-full rounded-md object-cover"
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 0.3 }}
         />
