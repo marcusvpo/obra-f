@@ -1,13 +1,14 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertIcon, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Calendar, CheckCircle2, Hammer, FileWarning } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
-import { BarChart } from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
 import { AlertItem, DelayRiskInfo, MaintenanceItem } from "@/types/project";
 import { cn } from "@/lib/utils";
+import { Bar } from "recharts";
 
 interface ProjectRiskInfoProps {
   delayRisk: DelayRiskInfo;
@@ -74,42 +75,19 @@ export default function ProjectRiskInfo({
           <div className="space-y-4">
             <h3 className="text-sm font-semibold mb-2">Distribuição de Falhas por Área</h3>
             <div className="h-56">
-              <BarChart 
-                data={chartData}
-                options={{
-                  plugins: {
-                    legend: {
-                      display: false
-                    },
-                    tooltip: {
-                      enabled: true
-                    }
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      grid: {
-                        display: false
-                      },
-                      ticks: {
-                        font: {
-                          size: 10
-                        }
-                      }
-                    },
-                    x: {
-                      grid: {
-                        display: false
-                      },
-                      ticks: {
-                        font: {
-                          size: 10
-                        }
-                      }
-                    }
-                  }
-                }}
-              />
+              <ChartContainer 
+                config={{}}
+                className="h-full w-full"
+              >
+                <Bar 
+                  data={Object.entries(failureCategories).map(([name, value]) => ({
+                    name,
+                    value
+                  }))}
+                  dataKey="value"
+                  fill="#8884d8"
+                />
+              </ChartContainer>
             </div>
           </div>
           
@@ -119,7 +97,7 @@ export default function ProjectRiskInfo({
             <div>
               <h3 className="text-sm font-semibold mb-2">Risco de Atraso</h3>
               <Alert className={`bg-opacity-20 ${delayRisk.percentage > 60 ? 'bg-red-900 border-red-800' : delayRisk.percentage > 30 ? 'bg-yellow-900 border-yellow-800' : 'bg-green-900 border-green-800'}`}>
-                <AlertIcon className={delayRisk.percentage > 60 ? 'text-red-500' : delayRisk.percentage > 30 ? 'text-yellow-500' : 'text-green-500'} />
+                <AlertCircle className={delayRisk.percentage > 60 ? 'text-red-500' : delayRisk.percentage > 30 ? 'text-yellow-500' : 'text-green-500'} />
                 <AlertTitle className="text-sm">
                   {delayRisk.percentage > 60 ? 'Risco Alto' : delayRisk.percentage > 30 ? 'Risco Moderado' : 'Risco Baixo'}
                 </AlertTitle>

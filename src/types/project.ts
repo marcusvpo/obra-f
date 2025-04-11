@@ -30,11 +30,7 @@ export interface ProjectDetails extends Project {
     planned: number;
     estimated: number;
   };
-  delayRisk?: {
-    percentage: number;
-    days: number;
-    reason: string;
-  };
+  delayRisk?: DelayRiskInfo;
   safetyAlerts?: AlertItem[];
   qualityIssues?: AlertItem[];
   teamProductivity?: number;
@@ -44,6 +40,12 @@ export interface ProjectDetails extends Project {
   chatLogs?: ChatMessage[];
   tarefasPendentes?: string[];
   materiais?: Record<string, { usado: number; planejado: number }>;
+}
+
+export interface DelayRiskInfo {
+  percentage: number;
+  days: number;
+  reason: string;
 }
 
 export interface TimelineEvent {
