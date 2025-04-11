@@ -1,16 +1,18 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, MessageSquare, LogOut, Construction, FileText, Users, Plus, User, MessageCircle } from "lucide-react";
+import { Home, MessageSquare, LogOut, Construction, FileText, Users, Plus, Settings, HelpCircle, User, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
+import { useTheme } from "@/components/theme-provider";
 
 export default function Sidebar() {
   const location = useLocation();
   const [activeItem, setActiveItem] = useState<string>("/");
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setActiveItem(location.pathname);
@@ -18,6 +20,11 @@ export default function Sidebar() {
 
   const handleLogout = () => {
     toast.success("Logout realizado com sucesso");
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+    toast.success(`Tema ${theme === "dark" ? "claro" : "escuro"} ativado`);
   };
 
   const menuItems = [
@@ -76,7 +83,8 @@ export default function Sidebar() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="text-xl font-bold"
         >
-          ObraFácil
+          <span className="text-[#FF6200] mr-1">Construções</span> 
+          <span className="text-gray-200">Ramos</span>
         </motion.h1>
       </div>
 
@@ -113,6 +121,44 @@ export default function Sidebar() {
         </ul>
       </nav>
 
+      {/* Suporte e Configurações */}
+      <div className="px-2 mb-4">
+        <Separator className="my-4 bg-gray-600" />
+        <ul className="space-y-2">
+          <motion.li
+            initial="hidden"
+            animate="visible"
+            variants={menuItemVariants}
+            custom={6}
+          >
+            <Link
+              to="/suporte"
+              className="flex items-center p-3 rounded-md transition-all duration-300 text-gray-300 hover:bg-secondary/50 hover:translate-x-1"
+            >
+              <HelpCircle size={20} className="mr-3" />
+              <span>Suporte</span>
+            </Link>
+          </motion.li>
+          <motion.li
+            initial="hidden"
+            animate="visible"
+            variants={menuItemVariants}
+            custom={7}
+          >
+            <button
+              onClick={toggleTheme}
+              className="w-full flex items-center p-3 rounded-md transition-all duration-300 text-gray-300 hover:bg-secondary/50 hover:translate-x-1"
+            >
+              <Settings size={20} className="mr-3" />
+              <span>Configurações</span>
+              <span className="ml-auto text-xs bg-secondary/50 px-2 py-0.5 rounded">
+                Tema: {theme === "dark" ? "Escuro" : "Claro"}
+              </span>
+            </button>
+          </motion.li>
+        </ul>
+      </div>
+
       {/* Profile section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -123,11 +169,11 @@ export default function Sidebar() {
         <div className="flex items-center space-x-3 mb-3">
           <Avatar className="border-2 border-primary/20">
             <AvatarImage src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=150" />
-            <AvatarFallback>FD</AvatarFallback>
+            <AvatarFallback>CR</AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-medium text-sm">Fulano</p>
-            <p className="text-xs text-gray-400">fulano@example.com</p>
+            <p className="font-medium text-sm">Construções Ramos</p>
+            <p className="text-xs text-gray-400">contato@ramos.com.br</p>
           </div>
         </div>
         <Separator className="my-2 bg-gray-600" />

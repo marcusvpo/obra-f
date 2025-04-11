@@ -175,6 +175,7 @@ export default function ProjectDetailsContainer() {
             postConstructionMaintenance={project.postConstructionMaintenance}
             isCompleted={project.isCompleted}
             onHandleRiskUpdated={handleRiskUpdated}
+            className="md:h-[500px]"
           />
         </div>
         
@@ -195,7 +196,7 @@ export default function ProjectDetailsContainer() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5 mb-5">
-            <div className="md:col-span-8">
+            <div className="md:col-span-9">
               <MediaGallery 
                 projectId={project.id} 
                 photos={project.photos} 
@@ -203,9 +204,9 @@ export default function ProjectDetailsContainer() {
                 onObservationsUpdated={handleObservationsUpdated} 
               />
             </div>
-            <div className="md:col-span-4">
+            <div className="md:col-span-3">
               {project.photos && project.photos.length > 0 && (
-                <div className="h-full flex items-center justify-center">
+                <div className="flex items-start justify-center">
                   <ProjectLatestPhoto photo={project.photos[project.photos.length - 1]} />
                 </div>
               )}
