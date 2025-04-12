@@ -22,11 +22,6 @@ export default function Sidebar() {
     toast.success("Logout realizado com sucesso");
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-    toast.success(`Tema ${theme === "dark" ? "claro" : "escuro"} ativado`);
-  };
-
   const menuItems = [
     { 
       path: "/", 
@@ -83,8 +78,8 @@ export default function Sidebar() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="text-xl font-bold"
         >
-          <span className="text-[#FF6200] mr-1">Construções</span> 
-          <span className="text-gray-200">Ramos</span>
+          <span className="text-[#FF6200] mr-1">Obra</span> 
+          <span className="text-gray-200">Fácil</span>
         </motion.h1>
       </div>
 
@@ -145,16 +140,13 @@ export default function Sidebar() {
             variants={menuItemVariants}
             custom={7}
           >
-            <button
-              onClick={toggleTheme}
-              className="w-full flex items-center p-3 rounded-md transition-all duration-300 text-gray-300 hover:bg-secondary/50 hover:translate-x-1"
+            <Link
+              to="/configuracoes"
+              className="flex items-center p-3 rounded-md transition-all duration-300 text-gray-300 hover:bg-secondary/50 hover:translate-x-1"
             >
               <Settings size={20} className="mr-3" />
               <span>Configurações</span>
-              <span className="ml-auto text-xs bg-secondary/50 px-2 py-0.5 rounded">
-                Tema: {theme === "dark" ? "Escuro" : "Claro"}
-              </span>
-            </button>
+            </Link>
           </motion.li>
         </ul>
       </div>
@@ -188,4 +180,4 @@ export default function Sidebar() {
       </motion.div>
     </motion.div>
   );
-}
+};

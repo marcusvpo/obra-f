@@ -62,6 +62,12 @@ const AppLayout = ({
           </div>
           
           <div className="flex items-center gap-4">
+            <div className="mr-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-muted-foreground">Cliente:</span>
+                <span className="text-sm font-semibold">Construções Ramos</span>
+              </div>
+            </div>
             <Button 
               variant="ghost" 
               size="sm" 

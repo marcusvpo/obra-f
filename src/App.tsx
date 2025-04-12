@@ -13,6 +13,7 @@ import Equipe from "./pages/Equipe";
 import NotFound from "./pages/NotFound";
 import ChatLog from "./pages/ChatLog";
 import Suporte from "./pages/Suporte";
+import Configuracoes from "./pages/Configuracoes";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => {
               <Route path="/equipe" element={<Equipe />} />
               <Route path="/chatlog" element={<ChatLog />} />
               <Route path="/suporte" element={<Suporte />} />
+              <Route path="/configuracoes" element={<Configuracoes />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
