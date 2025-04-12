@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import ChatLog from "./pages/ChatLog";
 import Suporte from "./pages/Suporte";
 import Configuracoes from "./pages/Configuracoes";
+import Landing from "./pages/Landing";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -27,7 +28,8 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Landing />} />
+              <Route path="/dashboard" element={<Home />} />
               <Route path="/projetos" element={<Projetos />} />
               <Route path="/projeto/:id" element={<ProjectDetails />} />
               <Route path="/novo-projeto" element={<NewProject />} />
