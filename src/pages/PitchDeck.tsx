@@ -11,9 +11,11 @@ import {
   PieChart, 
   BarChart, 
   Users, 
-  Briefcase,
-  Lightbulb,
-  Target
+  ClipboardCheck,
+  Clock,
+  FileCheck,
+  FileText,
+  ArrowDown
 } from "lucide-react";
 
 interface SlideProps {
@@ -34,275 +36,355 @@ const Slide = ({ title, children, icon }: SlideProps) => (
   </Card>
 );
 
-const ProblemSlide = () => (
-  <Slide title="O Problema" icon={<MessageSquare className="text-white" size={24} />}>
+const OpeningSlide = () => (
+  <Slide title="Abertura Impactante" icon={<FileText className="text-white" size={24} />}>
+    <div className="flex flex-col items-center justify-center h-full gap-8">
+      <h1 className="text-4xl md:text-5xl font-bold text-center text-white">
+        Você ainda está <span className="text-[#FF6200]">perdendo tempo e dinheiro</span> com a gestão da sua obra?
+      </h1>
+      
+      <h2 className="text-2xl text-center text-gray-300">
+        Existe uma forma mais simples, eficiente e econômica de controlar tudo.
+      </h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-8">
+        <div className="bg-[#444444] p-4 rounded-lg relative">
+          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+            ANTES
+          </div>
+          <div className="w-full h-48 bg-[#3A3A3A] rounded flex items-center justify-center">
+            <img src="/placeholder.svg" alt="Canteiro de obra desorganizado" className="object-cover w-full h-full opacity-70" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-white text-lg font-bold bg-black bg-opacity-50 p-2 rounded">Caos e Desorganização</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-[#444444] p-4 rounded-lg relative">
+          <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+            DEPOIS
+          </div>
+          <div className="w-full h-48 bg-[#3A3A3A] rounded flex items-center justify-center overflow-hidden">
+            <img src="/placeholder.svg" alt="Dashboard ObraFácil" className="object-cover w-full h-full" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-white text-lg font-bold bg-black bg-opacity-50 p-2 rounded">Controle Total</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="animate-bounce mt-4">
+        <ArrowDown className="text-[#FF6200]" size={32} />
+      </div>
+    </div>
+  </Slide>
+);
+
+const PainSlide = () => (
+  <Slide title="A Dor" icon={<MessageSquare className="text-white" size={24} />}>
+    <div className="flex flex-col gap-8">
+      <div className="mb-6 text-center">
+        <h3 className="text-3xl font-bold text-[#FF6200] mb-2">Você já viveu isso?</h3>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center text-center">
+          <div className="text-4xl mb-4">🔧</div>
+          <h4 className="font-bold mb-2 text-[#FF6200]">Equipes que não se comunicam</h4>
+          <p>Informações importantes se perdendo entre o escritório e o campo</p>
+        </div>
+        <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center text-center">
+          <div className="text-4xl mb-4">🕒</div>
+          <h4 className="font-bold mb-2 text-[#FF6200]">Atrasos que viram prejuízo</h4>
+          <p>Cronogramas estourados e multas contratuais inesperadas</p>
+        </div>
+        <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center text-center">
+          <div className="text-4xl mb-4">📉</div>
+          <h4 className="font-bold mb-2 text-[#FF6200]">Materiais sumindo sem controle</h4>
+          <p>Estoque impreciso e desperdício de materiais importantes</p>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center text-center">
+          <div className="text-4xl mb-4">🔁</div>
+          <h4 className="font-bold mb-2 text-[#FF6200]">Retrabalho por falta de informação</h4>
+          <p>Serviços refeitos por erro de comunicação ou especificações incorretas</p>
+        </div>
+        <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center text-center">
+          <div className="text-4xl mb-4">😤</div>
+          <h4 className="font-bold mb-2 text-[#FF6200]">Clientes insatisfeitos</h4>
+          <p>Reclamações constantes por falta de transparência e atualizações</p>
+        </div>
+      </div>
+      
+      <div className="mt-8 bg-[#3A3A3A] p-8 rounded-lg text-center">
+        <p className="text-xl italic">
+          "A gente entende. E você não está sozinho. <span className="text-[#FF6200] font-bold">8 a cada 10 obras</span> sofrem com esses mesmos problemas todos os dias."
+        </p>
+      </div>
+    </div>
+  </Slide>
+);
+
+const CostSlide = () => (
+  <Slide title="O Custo Invisível do Caos" icon={<BarChart className="text-white" size={24} />}>
     <div className="flex flex-col gap-8">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Gerenciamento de Obras Ineficiente</h3>
-        <p className="text-lg mb-6">O setor da construção civil enfrenta desafios significativos no gerenciamento de projetos</p>
+        <h3 className="text-2xl font-bold text-[#FF6200] mb-2 text-center">O problema não é só operacional. É financeiro.</h3>
+        <p className="text-lg mb-6 text-center text-gray-300">Quanto está custando a desorganização da sua obra?</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center">
-          <div className="text-4xl font-bold text-[#FF6200] mb-2">72%</div>
-          <p className="text-center">das construtoras relatam problemas de comunicação entre campo e escritório</p>
+          <div className="text-4xl font-bold text-[#FF6200] mb-2">25%</div>
+          <p className="text-center">do custo total da obra vem de retrabalho por falhas de comunicação</p>
         </div>
         <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center">
-          <div className="text-4xl font-bold text-[#FF6200] mb-2">36%</div>
-          <p className="text-center">é a taxa média de retrabalho por falhas de comunicação</p>
+          <div className="text-4xl font-bold text-[#FF6200] mb-2">2 semanas</div>
+          <p className="text-center">perdidas por obra apenas para resolver problemas de comunicação</p>
         </div>
         <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center">
-          <div className="text-4xl font-bold text-[#FF6200] mb-2">1.5M</div>
-          <p className="text-center">profissionais lutam com controle de projetos fragmentado</p>
+          <div className="text-4xl font-bold text-[#FF6200] mb-2">R$35 mil</div>
+          <p className="text-center">desperdiçados em média por mês por falta de controle em cada obra</p>
         </div>
       </div>
       
-      <div className="mt-8 bg-[#3A3A3A] p-6 rounded-lg border-l-4 border-[#FF6200]">
-        <h4 className="font-bold mb-2">Principais Desafios:</h4>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>Comunicação fragmentada entre equipes e clientes</li>
-          <li>Dificuldade em monitorar o progresso das obras</li>
-          <li>Gestão ineficiente de recursos e materiais</li>
-          <li>Alta taxa de retrabalho e falhas de execução</li>
-        </ul>
+      <div className="mt-8 bg-[#3A3A3A] p-6 rounded-lg">
+        <h4 className="font-bold mb-4 text-[#FF6200] text-center">Impacto Anual em Uma Construtora Média:</h4>
+        
+        <div className="w-full bg-[#444444] h-16 rounded-lg relative overflow-hidden mb-4">
+          <div className="absolute top-0 left-0 h-full bg-[#FF6200]" style={{ width: "37%" }}></div>
+          <div className="absolute inset-0 flex items-center justify-center text-white font-bold">
+            37% de lucro perdido anualmente
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+          <div className="bg-[#444444] p-4 rounded-lg">
+            <p className="text-lg mb-1">Aumento médio do prazo de entrega</p>
+            <p className="text-2xl font-bold text-[#FF6200]">38%</p>
+          </div>
+          <div className="bg-[#444444] p-4 rounded-lg">
+            <p className="text-lg mb-1">Taxa de retrabalho típica</p>
+            <p className="text-2xl font-bold text-[#FF6200]">22%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Slide>
+);
+
+const WhatIfSlide = () => (
+  <Slide title="A Virada: Como Seria Se..." icon={<Rocket className="text-white" size={24} />}>
+    <div className="flex flex-col gap-8">
+      <div className="mb-6 text-center">
+        <h3 className="text-3xl font-bold text-[#FF6200] mb-2">E se tudo isso mudasse a partir de agora?</h3>
+        <p className="text-lg text-gray-300">Imagine um novo cenário para suas obras</p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-[#444444] p-6 rounded-lg">
+          <div className="flex gap-4 mb-6 items-center">
+            <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              ✓
+            </div>
+            <div>
+              <h4 className="font-bold text-xl">Equipes integradas em tempo real</h4>
+              <p className="text-gray-300">Todos com acesso às mesmas informações, atualizadas instantaneamente</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-4 mb-6 items-center">
+            <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              ✓
+            </div>
+            <div>
+              <h4 className="font-bold text-xl">Visão total da obra no celular</h4>
+              <p className="text-gray-300">Acompanhe tudo a distância, como se estivesse presente na obra</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-4 items-center">
+            <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              ✓
+            </div>
+            <div>
+              <h4 className="font-bold text-xl">Zero papelada, 100% automatizado</h4>
+              <p className="text-gray-300">Adeus às planilhas e papéis que se perdem facilmente</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-[#444444] p-6 rounded-lg">
+          <div className="flex gap-4 mb-6 items-center">
+            <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              ✓
+            </div>
+            <div>
+              <h4 className="font-bold text-xl">Controle de materiais, gastos e atrasos</h4>
+              <p className="text-gray-300">Monitore todos os aspectos críticos de cada projeto</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-4 mb-6 items-center">
+            <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              ✓
+            </div>
+            <div>
+              <h4 className="font-bold text-xl">Cliente satisfeito, equipe eficiente</h4>
+              <p className="text-gray-300">Aumento da produtividade e satisfação de todos os envolvidos</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-4 items-center">
+            <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              ✓
+            </div>
+            <div>
+              <h4 className="font-bold text-xl">Decisões baseadas em dados reais</h4>
+              <p className="text-gray-300">Relatórios e insights que ajudam a prevenir problemas</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-4 bg-[#3A3A3A] p-6 rounded-lg text-center">
+        <p className="text-xl font-bold mb-2">Resultado:</p>
+        <div className="flex flex-col md:flex-row justify-around items-center gap-4">
+          <div>
+            <p className="text-[#FF6200] text-2xl font-bold">+24%</p>
+            <p>de produtividade</p>
+          </div>
+          <div>
+            <p className="text-[#FF6200] text-2xl font-bold">-32%</p>
+            <p>nos custos operacionais</p>
+          </div>
+          <div>
+            <p className="text-[#FF6200] text-2xl font-bold">+40%</p>
+            <p>na satisfação dos clientes</p>
+          </div>
+        </div>
       </div>
     </div>
   </Slide>
 );
 
 const SolutionSlide = () => (
-  <Slide title="A Solução" icon={<Lightbulb className="text-white" size={24} />}>
+  <Slide title="A Solução: ObraFácil" icon={<ClipboardCheck className="text-white" size={24} />}>
     <div className="flex flex-col gap-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">ObraFácil: Gestão Integrada de Construções</h3>
-        <p className="text-lg mb-6">Uma plataforma centralizada que conecta o escritório com o campo via WhatsApp, simplificando todo o processo de gerenciamento de obras</p>
+      <div className="mb-6 text-center">
+        <h3 className="text-3xl font-bold text-[#FF6200] mb-4">Conheça o ObraFácil</h3>
+        <h4 className="text-xl text-white">Sua obra no controle, do começo ao fim.</h4>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-[#444444] p-6 rounded-lg">
-          <div className="w-full h-48 bg-[#3A3A3A] mb-4 rounded flex items-center justify-center">
-            <img src="/placeholder.svg" alt="Dashboard ObraFácil" className="max-h-full object-contain" />
-          </div>
-          <h4 className="font-bold mb-2 text-[#FF6200]">Dashboard Unificado</h4>
-          <p>Visão completa de todos os projetos e métricas relevantes em um só lugar</p>
-        </div>
-        <div className="bg-[#444444] p-6 rounded-lg">
-          <div className="w-full h-48 bg-[#3A3A3A] mb-4 rounded flex items-center justify-center">
-            <img src="/placeholder.svg" alt="Integração WhatsApp" className="max-h-full object-contain" />
-          </div>
-          <h4 className="font-bold mb-2 text-[#FF6200]">Integração WhatsApp</h4>
-          <p>Comunicação direta com a equipe em campo sem precisar de aplicativos adicionais</p>
-        </div>
-      </div>
-      
-      <div className="mt-6 bg-[#3A3A3A] p-6 rounded-lg border-l-4 border-[#FF6200]">
-        <h4 className="font-bold mb-2">Diferencial-Chave:</h4>
-        <p>Enquanto outras soluções exigem aplicativos específicos e treinamento extensivo, o ObraFácil integra-se ao WhatsApp - ferramenta que suas equipes já usam diariamente, eliminando barreiras de adoção.</p>
-      </div>
-    </div>
-  </Slide>
-);
-
-const MarketSlide = () => (
-  <Slide title="Tamanho de Mercado" icon={<PieChart className="text-white" size={24} />}>
-    <div className="flex flex-col gap-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Um Mercado Massivo em Digitalização</h3>
-        <p className="text-lg mb-4">A construção civil representa 7% do PIB brasileiro com crescente adoção digital</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center">
-          <div className="text-4xl font-bold text-[#FF6200] mb-2">R$500B</div>
-          <p className="text-center">Valor do mercado de construção civil no Brasil (TAM)</p>
-        </div>
-        <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center">
-          <div className="text-4xl font-bold text-[#FF6200] mb-2">R$85B</div>
-          <p className="text-center">Mercado de gerenciamento de projetos de construção (SAM)</p>
-        </div>
-        <div className="bg-[#444444] p-6 rounded-lg flex flex-col items-center">
-          <div className="text-4xl font-bold text-[#FF6200] mb-2">R$12B</div>
-          <p className="text-center">Mercado inicial de foco: pequenas e médias construtoras (SOM)</p>
-        </div>
+      <div className="bg-[#444444] p-6 rounded-lg text-center mb-6">
+        <p className="text-lg">
+          "Uma plataforma que centraliza toda a gestão da obra, com comunicação por WhatsApp e monitoramento em tempo real."
+        </p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#3A3A3A] p-6 rounded-lg">
-          <h4 className="font-bold mb-2 text-[#FF6200]">Crescimento do Mercado</h4>
-          <div className="w-full h-40 bg-[#444444] rounded mb-4 relative overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <BarChart className="text-[#FF6200]" size={120} />
+        <div className="bg-[#3A3A3A] p-6 rounded-lg h-80 flex items-center justify-center">
+          <div className="relative w-full max-w-md">
+            <img src="/placeholder.svg" alt="Dashboard ObraFácil" className="w-full rounded-lg shadow-lg" />
+            <div className="absolute -top-4 -right-4 bg-[#FF6200] text-white px-3 py-1 rounded-full text-sm font-bold">
+              Dashboard Web
             </div>
           </div>
-          <p>Taxa de crescimento anual do mercado de software para construção: 18%</p>
         </div>
-        <div className="bg-[#3A3A3A] p-6 rounded-lg">
-          <h4 className="font-bold mb-2 text-[#FF6200]">Por que Agora?</h4>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Crescente adoção de soluções digitais pós-pandemia</li>
-            <li>Penetração de smartphones em 97% das equipes de campo</li>
-            <li>Pressão por redução de custos e aumento de eficiência</li>
-            <li>WhatsApp como ferramenta universal no setor</li>
-          </ul>
+        
+        <div className="bg-[#3A3A3A] p-6 rounded-lg h-80 flex items-center justify-center">
+          <div className="relative w-48">
+            <div className="border-8 border-black rounded-3xl overflow-hidden">
+              <img src="/placeholder.svg" alt="WhatsApp integrado" className="w-full" />
+            </div>
+            <div className="absolute -top-4 -right-4 bg-[#FF6200] text-white px-3 py-1 rounded-full text-sm font-bold">
+              WhatsApp Integrado
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <div className="bg-[#444444] p-4 rounded-lg text-center">
+          <h4 className="font-bold mb-2 text-[#FF6200]">Simples</h4>
+          <p className="text-sm">Implementação em apenas 24 horas, sem necessidade de treinamento extensivo</p>
+        </div>
+        <div className="bg-[#444444] p-4 rounded-lg text-center">
+          <h4 className="font-bold mb-2 text-[#FF6200]">Completo</h4>
+          <p className="text-sm">Todos os recursos que você precisa para gerenciar sua obra de ponta a ponta</p>
+        </div>
+        <div className="bg-[#444444] p-4 rounded-lg text-center">
+          <h4 className="font-bold mb-2 text-[#FF6200]">Acessível</h4>
+          <p className="text-sm">Planos adequados para construtoras de todos os tamanhos</p>
         </div>
       </div>
     </div>
   </Slide>
 );
 
-const BusinessModelSlide = () => (
-  <Slide title="Modelo de Negócio" icon={<Briefcase className="text-white" size={24} />}>
+const HowItWorksSlide = () => (
+  <Slide title="Funciona Assim" icon={<Clock className="text-white" size={24} />}>
     <div className="flex flex-col gap-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Modelo de Assinatura Simples e Escalável</h3>
+      <div className="mb-6 text-center">
+        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Veja como é fácil usar o ObraFácil</h3>
+        <p className="text-gray-300">Um fluxo simples que qualquer equipe pode adotar rapidamente</p>
       </div>
       
-      <div className="bg-[#444444] p-6 rounded-lg mb-8">
-        <div className="flex flex-col md:flex-row items-center gap-8">
-          <div className="bg-[#3A3A3A] p-6 rounded-lg flex-1">
-            <h4 className="text-xl font-bold text-[#FF6200] mb-4 text-center">Como Geramos Receita</h4>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center">1</div>
-                <div>
-                  <p className="font-semibold">Modelo SaaS por Projetos</p>
-                  <p className="text-sm text-gray-300">Assinatura baseada no número de projetos simultâneos</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center">2</div>
-                <div>
-                  <p className="font-semibold">Versão Básica Gratuita</p>
-                  <p className="text-sm text-gray-300">Para atração de clientes e expansão da base de usuários</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center">3</div>
-                <div>
-                  <p className="font-semibold">Recursos Avançados Premium</p>
-                  <p className="text-sm text-gray-300">Análise de dados, IA e integrações personalizadas</p>
-                </div>
-              </div>
+      <div className="relative">
+        <div className="absolute left-1/2 top-12 bottom-12 w-1 bg-[#FF6200] -translate-x-1/2 hidden md:block"></div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 relative">
+          <div className="md:text-right">
+            <div className="bg-[#444444] p-6 rounded-lg relative">
+              <div className="absolute -right-5 top-1/2 w-9 h-9 bg-[#FF6200] rounded-full -translate-y-1/2 flex items-center justify-center font-bold text-white hidden md:flex">1</div>
+              <div className="md:hidden w-9 h-9 bg-[#FF6200] rounded-full flex items-center justify-center font-bold text-white mb-2">1</div>
+              <h4 className="font-bold mb-2 text-[#FF6200]">Sua equipe envia mensagens pelo WhatsApp</h4>
+              <p>Fotos, atualizações, problemas e relatórios diários usando o app que todos já têm no celular</p>
             </div>
           </div>
           
-          <div className="bg-[#3A3A3A] p-6 rounded-lg flex-1">
-            <h4 className="text-xl font-bold text-[#FF6200] mb-4 text-center">Unidade Econômica</h4>
-            <div className="space-y-4">
-              <div className="flex justify-between border-b border-[#555555] pb-2">
-                <span>CAC Médio:</span>
-                <span className="font-bold">R$ 800</span>
-              </div>
-              <div className="flex justify-between border-b border-[#555555] pb-2">
-                <span>LTV Médio:</span>
-                <span className="font-bold">R$ 8.400</span>
-              </div>
-              <div className="flex justify-between border-b border-[#555555] pb-2">
-                <span>LTV/CAC Ratio:</span>
-                <span className="font-bold text-[#FF6200]">10.5x</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Tempo médio de recuperação de CAC:</span>
-                <span className="font-bold">4 meses</span>
-              </div>
+          <div className="md:mt-32">
+            <div className="bg-[#444444] p-6 rounded-lg relative">
+              <div className="absolute -left-5 top-1/2 w-9 h-9 bg-[#FF6200] rounded-full -translate-y-1/2 flex items-center justify-center font-bold text-white hidden md:flex">2</div>
+              <div className="md:hidden w-9 h-9 bg-[#FF6200] rounded-full flex items-center justify-center font-bold text-white mb-2">2</div>
+              <h4 className="font-bold mb-2 text-[#FF6200]">A plataforma organiza tudo automaticamente</h4>
+              <p>Nossa IA categoriza mensagens, detecta problemas e atualiza cronogramas sem precisar de intervenção manual</p>
+            </div>
+          </div>
+          
+          <div className="md:text-right md:mt-32">
+            <div className="bg-[#444444] p-6 rounded-lg relative">
+              <div className="absolute -right-5 top-1/2 w-9 h-9 bg-[#FF6200] rounded-full -translate-y-1/2 flex items-center justify-center font-bold text-white hidden md:flex">3</div>
+              <div className="md:hidden w-9 h-9 bg-[#FF6200] rounded-full flex items-center justify-center font-bold text-white mb-2">3</div>
+              <h4 className="font-bold mb-2 text-[#FF6200]">Você acompanha cada detalhe pelo dashboard</h4>
+              <p>Tenha uma visão completa de todas as suas obras em tempo real, com gráficos e métricas importantes</p>
+            </div>
+          </div>
+          
+          <div className="md:mt-32">
+            <div className="bg-[#444444] p-6 rounded-lg relative">
+              <div className="absolute -left-5 top-1/2 w-9 h-9 bg-[#FF6200] rounded-full -translate-y-1/2 flex items-center justify-center font-bold text-white hidden md:flex">4</div>
+              <div className="md:hidden w-9 h-9 bg-[#FF6200] rounded-full flex items-center justify-center font-bold text-white mb-2">4</div>
+              <h4 className="font-bold mb-2 text-[#FF6200]">Receba alertas instantâneos de atrasos ou problemas</h4>
+              <p>Seja notificado quando algo sai do planejado, permitindo ações preventivas rápidas</p>
             </div>
           </div>
         </div>
       </div>
       
-      <div className="bg-[#3A3A3A] p-6 rounded-lg border-l-4 border-[#FF6200]">
-        <h4 className="font-bold mb-2">Proposta de Valor Clara:</h4>
-        <p>Para cada R$1 investido no ObraFácil, o cliente economiza em média R$4,70 em custos operacionais, retrabalhos evitados e eficiência aumentada.</p>
-      </div>
-    </div>
-  </Slide>
-);
-
-const TractionSlide = () => (
-  <Slide title="Tração" icon={<BarChart className="text-white" size={24} />}>
-    <div className="flex flex-col gap-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Crescimento Consistente</h3>
-        <p className="text-lg mb-4">Métricas que demonstram a validação do mercado</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-[#444444] p-6 rounded-lg">
-          <h4 className="font-bold mb-4 text-center">Crescimento de Usuários</h4>
-          <div className="w-full h-60 bg-[#3A3A3A] rounded mb-4 relative overflow-hidden">
-            <div className="absolute inset-0 p-4">
-              <div className="h-full flex items-end justify-around">
-                <div className="w-6 bg-[#FF6200] h-[15%] rounded-t"></div>
-                <div className="w-6 bg-[#FF6200] h-[25%] rounded-t"></div>
-                <div className="w-6 bg-[#FF6200] h-[40%] rounded-t"></div>
-                <div className="w-6 bg-[#FF6200] h-[60%] rounded-t"></div>
-                <div className="w-6 bg-[#FF6200] h-[90%] rounded-t"></div>
-              </div>
-              <div className="absolute bottom-2 left-0 right-0 flex justify-around text-xs">
-                <span>JAN</span>
-                <span>FEV</span>
-                <span>MAR</span>
-                <span>ABR</span>
-                <span>MAI</span>
-              </div>
-            </div>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[#FF6200]">+28% MoM</p>
-            <p>Crescimento médio mensal de usuários</p>
-          </div>
-        </div>
-        
-        <div className="bg-[#444444] p-6 rounded-lg">
-          <h4 className="font-bold mb-4 text-center">Engajamento</h4>
-          <div className="space-y-4">
-            <div className="bg-[#3A3A3A] p-4 rounded-lg">
-              <div className="flex justify-between mb-2">
-                <span>Projetos gerenciados:</span>
-                <span className="font-bold text-[#FF6200]">320</span>
-              </div>
-              <div className="w-full bg-[#555555] rounded-full h-2">
-                <div className="bg-[#FF6200] h-2 rounded-full" style={{ width: "65%" }}></div>
-              </div>
-            </div>
-            
-            <div className="bg-[#3A3A3A] p-4 rounded-lg">
-              <div className="flex justify-between mb-2">
-                <span>Taxa de retenção:</span>
-                <span className="font-bold text-[#FF6200]">92%</span>
-              </div>
-              <div className="w-full bg-[#555555] rounded-full h-2">
-                <div className="bg-[#FF6200] h-2 rounded-full" style={{ width: "92%" }}></div>
-              </div>
-            </div>
-            
-            <div className="bg-[#3A3A3A] p-4 rounded-lg">
-              <div className="flex justify-between mb-2">
-                <span>NPS:</span>
-                <span className="font-bold text-[#FF6200]">78</span>
-              </div>
-              <div className="w-full bg-[#555555] rounded-full h-2">
-                <div className="bg-[#FF6200] h-2 rounded-full" style={{ width: "78%" }}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="bg-[#3A3A3A] p-6 rounded-lg">
-        <h4 className="font-bold mb-4 text-[#FF6200]">Casos de Sucesso</h4>
+      <div className="mt-8 bg-[#3A3A3A] p-6 rounded-lg text-center">
+        <h4 className="font-bold mb-4 text-[#FF6200] text-xl">Tudo isso sem precisar:</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-[#444444] p-4 rounded-lg">
-            <p className="text-sm italic">"Reduzimos o tempo de comunicação entre escritório e campo em 65% desde que implementamos o ObraFácil."</p>
-            <p className="text-right text-[#FF6200] mt-2">- Construtora Exemplo</p>
+            <p className="text-lg">❌ Instalar novos aplicativos</p>
           </div>
           <div className="bg-[#444444] p-4 rounded-lg">
-            <p className="text-sm italic">"O retrabalho caiu 42% em apenas 3 meses de uso da plataforma."</p>
-            <p className="text-right text-[#FF6200] mt-2">- Engenharia & Cia</p>
+            <p className="text-lg">❌ Treinamentos complexos</p>
           </div>
           <div className="bg-[#444444] p-4 rounded-lg">
-            <p className="text-sm italic">"Conseguimos gerenciar 30% mais projetos com a mesma equipe graças ao ObraFácil."</p>
-            <p className="text-right text-[#FF6200] mt-2">- Construções Brasil</p>
+            <p className="text-lg">❌ Mudar seus processos atuais</p>
           </div>
         </div>
       </div>
@@ -310,173 +392,90 @@ const TractionSlide = () => (
   </Slide>
 );
 
-const CompetitionSlide = () => (
-  <Slide title="Concorrência" icon={<Target className="text-white" size={24} />}>
+const ResultsSlide = () => (
+  <Slide title="Resultados Reais" icon={<FileCheck className="text-white" size={24} />}>
     <div className="flex flex-col gap-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Nosso Diferencial Competitivo</h3>
-        <p className="text-lg mb-4">Enquanto a concorrência cria barreiras, nós eliminamos fricção</p>
+      <div className="mb-6 text-center">
+        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Construtoras que usam ObraFácil já estão vendo a diferença</h3>
       </div>
       
-      <div className="bg-[#444444] p-6 rounded-lg">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th className="text-left pb-4">Característica</th>
-                <th className="text-center pb-4 text-[#FF6200]">ObraFácil</th>
-                <th className="text-center pb-4">Software A</th>
-                <th className="text-center pb-4">Software B</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm">
-              <tr className="border-b border-[#555555]">
-                <td className="py-3">Integração WhatsApp</td>
-                <td className="text-center text-[#FF6200]">✓</td>
-                <td className="text-center">✗</td>
-                <td className="text-center">✗</td>
-              </tr>
-              <tr className="border-b border-[#555555]">
-                <td className="py-3">Sem necessidade de app adicional</td>
-                <td className="text-center text-[#FF6200]">✓</td>
-                <td className="text-center">✗</td>
-                <td className="text-center">✗</td>
-              </tr>
-              <tr className="border-b border-[#555555]">
-                <td className="py-3">Tempo de implementação</td>
-                <td className="text-center text-[#FF6200]">1 dia</td>
-                <td className="text-center">2 semanas</td>
-                <td className="text-center">1 mês</td>
-              </tr>
-              <tr className="border-b border-[#555555]">
-                <td className="py-3">Facilidade de uso</td>
-                <td className="text-center text-[#FF6200]">★★★★★</td>
-                <td className="text-center">★★★☆☆</td>
-                <td className="text-center">★★☆☆☆</td>
-              </tr>
-              <tr>
-                <td className="py-3">Análise de riscos em tempo real</td>
-                <td className="text-center text-[#FF6200]">✓</td>
-                <td className="text-center">Limitada</td>
-                <td className="text-center">✓</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#3A3A3A] p-6 rounded-lg">
-          <h4 className="font-bold mb-2 text-[#FF6200]">Por Que Outras Soluções Falham</h4>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Exigem treinamento extensivo da equipe</li>
-            <li>Aplicativos adicionais que consomem memória do celular</li>
-            <li>Interfaces complexas e pouco intuitivas</li>
-            <li>Alto custo de implementação</li>
-            <li>Resistência dos trabalhadores em campo para adoção</li>
-          </ul>
-        </div>
-        
-        <div className="bg-[#3A3A3A] p-6 rounded-lg">
-          <h4 className="font-bold mb-2 text-[#FF6200]">Nossa Vantagem Única</h4>
-          <p className="mb-4">Integramos com o WhatsApp, ferramenta que:</p>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Já é usada por 99% dos trabalhadores da construção</li>
-            <li>Não exige treinamento adicional</li>
-            <li>Funciona mesmo em áreas com conexão limitada</li>
-            <li>Permite compartilhamento de fotos, vídeos e documentos</li>
-            <li>É familiar tanto para gestores quanto para equipes de campo</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </Slide>
-);
-
-const TeamSlide = () => (
-  <Slide title="Equipe" icon={<Users className="text-white" size={24} />}>
-    <div className="flex flex-col gap-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Quem Está Por Trás do ObraFácil</h3>
-        <p className="text-lg mb-4">Time multidisciplinar com experiência em construção civil e tecnologia</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-[#444444] p-6 rounded-lg text-center">
-          <div className="w-32 h-32 bg-[#3A3A3A] rounded-full mx-auto mb-4 overflow-hidden flex items-center justify-center">
-            <img src="/placeholder.svg" alt="CEO" className="w-full h-full object-cover" />
-          </div>
-          <h4 className="font-bold text-[#FF6200]">Ana Silva</h4>
-          <p className="text-sm mb-2">CEO & Fundadora</p>
-          <p className="text-sm mb-4">Engenheira Civil com 15 anos de experiência em gestão de obras</p>
-          <div className="flex justify-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[#3A3A3A] flex items-center justify-center">
-              <span className="text-xs">In</span>
-            </div>
-          </div>
+          <div className="text-5xl font-bold text-[#FF6200] mb-2">⏱</div>
+          <h4 className="text-2xl font-bold mb-2">Redução de 30%</h4>
+          <p>no tempo total de obra</p>
         </div>
-        
         <div className="bg-[#444444] p-6 rounded-lg text-center">
-          <div className="w-32 h-32 bg-[#3A3A3A] rounded-full mx-auto mb-4 overflow-hidden flex items-center justify-center">
-            <img src="/placeholder.svg" alt="CTO" className="w-full h-full object-cover" />
-          </div>
-          <h4 className="font-bold text-[#FF6200]">Carlos Mendes</h4>
-          <p className="text-sm mb-2">CTO</p>
-          <p className="text-sm mb-4">Ex-líder de engenharia no iFood, especialista em desenvolvimento mobile</p>
-          <div className="flex justify-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[#3A3A3A] flex items-center justify-center">
-              <span className="text-xs">In</span>
-            </div>
-          </div>
+          <div className="text-5xl font-bold text-[#FF6200] mb-2">💰</div>
+          <h4 className="text-2xl font-bold mb-2">Economia de R$18k</h4>
+          <p>em média por projeto</p>
         </div>
-        
         <div className="bg-[#444444] p-6 rounded-lg text-center">
-          <div className="w-32 h-32 bg-[#3A3A3A] rounded-full mx-auto mb-4 overflow-hidden flex items-center justify-center">
-            <img src="/placeholder.svg" alt="COO" className="w-full h-full object-cover" />
-          </div>
-          <h4 className="font-bold text-[#FF6200]">Rafael Costa</h4>
-          <p className="text-sm mb-2">COO</p>
-          <p className="text-sm mb-4">10 anos na indústria de construção, ex-diretor operacional de construtora de médio porte</p>
-          <div className="flex justify-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[#3A3A3A] flex items-center justify-center">
-              <span className="text-xs">In</span>
-            </div>
-          </div>
+          <div className="text-5xl font-bold text-[#FF6200] mb-2">😍</div>
+          <h4 className="text-2xl font-bold mb-2">92% de satisfação</h4>
+          <p>entre clientes e engenheiros</p>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
         <div className="bg-[#3A3A3A] p-6 rounded-lg">
-          <h4 className="font-bold mb-2 text-[#FF6200]">Nossa Experiência</h4>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>+25 anos combinados em gestão de projetos de construção</li>
-            <li>+10 anos de experiência em desenvolvimento de software</li>
-            <li>Vivência prática dos problemas que estamos resolvendo</li>
-            <li>Rede de contatos no setor de construção civil</li>
-          </ul>
-        </div>
-        
-        <div className="bg-[#3A3A3A] p-6 rounded-lg">
-          <h4 className="font-bold mb-2 text-[#FF6200]">Conselho Consultivo</h4>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#444444] rounded-full flex items-center justify-center">
-                <img src="/placeholder.svg" alt="Advisor" className="w-full h-full rounded-full object-cover" />
-              </div>
-              <div>
-                <p className="font-semibold">Roberto Almeida</p>
-                <p className="text-sm">Ex-presidente da Associação Brasileira de Construtoras</p>
-              </div>
+          <div className="flex flex-col h-full justify-between">
+            <div className="text-lg italic mb-4">
+              "Hoje eu consigo dormir tranquilo sabendo que minha obra está no meu celular. O ObraFácil reduziu nossos atrasos em 70% e melhorou a comunicação com clientes."
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#444444] rounded-full flex items-center justify-center">
-                <img src="/placeholder.svg" alt="Advisor" className="w-full h-full rounded-full object-cover" />
+              <div className="w-12 h-12 bg-[#444444] rounded-full flex items-center justify-center overflow-hidden">
+                <img src="/placeholder.svg" alt="Foto do João" className="w-full h-full object-cover" />
               </div>
               <div>
-                <p className="font-semibold">Luiza Santos</p>
-                <p className="text-sm">Investidora anjo com portfolio em ConTech</p>
+                <p className="font-semibold">João Silva</p>
+                <p className="text-sm text-gray-400">Engenheiro Civil, Construções Exemplo</p>
               </div>
             </div>
+          </div>
+        </div>
+        
+        <div className="bg-[#3A3A3A] p-6 rounded-lg">
+          <div className="flex flex-col h-full justify-between">
+            <div className="text-lg italic mb-4">
+              "A integração com WhatsApp foi um divisor de águas. Nossa equipe de campo não precisou mudar nada na rotina, mas agora temos controle total sobre tudo."
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-[#444444] rounded-full flex items-center justify-center overflow-hidden">
+                <img src="/placeholder.svg" alt="Foto da Maria" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <p className="font-semibold">Maria Oliveira</p>
+                <p className="text-sm text-gray-400">Diretora de Operações, Construtora Inovação</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-6 bg-[#444444] p-6 rounded-lg">
+        <h4 className="font-bold mb-4 text-[#FF6200] text-xl text-center">Impacto Médio por Tamanho de Empresa</h4>
+        <div className="w-full bg-[#3A3A3A] h-12 rounded-lg relative overflow-hidden mb-4">
+          <div className="absolute top-0 left-0 h-full bg-[#FF6200]" style={{ width: "65%" }}></div>
+          <div className="absolute inset-0 flex items-center px-4 justify-between text-white">
+            <span className="font-bold">Pequenas Construtoras</span>
+            <span className="font-bold">65% de aumento na eficiência</span>
+          </div>
+        </div>
+        
+        <div className="w-full bg-[#3A3A3A] h-12 rounded-lg relative overflow-hidden mb-4">
+          <div className="absolute top-0 left-0 h-full bg-[#FF6200]" style={{ width: "48%" }}></div>
+          <div className="absolute inset-0 flex items-center px-4 justify-between text-white">
+            <span className="font-bold">Médias Construtoras</span>
+            <span className="font-bold">48% de aumento na eficiência</span>
+          </div>
+        </div>
+        
+        <div className="w-full bg-[#3A3A3A] h-12 rounded-lg relative overflow-hidden">
+          <div className="absolute top-0 left-0 h-full bg-[#FF6200]" style={{ width: "35%" }}></div>
+          <div className="absolute inset-0 flex items-center px-4 justify-between text-white">
+            <span className="font-bold">Grandes Construtoras</span>
+            <span className="font-bold">35% de aumento na eficiência</span>
           </div>
         </div>
       </div>
@@ -484,103 +483,229 @@ const TeamSlide = () => (
   </Slide>
 );
 
-const GoToMarketSlide = () => (
-  <Slide title="Estratégia de Entrada no Mercado" icon={<Rocket className="text-white" size={24} />}>
+const UrgencySlide = () => (
+  <Slide title="Por Que Agora?" icon={<Clock className="text-white" size={24} />}>
     <div className="flex flex-col gap-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Como Vamos Escalar</h3>
-        <p className="text-lg mb-4">Estratégia de três fases para conquistar o mercado</p>
+      <div className="mb-6 text-center">
+        <h3 className="text-3xl font-bold text-[#FF6200] mb-2">O tempo da obra não espera. E sua concorrência também não.</h3>
       </div>
       
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="bg-[#444444] p-6 rounded-lg flex-1">
-          <div className="text-center mb-4">
-            <div className="w-16 h-16 bg-[#FF6200] rounded-full mx-auto mb-2 flex items-center justify-center">
-              <span className="text-xl font-bold">1</span>
-            </div>
-            <h4 className="font-bold">Fase Inicial</h4>
-          </div>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Foco em construtoras de pequeno e médio porte</li>
-            <li>Marketing de conteúdo direcionado a problemas específicos</li>
-            <li>Programa "Indique e Ganhe" para crescimento orgânico</li>
-            <li>Piloto gratuito por 30 dias</li>
-          </ul>
-        </div>
+      <div className="bg-[#444444] p-8 rounded-lg text-center">
+        <p className="text-xl mb-6">
+          "Enquanto você ainda gerencia sua obra com papel, outros já estão otimizando tudo com inteligência. Não fique para trás."
+        </p>
         
-        <div className="bg-[#444444] p-6 rounded-lg flex-1">
-          <div className="text-center mb-4">
-            <div className="w-16 h-16 bg-[#FF6200] rounded-full mx-auto mb-2 flex items-center justify-center">
-              <span className="text-xl font-bold">2</span>
-            </div>
-            <h4 className="font-bold">Crescimento</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-[#3A3A3A] p-4 rounded-lg">
+            <div className="text-4xl text-[#FF6200] mb-2">82%</div>
+            <p className="text-sm">das construtoras que não digitalizaram perderam projetos para concorrentes em 2023</p>
           </div>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Expansão para construtoras de grande porte</li>
-            <li>Parcerias estratégicas com fornecedores de materiais</li>
-            <li>Integração com sistemas de ERP populares no setor</li>
-            <li>Equipe de vendas especializada</li>
-          </ul>
-        </div>
-        
-        <div className="bg-[#444444] p-6 rounded-lg flex-1">
-          <div className="text-center mb-4">
-            <div className="w-16 h-16 bg-[#FF6200] rounded-full mx-auto mb-2 flex items-center justify-center">
-              <span className="text-xl font-bold">3</span>
-            </div>
-            <h4 className="font-bold">Expansão</h4>
+          <div className="bg-[#3A3A3A] p-4 rounded-lg">
+            <div className="text-4xl text-[#FF6200] mb-2">3.5x</div>
+            <p className="text-sm">mais rápido o crescimento de construtoras que adotaram tecnologia nos últimos 2 anos</p>
           </div>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Entrada em mercados internacionais (América Latina)</li>
-            <li>Desenvolvimento de módulos específicos por nicho</li>
-            <li>Plataforma de marketplace para serviços complementares</li>
-            <li>Modelo white-label para grandes construtoras</li>
-          </ul>
+          <div className="bg-[#3A3A3A] p-4 rounded-lg">
+            <div className="text-4xl text-[#FF6200] mb-2">68%</div>
+            <p className="text-sm">dos clientes escolhem construtoras com sistemas de acompanhamento online</p>
+          </div>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#3A3A3A] p-6 rounded-lg">
-          <h4 className="font-bold mb-2 text-[#FF6200]">Métricas de Aquisição</h4>
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span>Custo de Aquisição de Cliente (CAC):</span>
-              <span className="font-bold">R$ 800</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Taxa de Conversão (Trial para Pago):</span>
-              <span className="font-bold">32%</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Tempo Médio de Ciclo de Vendas:</span>
-              <span className="font-bold">21 dias</span>
-            </div>
+      <div className="bg-[#3A3A3A] p-6 rounded-lg border-2 border-[#FF6200] text-center">
+        <div className="flex items-center justify-center mb-4">
+          <div className="w-12 h-12 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+            ⚠️
           </div>
+        </div>
+        <h4 className="text-xl font-bold mb-4">ATENÇÃO: VAGAS LIMITADAS</h4>
+        <p className="text-lg mb-4">
+          Estamos abrindo apenas <span className="text-[#FF6200] font-bold">10 vagas</span> para novos clientes no plano de implementação assistida.
+        </p>
+        <div className="flex justify-center">
+          <div className="bg-[#444444] px-6 py-3 rounded-lg">
+            <div className="text-sm text-gray-300 mb-1">Vagas restantes:</div>
+            <div className="text-4xl font-bold text-[#FF6200]">3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Slide>
+);
+
+const PlansSlide = () => (
+  <Slide title="Escolha Seu Plano" icon={<Users className="text-white" size={24} />}>
+    <div className="flex flex-col gap-8">
+      <div className="mb-6 text-center">
+        <h3 className="text-2xl font-bold text-[#FF6200] mb-2">Temos um plano ideal para o tamanho da sua obra</h3>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-[#444444] p-6 rounded-lg border border-gray-600 flex flex-col">
+          <div className="text-center mb-6">
+            <h4 className="text-xl font-bold mb-1">Starter</h4>
+            <div className="text-[#FF6200] text-3xl font-bold mb-2">R$297<span className="text-sm text-gray-300">/mês</span></div>
+            <p className="text-sm text-gray-300">Para até 3 obras simultâneas</p>
+          </div>
+          
+          <ul className="space-y-3 mb-8 flex-grow">
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Dashboard completo
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Integração WhatsApp básica
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Relatórios semanais
+            </li>
+            <li className="flex items-center opacity-50">
+              <div className="w-5 h-5 mr-2 bg-gray-600 rounded-full flex items-center justify-center text-white text-xs">✗</div>
+              Análise de riscos
+            </li>
+            <li className="flex items-center opacity-50">
+              <div className="w-5 h-5 mr-2 bg-gray-600 rounded-full flex items-center justify-center text-white text-xs">✗</div>
+              Suporte prioritário
+            </li>
+          </ul>
+          
+          <Button variant="outline" className="w-full border-[#FF6200] text-[#FF6200] hover:bg-[#FF6200] hover:text-white">
+            Começar Agora
+          </Button>
         </div>
         
-        <div className="bg-[#3A3A3A] p-6 rounded-lg">
-          <h4 className="font-bold mb-2 text-[#FF6200]">Parcerias Estratégicas</h4>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-            <div className="bg-[#444444] h-16 rounded flex items-center justify-center">
-              <span className="text-xs">Parceiro 1</span>
-            </div>
-            <div className="bg-[#444444] h-16 rounded flex items-center justify-center">
-              <span className="text-xs">Parceiro 2</span>
-            </div>
-            <div className="bg-[#444444] h-16 rounded flex items-center justify-center">
-              <span className="text-xs">Parceiro 3</span>
-            </div>
-            <div className="bg-[#444444] h-16 rounded flex items-center justify-center">
-              <span className="text-xs">Parceiro 4</span>
-            </div>
-            <div className="bg-[#444444] h-16 rounded flex items-center justify-center">
-              <span className="text-xs">Parceiro 5</span>
-            </div>
-            <div className="bg-[#444444] h-16 rounded flex items-center justify-center">
-              <span className="text-xs">Parceiro 6</span>
-            </div>
+        <div className="bg-[#444444] p-6 rounded-lg border-2 border-[#FF6200] flex flex-col relative">
+          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#FF6200] text-white px-3 py-1 rounded-full text-sm font-bold">
+            Mais Popular
+          </div>
+          
+          <div className="text-center mb-6">
+            <h4 className="text-xl font-bold mb-1">Profissional</h4>
+            <div className="text-[#FF6200] text-3xl font-bold mb-2">R$597<span className="text-sm text-gray-300">/mês</span></div>
+            <p className="text-sm text-gray-300">Monitoramento completo</p>
+          </div>
+          
+          <ul className="space-y-3 mb-8 flex-grow">
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Dashboard completo
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Integração WhatsApp avançada
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Relatórios diários
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Análise de riscos em tempo real
+            </li>
+            <li className="flex items-center opacity-50">
+              <div className="w-5 h-5 mr-2 bg-gray-600 rounded-full flex items-center justify-center text-white text-xs">✗</div>
+              Suporte prioritário
+            </li>
+          </ul>
+          
+          <Button className="w-full bg-[#FF6200] hover:bg-[#FF7D33]">
+            Escolher Plano
+          </Button>
+        </div>
+        
+        <div className="bg-[#444444] p-6 rounded-lg border border-gray-600 flex flex-col">
+          <div className="text-center mb-6">
+            <h4 className="text-xl font-bold mb-1">Enterprise</h4>
+            <div className="text-[#FF6200] text-3xl font-bold mb-2">Personalizado</div>
+            <p className="text-sm text-gray-300">Para construtoras maiores</p>
+          </div>
+          
+          <ul className="space-y-3 mb-8 flex-grow">
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Dashboard personalizado
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Integração WhatsApp premium
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Relatórios personalizados
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Análise de riscos avançada
+            </li>
+            <li className="flex items-center">
+              <div className="w-5 h-5 mr-2 bg-[#FF6200] rounded-full flex items-center justify-center text-white text-xs">✓</div>
+              Suporte prioritário 24/7
+            </li>
+          </ul>
+          
+          <Button variant="outline" className="w-full border-[#FF6200] text-[#FF6200] hover:bg-[#FF6200] hover:text-white">
+            Falar com Consultor
+          </Button>
+        </div>
+      </div>
+      
+      <div className="mt-4 bg-[#3A3A3A] p-6 rounded-lg text-center">
+        <h4 className="font-bold mb-4 text-[#FF6200]">Sem fidelidade. Sem burocracia. Comece em menos de 24h.</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-[#444444] p-4 rounded-lg">
+            <p className="text-sm">✅ Suporte técnico gratuito</p>
+          </div>
+          <div className="bg-[#444444] p-4 rounded-lg">
+            <p className="text-sm">✅ Cancele quando quiser</p>
+          </div>
+          <div className="bg-[#444444] p-4 rounded-lg">
+            <p className="text-sm">✅ 14 dias de garantia</p>
           </div>
         </div>
+      </div>
+    </div>
+  </Slide>
+);
+
+const CtaSlide = () => (
+  <Slide title="Chamada para Ação" icon={<MessageSquare className="text-white" size={24} />}>
+    <div className="flex flex-col items-center justify-center h-full text-center gap-8">
+      <h2 className="text-4xl font-bold">
+        Quer transformar a <span className="text-[#FF6200]">gestão da sua obra</span>?
+      </h2>
+      
+      <p className="text-xl max-w-2xl">
+        Solicite uma demonstração gratuita agora mesmo e veja o ObraFácil funcionando com sua equipe.
+      </p>
+      
+      <Button className="bg-[#FF6200] hover:bg-[#FF7D33] text-white text-lg px-8 py-6 rounded-lg">
+        Agendar Demonstração
+      </Button>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-xl mt-4">
+        <div className="bg-[#444444] p-6 rounded-lg text-center flex flex-col items-center">
+          <div className="text-[#FF6200] mb-2">
+            <MessageSquare size={32} />
+          </div>
+          <h3 className="font-bold mb-1">WhatsApp Comercial</h3>
+          <p className="text-xl font-bold">(11) 99999-8888</p>
+        </div>
+        
+        <div className="bg-[#444444] p-6 rounded-lg text-center flex flex-col items-center">
+          <div className="text-[#FF6200] mb-2">
+            <MessageSquare size={32} />
+          </div>
+          <h3 className="font-bold mb-1">Email</h3>
+          <p className="text-xl font-bold">comercial@obrafacil.com</p>
+        </div>
+      </div>
+      
+      <div className="mt-6 bg-[#3A3A3A] p-6 rounded-lg max-w-2xl">
+        <h4 className="font-bold mb-4 text-center">Nossa Garantia</h4>
+        <p className="text-center">
+          Se em 14 dias você não perceber melhorias na gestão da sua obra, devolvemos 100% do seu investimento, sem questionamentos.
+        </p>
       </div>
     </div>
   </Slide>
@@ -590,14 +715,16 @@ const PitchDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
   const slides = [
-    <ProblemSlide key="problem" />,
+    <OpeningSlide key="opening" />,
+    <PainSlide key="pain" />,
+    <CostSlide key="cost" />,
+    <WhatIfSlide key="what-if" />,
     <SolutionSlide key="solution" />,
-    <MarketSlide key="market" />,
-    <BusinessModelSlide key="business" />,
-    <TractionSlide key="traction" />,
-    <CompetitionSlide key="competition" />,
-    <TeamSlide key="team" />,
-    <GoToMarketSlide key="go-to-market" />
+    <HowItWorksSlide key="how-it-works" />,
+    <ResultsSlide key="results" />,
+    <UrgencySlide key="urgency" />,
+    <PlansSlide key="plans" />,
+    <CtaSlide key="cta" />
   ];
   
   const handleNextSlide = () => {
@@ -613,7 +740,7 @@ const PitchDeck = () => {
   };
   
   return (
-    <AppLayout title="Pitch Deck ObraFácil">
+    <AppLayout title="ObraFácil - Apresentação">
       <div className="flex flex-col h-full">
         <div className="flex-1 overflow-hidden">
           {slides[currentSlide]}

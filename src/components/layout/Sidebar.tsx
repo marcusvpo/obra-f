@@ -50,7 +50,7 @@ export default function Sidebar() {
     },
     {
       path: "/pitch-deck",
-      label: "TESTE",
+      label: "Apresentação",
       icon: <PresentationIcon size={20} />
     }
   ];
