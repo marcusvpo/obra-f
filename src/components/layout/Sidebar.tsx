@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, MessageSquare, LogOut, Construction, FileText, Users, Plus, Settings, HelpCircle, User, MessageCircle } from "lucide-react";
+import { Home, MessageSquare, LogOut, Construction, FileText, Users, Plus, Settings, HelpCircle, User, MessageCircle, PresentationIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -47,6 +47,11 @@ export default function Sidebar() {
       path: "/chatlog",
       label: "ChatLog",
       icon: <MessageCircle size={20} />
+    },
+    {
+      path: "/pitch-deck",
+      label: "TESTE",
+      icon: <PresentationIcon size={20} />
     }
   ];
 
