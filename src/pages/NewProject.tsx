@@ -9,11 +9,13 @@ import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { projects } from "@/data/projectsData";
-import { Project } from "@/types/project";
+import { Project, TimelineTask } from "@/types/project";
 import ProjectBasicInfo from "@/components/new-project/ProjectBasicInfo";
 import ProjectContactInfo from "@/components/new-project/ProjectContactInfo";
 import ProjectLocation from "@/components/new-project/ProjectLocation";
-import { Upload } from "lucide-react";
+import { Upload, CalendarDays } from "lucide-react";
+import TimelineManager from "@/components/project-details/TimelineManager";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TeamMember {
   id: string;
@@ -37,6 +39,7 @@ export default function NewProject() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [timelineTasks, setTimelineTasks] = useState<TimelineTask[]>([]);
   
   useEffect(() => {
     const storedMembers = localStorage.getItem("teamMembers");
@@ -81,6 +84,7 @@ export default function NewProject() {
     const updatedProjects = [...projects, newProject];
     
     console.log("New project created:", newProject);
+    console.log("Timeline tasks:", timelineTasks);
     
     setTimeout(() => {
       toast.success("Projeto criado com sucesso!");
@@ -99,6 +103,11 @@ export default function NewProject() {
   const handleSendDocuments = () => {
     toast.info("Função de envio de documentos será implementada em breve.");
   };
+
+  const handleTimelineUpdate = (tasks: TimelineTask[]) => {
+    setTimelineTasks(tasks);
+    toast.success("Cronograma atualizado");
+  };
   
   return (
     <AppLayout 
@@ -107,7 +116,7 @@ export default function NewProject() {
       onBackClick={() => navigate("/")}
     >
       <div className="max-w-3xl mx-auto">
-        <Card className="bg-card border-none shadow">
+        <Card className="bg-card border-none shadow mb-6">
           <CardHeader>
             <CardTitle className="text-xl font-medium">Adicionar Novo Projeto</CardTitle>
           </CardHeader>
@@ -150,6 +159,75 @@ export default function NewProject() {
                 </div>
               </form>
             </Form>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-card border-none shadow">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-xl font-medium">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-5 w-5" />
+                <span>Adicionar Cronograma</span>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="timeline" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="timeline">Cronograma</TabsTrigger>
+                <TabsTrigger value="manage">Gerenciar</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="timeline">
+                {timelineTasks.length > 0 ? (
+                  <div className="space-y-2">
+                    <div className="text-sm text-muted">
+                      O cronograma possui {timelineTasks.length} tarefas definidas.
+                    </div>
+                    <div className="max-h-[300px] overflow-y-auto space-y-2 pr-2">
+                      {timelineTasks.map((task) => (
+                        <div key={task.id} className="bg-secondary p-3 rounded-md">
+                          <div className="font-medium">{task.name}</div>
+                          <div className="grid grid-cols-2 gap-2 mt-1 text-xs">
+                            <div className="text-muted">
+                              Início: {task.startDate.includes('T') 
+                                ? new Date(task.startDate).toLocaleDateString('pt-BR')
+                                : task.startDate.includes('-')
+                                  ? new Date(task.startDate).toLocaleDateString('pt-BR')
+                                  : task.startDate}
+                            </div>
+                            <div className="text-muted">
+                              Término: {task.endDate.includes('T') 
+                                ? new Date(task.endDate).toLocaleDateString('pt-BR')
+                                : task.endDate.includes('-')
+                                  ? new Date(task.endDate).toLocaleDateString('pt-BR')
+                                  : task.endDate}
+                            </div>
+                          </div>
+                          <div className="text-xs text-muted mt-1">
+                            Responsável: {task.responsiblePerson}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-muted">
+                      Nenhuma tarefa adicionada ao cronograma. Utilize a aba "Gerenciar" para adicionar tarefas.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="manage">
+                <TimelineManager 
+                  projectId="new" 
+                  timelineTasks={timelineTasks}
+                  onTimelineUpdate={handleTimelineUpdate}
+                />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>

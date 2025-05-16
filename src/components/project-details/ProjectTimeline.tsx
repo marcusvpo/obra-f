@@ -1,5 +1,4 @@
-
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { TimelineTask, ScheduleAdherence } from "@/types/project";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -14,11 +13,16 @@ import {
 } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle, Clock, Calendar } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, Calendar, Edit } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import TimelineManager from "./TimelineManager";
 
 interface ProjectTimelineProps {
+  projectId: string;
   timelineTasks?: TimelineTask[];
   scheduleAdherence?: ScheduleAdherence;
+  onTimelineUpdate?: (tasks: TimelineTask[]) => void;
 }
 
 const TaskStatusColors = {
@@ -71,20 +75,33 @@ const calculatePosition = (
   return { left, width };
 };
 
-export default function ProjectTimeline({ timelineTasks = [], scheduleAdherence }: ProjectTimelineProps) {
+export default function ProjectTimeline({ 
+  projectId,
+  timelineTasks = [], 
+  scheduleAdherence,
+  onTimelineUpdate 
+}: ProjectTimelineProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   if (timelineTasks.length === 0) {
     return (
       <Card className="w-full">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-xl font-bold">Cronograma do Projeto</CardTitle>
+          <Button variant="outline" size="sm" className="flex items-center gap-1" 
+            onClick={() => setIsEditDialogOpen(true)}>
+            <Edit className="h-4 w-4" />
+            <span>Editar</span>
+          </Button>
         </CardHeader>
         <CardContent className="flex items-center justify-center h-56">
           <p className="text-muted text-center">
-            Nenhuma tarefa no cronograma ainda. Adicione tarefas ou faça upload de um cronograma para visualizá-lo aqui.
+            Nenhuma tarefa no cronograma ainda. Clique em "Editar" para adicionar tarefas ou fazer upload de um cronograma.
           </p>
         </CardContent>
+        
+        {renderEditDialog()}
       </Card>
     );
   }
@@ -130,10 +147,40 @@ export default function ProjectTimeline({ timelineTasks = [], scheduleAdherence 
   const completedTasks = timelineTasks.filter(task => task.status === "completed").length;
   const overallProgress = Math.round((completedTasks / timelineTasks.length) * 100);
 
+  function renderEditDialog() {
+    return (
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Editar Cronograma</DialogTitle>
+          </DialogHeader>
+          <TimelineManager
+            projectId={projectId}
+            timelineTasks={timelineTasks}
+            onTimelineUpdate={(tasks) => {
+              if (onTimelineUpdate) {
+                onTimelineUpdate(tasks);
+              }
+              setIsEditDialogOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Card className="w-full mb-6">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">Cronograma do Projeto</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-xl font-bold">Cronograma do Projeto</CardTitle>
+          <Button variant="outline" size="sm" className="flex items-center gap-1" 
+            onClick={() => setIsEditDialogOpen(true)}>
+            <Edit className="h-4 w-4" />
+            <span>Editar</span>
+          </Button>
+        </div>
+        
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2">
           <div className="mb-2 sm:mb-0">
             <div className="flex items-center gap-2">
@@ -166,30 +213,7 @@ export default function ProjectTimeline({ timelineTasks = [], scheduleAdherence 
       </CardHeader>
 
       <CardContent>
-        {scheduleAdherence && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="bg-secondary rounded-lg p-3">
-              <div className="text-sm text-muted mb-1">Tarefas atrasadas</div>
-              <div className="text-xl font-semibold">
-                {scheduleAdherence.delayedTasksPercentage}%
-              </div>
-            </div>
-            <div className="bg-secondary rounded-lg p-3">
-              <div className="text-sm text-muted mb-1">Diferença do planejado</div>
-              <div className="text-xl font-semibold">
-                {scheduleAdherence.plannedVsActualDifference > 0 
-                  ? `+${scheduleAdherence.plannedVsActualDifference} dias`
-                  : `${scheduleAdherence.plannedVsActualDifference} dias`}
-              </div>
-            </div>
-            <div className="bg-secondary rounded-lg p-3">
-              <div className="text-sm text-muted mb-1">Previsão de conclusão</div>
-              <div className="text-xl font-semibold">
-                {scheduleAdherence.dynamicCompletionForecast}
-              </div>
-            </div>
-          </div>
-        )}
+        {/* ... keep existing code (schedule adherence indicators) */}
 
         <div className="relative mb-3">
           <div className="flex justify-between text-xs text-muted">
@@ -321,6 +345,8 @@ export default function ProjectTimeline({ timelineTasks = [], scheduleAdherence 
           </div>
         </div>
       </CardContent>
+      
+      {renderEditDialog()}
     </Card>
   );
 }

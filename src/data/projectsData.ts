@@ -1,4 +1,4 @@
-import { Project, ProjectDetails, AlertItem, MaintenanceItem, ChatMessage, TimelineEvent } from "@/types/project";
+import { Project, ProjectDetails, AlertItem, MaintenanceItem, ChatMessage, TimelineEvent, TimelineTask, ScheduleAdherence } from "@/types/project";
 
 // Helper function to convert string alerts to AlertItem objects
 export const convertStringToAlertItem = (alertString: string): AlertItem => {
@@ -19,6 +19,103 @@ export const convertStringToMaintenanceItem = (maintenanceString: string): Maint
     description: title,
     date: date || "",
     isCompleted: false
+  };
+};
+
+// Helper function to generate timeline tasks for a project
+export const generateTimelineTasksForProject = (projectId: string): TimelineTask[] => {
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 30); // Start 30 days ago
+  
+  // Adjust based on project ID to get different timelines
+  const projectSeed = parseInt(projectId, 10) || 1;
+  const tasks: TimelineTask[] = [];
+  
+  // Common phases for construction projects
+  const phases = [
+    "Preparação do terreno",
+    "Fundação",
+    "Estrutura",
+    "Alvenaria",
+    "Instalações elétricas",
+    "Instalações hidráulicas",
+    "Acabamentos internos",
+    "Acabamentos externos",
+    "Pintura",
+    "Testes e comissionamento",
+  ];
+  
+  // Responsible people
+  const responsiblePeople = [
+    "João Silva",
+    "Maria Oliveira",
+    "Carlos Mendes",
+    "Ana Santos",
+    "Roberto Alves",
+    "Antonio Pereira"
+  ];
+  
+  // Generate progress based on project ID
+  let currentDate = new Date(startDate);
+  let progress = projectSeed * 10; // Higher ID = more progress
+  if (progress > 100) progress = 85;
+  
+  // Make sure to have some completed, in-progress, and not-started tasks
+  for (let i = 0; i < phases.length; i++) {
+    // Duration varies by phase (5-20 days)
+    const duration = 5 + (i * 2 % 15);
+    const phaseProgress = Math.max(0, Math.min(100, progress - (i * 10)));
+    
+    let status: "completed" | "in_progress" | "delayed" | "not_started";
+    if (phaseProgress >= 100) {
+      status = "completed";
+    } else if (phaseProgress > 0) {
+      status = i % 4 === 0 ? "delayed" : "in_progress"; // Some random delays
+    } else {
+      status = "not_started";
+    }
+    
+    const endDate = new Date(currentDate);
+    endDate.setDate(currentDate.getDate() + duration);
+    
+    tasks.push({
+      id: `${projectId}-task-${i}`,
+      name: phases[i],
+      startDate: format(currentDate, 'yyyy-MM-dd'),
+      endDate: format(endDate, 'yyyy-MM-dd'),
+      responsiblePerson: responsiblePeople[i % responsiblePeople.length],
+      progress: phaseProgress,
+      status,
+      description: status === "delayed" ? "Atraso devido a problemas com fornecedores ou condições climáticas" : undefined
+    });
+    
+    // Move to next phase start date (some overlap)
+    currentDate.setDate(currentDate.getDate() + Math.floor(duration * 0.8));
+  }
+  
+  return tasks;
+};
+
+// Generate schedule adherence data based on timeline tasks
+export const generateScheduleAdherenceForTasks = (tasks: TimelineTask[]): ScheduleAdherence => {
+  const delayedTasks = tasks.filter(task => task.status === "delayed");
+  const delayedTasksPercentage = Math.round((delayedTasks.length / tasks.length) * 100);
+  
+  // Calculate planned vs actual difference
+  const plannedVsActualDifference = delayedTasks.length > 0 ? 
+    Math.max(1, Math.round(delayedTasks.length * 2.5)) : 0;
+  
+  // Generate forecast date
+  const today = new Date();
+  const forecastDate = new Date(today);
+  forecastDate.setDate(forecastDate.getDate() + 60 + plannedVsActualDifference);
+  
+  return {
+    delayedTasksPercentage,
+    plannedVsActualDifference,
+    dynamicCompletionForecast: format(forecastDate, 'dd/MM/yyyy'),
+    onTrack: delayedTasksPercentage < 15
   };
 };
 
@@ -312,6 +409,17 @@ export const projectDetails: Record<string, ProjectDetails> = {
     ]
   }
 };
+
+// Add timeline tasks to project details
+for (const projectId of Object.keys(projectDetails)) {
+  if (!projectDetails[projectId].timelineTasks || projectDetails[projectId].timelineTasks.length === 0) {
+    const timelineTasks = generateTimelineTasksForProject(projectId);
+    projectDetails[projectId].timelineTasks = timelineTasks;
+    
+    // Add schedule adherence based on tasks
+    projectDetails[projectId].scheduleAdherence = generateScheduleAdherenceForTasks(timelineTasks);
+  }
+}
 
 export const getLatestUpdates = () => {
   const updates: {projectId: string, projectName: string, update: TimelineEvent}[] = [];
