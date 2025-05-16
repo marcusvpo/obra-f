@@ -3,6 +3,7 @@ import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserPlus, Phone, MessageCircle, Edit, Trash2, X } from "lucide-react";
 import { 
   Dialog, 
@@ -14,15 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-
-interface TeamMember {
-  id: string;
-  nome: string;
-  numero: string;
-  ultimaMensagem: string;
-}
+import TeamPerformance from "@/components/workers/TeamPerformance";
+import { TeamMember } from "@/types/worker";
 
 const Equipe = () => {
+  const [activeTab, setActiveTab] = useState("trabalhadores");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -109,77 +106,88 @@ const Equipe = () => {
 
   return (
     <AppLayout title="Equipe">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Trabalhadores</h2>
-          
-          <Button 
-            onClick={() => setIsAddDialogOpen(true)}
-            className="bg-[#FF6200] text-white hover:bg-[#FF6200]/80"
-          >
-            <UserPlus size={18} className="mr-2" />
-            Adicionar Trabalhador
-          </Button>
-        </div>
-
-        {teamMembers.length === 0 ? (
-          <div className="text-center py-12 bg-card rounded-lg">
-            <p className="text-muted">Nenhum trabalhador cadastrado</p>
+      <div className="max-w-7xl mx-auto space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="flex justify-between items-center mb-4">
+            <TabsList className="bg-[#333333]">
+              <TabsTrigger value="trabalhadores">Trabalhadores</TabsTrigger>
+              <TabsTrigger value="desempenho">Desempenho</TabsTrigger>
+            </TabsList>
+            
             <Button 
               onClick={() => setIsAddDialogOpen(true)}
-              variant="outline"
-              className="mt-4"
+              className="bg-[#FF6200] text-white hover:bg-[#FF6200]/80"
             >
-              Adicionar trabalhador
+              <UserPlus size={18} className="mr-2" />
+              Adicionar Trabalhador
             </Button>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teamMembers.map(member => (
-              <Card key={member.id} className="bg-[#444444] border-0">
-                <CardContent className="p-6">
-                  <div className="flex justify-between">
-                    <div>
-                      <h3 className="font-medium text-lg">{member.nome}</h3>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        className="h-8 w-8 text-gray-400 hover:text-white hover:bg-[#333333]"
-                        onClick={() => openEditDialog(member)}
-                      >
-                        <Edit size={16} />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-500/10"
-                        onClick={() => openDeleteDialog(member)}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 space-y-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Phone size={14} className="text-[#FF6200]" />
-                      <span>{member.numero}</span>
-                    </div>
-                    <div className="flex items-start gap-2 text-sm">
-                      <MessageCircle size={14} className="text-[#FF6200] mt-1" />
-                      <div>
-                        <p className="text-xs text-gray-400">Última mensagem:</p>
-                        <p>{member.ultimaMensagem}</p>
+
+          <TabsContent value="trabalhadores" className="mt-0">
+            {teamMembers.length === 0 ? (
+              <div className="text-center py-12 bg-card rounded-lg">
+                <p className="text-muted">Nenhum trabalhador cadastrado</p>
+                <Button 
+                  onClick={() => setIsAddDialogOpen(true)}
+                  variant="outline"
+                  className="mt-4"
+                >
+                  Adicionar trabalhador
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {teamMembers.map(member => (
+                  <Card key={member.id} className="bg-[#444444] border-0">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between">
+                        <div>
+                          <h3 className="font-medium text-lg">{member.nome}</h3>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className="h-8 w-8 text-gray-400 hover:text-white hover:bg-[#333333]"
+                            onClick={() => openEditDialog(member)}
+                          >
+                            <Edit size={16} />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-500/10"
+                            onClick={() => openDeleteDialog(member)}
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+                      
+                      <div className="mt-4 space-y-3">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Phone size={14} className="text-[#FF6200]" />
+                          <span>{member.numero}</span>
+                        </div>
+                        <div className="flex items-start gap-2 text-sm">
+                          <MessageCircle size={14} className="text-[#FF6200] mt-1" />
+                          <div>
+                            <p className="text-xs text-gray-400">Última mensagem:</p>
+                            <p>{member.ultimaMensagem}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="desempenho" className="mt-0">
+            <TeamPerformance teamMembers={teamMembers} />
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Add Dialog */}
