@@ -1,4 +1,5 @@
 import { Project, ProjectDetails, AlertItem, MaintenanceItem, ChatMessage, TimelineEvent, TimelineTask, ScheduleAdherence } from "@/types/project";
+import { format } from "date-fns"; // Add this import for date formatting
 
 // Helper function to convert string alerts to AlertItem objects
 export const convertStringToAlertItem = (alertString: string): AlertItem => {
