@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+
+import { useRef, useState, useEffect } from "react";
 import { TimelineTask, ScheduleAdherence } from "@/types/project";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -17,12 +18,15 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TimelineManager from "./TimelineManager";
+import { getProjectDetails } from "@/data/projectData";
 
 interface ProjectTimelineProps {
   projectId: string;
   timelineTasks?: TimelineTask[];
   scheduleAdherence?: ScheduleAdherence;
   onTimelineUpdate?: (tasks: TimelineTask[]) => void;
+  compact?: boolean;
+  hideControls?: boolean;
 }
 
 const TaskStatusColors = {
@@ -67,15 +71,39 @@ const parseTimelineDate = (dateString: string): Date => {
 
 export default function ProjectTimeline({ 
   projectId,
-  timelineTasks = [], 
-  scheduleAdherence,
-  onTimelineUpdate 
+  timelineTasks: propTimelineTasks,
+  scheduleAdherence: propScheduleAdherence,
+  onTimelineUpdate,
+  compact = false,
+  hideControls = false
 }: ProjectTimelineProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [timeFilter, setTimeFilter] = useState<'7' | '15' | '30' | 'all'>('all');
+  
+  // Fetch data if not provided as props (for compact mode)
+  const [timelineTasks, setTimelineTasks] = useState<TimelineTask[]>([]);
+  const [scheduleAdherence, setScheduleAdherence] = useState<ScheduleAdherence | undefined>(undefined);
+  
+  useEffect(() => {
+    if (!propTimelineTasks) {
+      const project = getProjectDetails(projectId);
+      if (project?.timelineTasks) {
+        setTimelineTasks(project.timelineTasks);
+      }
+      if (project?.scheduleAdherence) {
+        setScheduleAdherence(project.scheduleAdherence);
+      }
+    }
+  }, [projectId, propTimelineTasks]);
+  
+  // Use either props or state
+  const tasks = propTimelineTasks || timelineTasks;
+  const adherence = propScheduleAdherence || scheduleAdherence;
 
-  if (timelineTasks.length === 0) {
+  if (tasks.length === 0) {
+    if (compact) return <div className="text-white/70 text-center py-2">Cronograma não disponível</div>;
+    
     return (
       <Card className="w-full">
         <CardHeader className="flex flex-row items-center justify-between">
@@ -98,7 +126,7 @@ export default function ProjectTimeline({
   }
 
   // Sort tasks by start date
-  const sortedTasks = [...timelineTasks].sort((a, b) => {
+  const sortedTasks = [...tasks].sort((a, b) => {
     const dateA = parseTimelineDate(a.startDate);
     const dateB = parseTimelineDate(b.startDate);
     return dateA.getTime() - dateB.getTime();
@@ -145,15 +173,15 @@ export default function ProjectTimeline({
   };
 
   // Calculate overall project progress
-  const completedTasks = timelineTasks.filter(task => task.status === "completed").length;
-  const overallProgress = Math.round((completedTasks / timelineTasks.length) * 100);
+  const completedTasks = tasks.filter(task => task.status === "completed").length;
+  const overallProgress = Math.round((completedTasks / tasks.length) * 100);
   const weightedProgress = Math.round(
-    timelineTasks.reduce((acc, task) => acc + task.progress, 0) / timelineTasks.length
+    tasks.reduce((acc, task) => acc + task.progress, 0) / tasks.length
   );
 
   // Check for potential delays (tasks scheduled for today but not in progress)
   const today = new Date();
-  const potentialDelays = timelineTasks.filter(task => {
+  const potentialDelays = tasks.filter(task => {
     const startDate = parseTimelineDate(task.startDate);
     const endDate = parseTimelineDate(task.endDate);
     return (
@@ -172,10 +200,12 @@ export default function ProjectTimeline({
           </DialogHeader>
           <TimelineManager
             projectId={projectId}
-            timelineTasks={timelineTasks}
-            onTimelineUpdate={(tasks) => {
+            timelineTasks={tasks}
+            onTimelineUpdate={(updatedTasks) => {
               if (onTimelineUpdate) {
-                onTimelineUpdate(tasks);
+                onTimelineUpdate(updatedTasks);
+              } else {
+                setTimelineTasks(updatedTasks);
               }
               setIsEditDialogOpen(false);
             }}
@@ -184,37 +214,157 @@ export default function ProjectTimeline({
       </Dialog>
     );
   }
+  
+  // Compact version for header
+  if (compact) {
+    return (
+      <div className="relative">
+        {/* Central Timeline Line */}
+        <div className="h-1 w-full bg-white/30 mt-2 mb-6"></div>
+            
+        {/* Today Marker */}
+        <div 
+          className="absolute h-4 w-0.5 bg-white bottom-0 transform -translate-x-1/2"
+          style={{ 
+            left: `${(differenceInDays(today, minDate) / totalDays) * 100}%`,
+            top: '-4px'
+          }}
+        >
+          <div className="absolute -top-6 -left-8 w-16 text-center">
+            <Badge variant="outline" className="bg-white/10 text-white border-white">
+              Hoje
+            </Badge>
+          </div>
+        </div>
+        
+        {/* Progress indicator */}
+        <div className="absolute text-center w-full top-3 text-sm text-white font-semibold">
+          {weightedProgress}% Concluído
+        </div>
+            
+        {/* Weighted Progress Marker */}
+        <div 
+          className="absolute h-1 bg-primary rounded-full top-0"
+          style={{ width: `${weightedProgress}%` }}
+        ></div>
+        
+        {/* Task Points */}
+        <div className="relative h-16">
+          {filteredTasks.map((task) => {
+            const { left } = calculateTaskPosition(task);
+            
+            return (
+              <HoverCard key={task.id}>
+                <HoverCardTrigger asChild>
+                  <div 
+                    className="absolute w-3 h-3 rounded-full cursor-pointer transform -translate-x-1/2"
+                    style={{ 
+                      left: left,
+                      top: '16px',
+                    }}
+                  >
+                    <div 
+                      className={cn(
+                        "w-full h-full rounded-full",
+                        TaskStatusColors[task.status],
+                        task.status === "completed" && "border-green-300",
+                        task.status === "in_progress" && "border-blue-300",
+                        task.status === "delayed" && "border-red-300",
+                        task.status === "not_started" && "border-gray-500"
+                      )}
+                    />
+                    
+                    <div className="absolute w-20 text-center text-white text-xs -bottom-5 transform -translate-x-1/2 left-1/2">
+                      {task.name}
+                    </div>
+                  </div>
+                </HoverCardTrigger>
+                
+                <HoverCardContent className="w-64 p-0">
+                  <div className="bg-card border-none shadow-lg rounded-lg p-4">
+                    <div className="mb-2 border-b pb-2 border-gray-600">
+                      <h4 className="font-semibold text-white text-base">{task.name}</h4>
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted">Status:</span>
+                        <Badge 
+                          variant="outline" 
+                          className={cn(
+                            task.status === "completed" && "bg-green-500/10 text-green-500 border-green-500",
+                            task.status === "in_progress" && "bg-blue-500/10 text-blue-500 border-blue-500",
+                            task.status === "delayed" && "bg-red-500/10 text-red-500 border-red-500",
+                            task.status === "not_started" && "bg-gray-500/10 text-gray-400 border-gray-400"
+                          )}
+                        >
+                          {task.status === "completed" && "Concluída"}
+                          {task.status === "in_progress" && "Em andamento"}
+                          {task.status === "delayed" && "Atrasada"}
+                          {task.status === "not_started" && "Não iniciada"}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <span className="text-muted">Período:</span>
+                        <span>{formatDate(task.startDate)} - {formatDate(task.endDate)}</span>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <span className="text-muted">Progresso:</span>
+                        <div className="flex items-center gap-2">
+                          <Progress value={task.progress} className="h-1.5 w-16" />
+                          <span className="font-medium">{task.progress}%</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <span className="text-muted">Responsável:</span>
+                        <span className="font-medium">{task.responsiblePerson}</span>
+                      </div>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Card className="w-full mb-6">
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
           <CardTitle className="text-xl font-bold mb-2 sm:mb-0">Cronograma do Projeto</CardTitle>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-            <Tabs 
-              defaultValue="all" 
-              value={timeFilter}
-              onValueChange={(value) => setTimeFilter(value as '7' | '15' | '30' | 'all')}
-              className="w-full sm:w-auto"
-            >
-              <TabsList className="grid grid-cols-4 w-full">
-                <TabsTrigger value="7">7 dias</TabsTrigger>
-                <TabsTrigger value="15">15 dias</TabsTrigger>
-                <TabsTrigger value="30">30 dias</TabsTrigger>
-                <TabsTrigger value="all">Todos</TabsTrigger>
-              </TabsList>
-            </Tabs>
-            
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex items-center gap-1 ml-0 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0" 
-              onClick={() => setIsEditDialogOpen(true)}
-            >
-              <Edit className="h-4 w-4" />
-              <span>Editar</span>
-            </Button>
-          </div>
+          {!hideControls && (
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <Tabs 
+                defaultValue="all" 
+                value={timeFilter}
+                onValueChange={(value) => setTimeFilter(value as '7' | '15' | '30' | 'all')}
+                className="w-full sm:w-auto"
+              >
+                <TabsList className="grid grid-cols-4 w-full">
+                  <TabsTrigger value="7">7 dias</TabsTrigger>
+                  <TabsTrigger value="15">15 dias</TabsTrigger>
+                  <TabsTrigger value="30">30 dias</TabsTrigger>
+                  <TabsTrigger value="all">Todos</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1 ml-0 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0" 
+                onClick={() => setIsEditDialogOpen(true)}
+              >
+                <Edit className="h-4 w-4" />
+                <span>Editar</span>
+              </Button>
+            </div>
+          )}
         </div>
         
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2">
@@ -227,21 +377,21 @@ export default function ProjectTimeline({
               <Progress value={weightedProgress} />
             </div>
           </div>
-          {scheduleAdherence && (
+          {adherence && (
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                {scheduleAdherence.onTrack ? (
+                {adherence.onTrack ? (
                   <CheckCircle className="text-green-500" size={16} />
                 ) : (
                   <AlertTriangle className="text-amber-500" size={16} />
                 )}
                 <span>
-                  {scheduleAdherence.onTrack ? "No prazo" : "Atraso detectado"}
+                  {adherence.onTrack ? "No prazo" : "Atraso detectado"}
                 </span>
               </div>
               <div className="flex items-center gap-1 text-sm text-muted">
                 <Calendar size={14} />
-                <span>Previsão: {scheduleAdherence.dynamicCompletionForecast}</span>
+                <span>Previsão: {adherence.dynamicCompletionForecast}</span>
               </div>
             </div>
           )}
