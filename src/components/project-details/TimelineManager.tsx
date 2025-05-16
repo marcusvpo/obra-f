@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -356,8 +355,8 @@ export default function TimelineManager({ projectId, timelineTasks = [], onTimel
           <div className="text-sm text-muted">
             O cronograma contém {timelineTasks.length} tarefas. 
             <br />
-            {timelineTasks.filter(t => t.status === "completed").length} concluídas, 
-            {timelineTasks.filter(t => t.status === "in_progress").length} em andamento, 
+            {timelineTasks.filter(t => t.status === "completed").length} concluídas, {' '}
+            {timelineTasks.filter(t => t.status === "in_progress").length} em andamento, {' '}
             {timelineTasks.filter(t => t.status === "delayed").length} atrasadas.
           </div>
         ) : (
@@ -392,9 +391,7 @@ export default function TimelineManager({ projectId, timelineTasks = [], onTimel
                     <Button
                       id="start-date"
                       variant="outline"
-                      className={
-                        "w-full justify-start text-left font-normal",
-                      }
+                      className="w-full justify-start text-left font-normal"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {newTask.startDate ? (
@@ -421,9 +418,7 @@ export default function TimelineManager({ projectId, timelineTasks = [], onTimel
                     <Button
                       id="end-date"
                       variant="outline"
-                      className={
-                        "w-full justify-start text-left font-normal",
-                      }
+                      className="w-full justify-start text-left font-normal"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {newTask.endDate ? (
