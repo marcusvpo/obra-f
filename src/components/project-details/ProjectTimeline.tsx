@@ -1,4 +1,3 @@
-
 import { useRef, useState } from "react";
 import { TimelineTask, ScheduleAdherence } from "@/types/project";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -284,7 +283,7 @@ export default function ProjectTimeline({
           </div>
           
           <div className="pb-6">
-            <ScrollArea className="h-[360px] pr-4 overflow-x-visible" orientation="vertical">
+            <ScrollArea className="h-[360px] pr-4 overflow-x-visible">
               <div className="space-y-8 mt-8" ref={timelineRef}>
                 {filteredTasks.map((task) => {
                   const { left, width } = calculateTaskPosition(task);
