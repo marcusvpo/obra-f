@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getProjectDetails } from "@/data/projectData";
+import { getProjectDetails, updateTimelineTasks } from "@/data/projectData";
 import ProjectHeader from "./ProjectHeader";
 import ProjectInfoPanel from "./ProjectInfoPanel";
 import ProjectKpis from "./ProjectKpis";
@@ -9,9 +10,11 @@ import PendingTasks from "./PendingTasks";
 import DelayHistory from "./DelayHistory";
 import MaterialConsumption from "./MaterialConsumption";
 import ProjectRiskInfo from "./ProjectRiskInfo";
-import { ProjectDetails as ProjectDetailsType } from "@/types/project";
+import { ProjectDetails as ProjectDetailsType, TimelineTask } from "@/types/project";
 import ProjectSummary from "./ProjectSummary";
 import ProjectLatestPhoto from "../project-details/ProjectLatestPhoto";
+import ProjectTimeline from "./ProjectTimeline";
+import TimelineManager from "./TimelineManager";
 import { motion } from "framer-motion";
 
 export default function ProjectDetailsContainer() {
@@ -110,6 +113,17 @@ export default function ProjectDetailsContainer() {
     console.log("Risk data updated");
   };
   
+  const handleTimelineTasksUpdated = (tasks: TimelineTask[]) => {
+    updateTimelineTasks(project.id, tasks);
+    setProject(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        timelineTasks: tasks,
+      };
+    });
+  };
+  
   return (
     <motion.div 
       className="container mx-auto"
@@ -131,6 +145,21 @@ export default function ProjectDetailsContainer() {
             estimatedCompletionDate={project.estimatedCompletionDate}
             hoursWorked={project.hoursWorked}
             onProjectUpdated={handleSummaryUpdated}
+          />
+        </div>
+        
+        <div className="mb-6">
+          <ProjectTimeline 
+            timelineTasks={project.timelineTasks} 
+            scheduleAdherence={project.scheduleAdherence}
+          />
+        </div>
+        
+        <div className="mb-6">
+          <TimelineManager
+            projectId={project.id}
+            timelineTasks={project.timelineTasks}
+            onTimelineUpdate={handleTimelineTasksUpdated}
           />
         </div>
         

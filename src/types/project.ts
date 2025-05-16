@@ -36,10 +36,12 @@ export interface ProjectDetails extends Project {
   teamProductivity?: number;
   postConstructionMaintenance?: MaintenanceItem[];
   timeline?: TimelineEvent[];
+  timelineTasks?: TimelineTask[];
   photos?: Photo[];
   chatLogs?: ChatMessage[];
   tarefasPendentes?: string[];
   materiais?: Record<string, { usado: number; planejado: number }>;
+  scheduleAdherence?: ScheduleAdherence;
 }
 
 export interface DelayRiskInfo {
@@ -54,6 +56,25 @@ export interface TimelineEvent {
   title: string;
   description: string;
   isDelayed?: boolean;
+}
+
+export interface TimelineTask {
+  id: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  responsiblePerson: string;
+  progress: number;
+  status: "completed" | "in_progress" | "delayed" | "not_started";
+  dependencies?: string[];
+  description?: string;
+}
+
+export interface ScheduleAdherence {
+  delayedTasksPercentage: number;
+  plannedVsActualDifference: number; // in days
+  dynamicCompletionForecast: string;
+  onTrack: boolean;
 }
 
 export interface Photo {
